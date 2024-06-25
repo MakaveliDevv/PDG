@@ -73,10 +73,10 @@ public class EnemyStateMachine : MonoBehaviour
                 } else 
                 {
                     // Change tag of enemy
-                    this.gameObject.tag = "DeadEnemy";
+                    gameObject.tag = "DeadEnemy";
 
                     // Not attackable by hero
-                    BSM.enemiesInBattle.Remove(this.gameObject);
+                    BSM.enemiesInBattle.Remove(gameObject);
 
                     // Disable the selector
                     selector.SetActive(false);
@@ -88,13 +88,13 @@ public class EnemyStateMachine : MonoBehaviour
                         {
                             if(i != 0) 
                             {
-                                if(BSM.performList[i].attackersGobj == this.gameObject) 
+                                if(BSM.performList[i].attackersGobj == gameObject) 
                                 {
                                     BSM.performList.Remove(BSM.performList[i]);
                                 }
 
                                 // Check if the target of the hero is this enemy
-                                if(BSM.performList[i].attackersTarget == this.gameObject) 
+                                if(BSM.performList[i].attackersTarget == gameObject) 
                                 {
                                     BSM.performList[i].attackersTarget = BSM.enemiesInBattle[Random.Range(0, BSM.enemiesInBattle.Count)];
                                 }
@@ -103,8 +103,7 @@ public class EnemyStateMachine : MonoBehaviour
                     }
 
                     // Change the color / play dead animation
-                    SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
-                    if(spriteRenderer != null) 
+                    if(gameObject.TryGetComponent<SpriteRenderer>(out var spriteRenderer)) 
                     {
                         spriteRenderer.material.color = new Color32(105, 105, 105, 255);
                     } else 
@@ -140,20 +139,20 @@ public class EnemyStateMachine : MonoBehaviour
     {
         if(BSM.performList.Count == 0) 
         {
-            HandleTurn myAttack = new HandleTurn();
-            myAttack.Attacker = enemy.TheName;
-            myAttack.Type = "Enemy";
-            myAttack.attackersGobj = this.gameObject;
-            myAttack.attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)]; // Randomize the target
+            HandleTurn myAttack = new()
+            {
+                Attacker = enemy.TheName,
+                Type = "Enemy",
+                attackersGobj = this.gameObject,
+                attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)] // Randomize the target
+            };
 
             // Choose attack
             int num = Random.Range(0, enemy.attacks.Count);
             myAttack.chosenAttack = enemy.attacks[num];
-
-            // 
             
             // Debug
-            Debug.Log(this.gameObject.name + " has choosen " + myAttack.chosenAttack.AttackName + " and does " + myAttack.chosenAttack.attackDamage + " damage");
+            Debug.Log(gameObject.name + " has choosen " + myAttack.chosenAttack.AttackName + " and does " + myAttack.chosenAttack.attackDamage + " damage");
 
             BSM.CollectActions(myAttack);
             currentState = TurnState.WAITING;   
@@ -170,7 +169,7 @@ public class EnemyStateMachine : MonoBehaviour
         actionStarted = true;
 
         // Animate the enemy near the hero to attack
-        Vector2 targetPosition = new Vector2(targetToAttack.transform.position.x + 1.5f, targetToAttack.transform.position.y);
+        Vector2 targetPosition = new(targetToAttack.transform.position.x + 1.5f, targetToAttack.transform.position.y);
         while(MoveTowardsTarget(targetPosition)) { yield return null; } // Change while loop to something else
 
         // Wait a bit

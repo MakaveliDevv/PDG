@@ -76,8 +76,8 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         {
             if (CanSpawnEnemyAt(point))
             {
-                SpawnEnemyAt(point);
                 SpawnSpawnPointAt(point);
+                SpawnEnemyAt(point);
             }
         }
 
@@ -87,85 +87,6 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         // Visualize spawn points using TilemapVisualizer
         tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
     }
-
-    // Generates rooms with corridors
-    // private void DungeonGenerator()
-    // {
-    //     HashSet<Vector2Int> floorPositions = new();
-    //     List<List<Vector2Int>> corridors = new();
-
-    //     Vector2Int currentPosition = startPosition;
-    //     var currentDirection = Direction2D.GetRandomCardinalDirection();
-
-    //     // Generate the primary corridor path from the starting pos   var primaryCorridor = ProceduralGenerationAlgorithms.RandomWalkCorridor(currentPosition, currentDirection, corridorLength);
-    //     var primaryCorridor = ProceduralGenerationAlgorithms.RandomWalkCorridor(currentPosition, currentDirection, corridorLength);
-    //     corridors.Add(primaryCorridor);
-    //     floorPositions.UnionWith(primaryCorridor);
-
-    //     currentPosition = primaryCorridor[^1]; // Update current position to end of primary corridor
-
-    //     for (int i = 0; i < corridorCount; i++)
-    //     {
-
-    //         // Ensure corridors do not start from the first room
-    //         if (currentPosition == startPosition)
-    //         {
-    //             currentDirection = Direction2D.GetRandomCardinalDirection(); // Change direction to avoid starting from the first room
-    //         }
-
-            
-    //         // Generate corridor in the current direction, starting from current position
-    //         var corridor = ProceduralGenerationAlgorithms.RandomWalkCorridor(currentPosition, currentDirection, corridorLength);
-
-    //         corridors.Add(corridor);
-    //         currentPosition = corridor[^1]; // Update current position to end of corridor
-
-    //         floorPositions.UnionWith(corridor);
-            
-    //         // Randomly decide if we should change direction
-    //         // if (Random.value < 0.5f)
-    //         // {
-    //         //     currentDirection = Direction2D.GetRandomCardinalDirection();
-    //         // }
-    //     }
-
-    //     // Create rooms
-    //     HashSet<Vector2Int> roomPositions = CreateRooms(corridors);
-
-    //     // Find dead ends
-    //     List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
-        
-    //     // Create rooms at dead end
-    //     CreateRoomsAtDeadEnd(deadEnds, roomPositions);
-
-    //     floorPositions.UnionWith(roomPositions);
-
-    //     for (int i = 0; i < corridors.Count; i++)
-    //     {
-    //         corridors[i] = IncreaseBrushSize(corridors[i]);
-    //         floorPositions.UnionWith(corridors[i]);
-    //     }
-
-    //     // Paint tiles and create walls
-    //     tilemapVisualizer.PaintFloorTiles(floorPositions);
-    //     HashSet<Vector2Int> walls = WallGenerator.CreateWall(floorPositions, tilemapVisualizer);
-
-    //     HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floorPositions, walls, maxSpawnPoints);
-
-    //     foreach (Vector2Int point in floorSpawnPoints)
-    //     {
-    //         if (CanSpawnEnemyAt(point))
-    //         {
-    //             SpawnEnemyAt(point);
-    //             SpawnSpawnPointAt(point);
-    //         }
-    //     }
-
-    //     SpawnPlayer(heroPref);
-
-    //     // Visualize spawn points using TilemapVisualizer
-    //     tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
-    // }
 
     private List<Vector2Int> IncreaseBrushSize(List<Vector2Int> _corridor)
     {
@@ -290,6 +211,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         GameObject spawnPoint = Instantiate(spawnPointPref, spawnPosition, Quaternion.identity);
         spawnPoints.Add(spawnPoint);
+        spawnPoint.transform.SetParent(spawnPointsHolder);
     }
 
     private HashSet<Vector2Int> GenerateSpawnPoints(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, int maxSpawnPoints)
@@ -297,6 +219,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         HashSet<Vector2Int> floorSpawnPoints = new(); 
 
         float minDistanceToWallSquared = 5f;
+        float minDistanceBetweenSpawnsSquared = 10f; // Minimum squared distance between spawn points
         int maxAttemptsPerPoint = 10;
 
         BoundsInt firstRoomBounds = roomsList[0];
@@ -322,13 +245,19 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
                 // Check if the spawn point is too close to any wall
                 if (IsTooCloseToWall(spawnPoint, walls, minDistanceToWallSquared))
                 {
-                    // Find a new spawn point away from the wall within the same floor
                     spawnPoint = FindSpawnPointAwayFromWall(floor, walls, minDistanceToWallSquared);
                 }
 
                 // Check if the spawn point is far enough from the center of the first room
                 float distanceToFirstRoomCenterSquared = (spawnPoint - firstRoomCenter).sqrMagnitude;
                 if (distanceToFirstRoomCenterSquared < minDistanceToFirstRoom * minDistanceToFirstRoom)
+                {
+                    attempts++;
+                    continue;
+                }
+
+                // Check if the spawn point is far enough from existing spawn points
+                if (floorSpawnPoints.Any(existingSpawn => (existingSpawn - spawnPoint).sqrMagnitude < minDistanceBetweenSpawnsSquared))
                 {
                     attempts++;
                     continue;
@@ -356,7 +285,6 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private bool SpawnPointAccesible(Vector2Int position, HashSet<Vector2Int> walls)
     {
-        // Check if there's enough space around the spawn position
         foreach (var direction in Direction2D.cardinalDirectionsList)
         {
             Vector2Int neighborPosition = position + direction;
@@ -370,7 +298,6 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private Vector2Int FindSpawnPointAwayFromWall(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, float minDistanceToWallSquared)
     {
-        // Iterate over the floor positions and find a position that is not too close to any wall
         foreach (Vector2Int position in floor)
         {
             if (!IsTooCloseToWall(position, walls, minDistanceToWallSquared))
@@ -378,8 +305,6 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
                 return position;
             }
         }
-
-        // If no suitable position is found, return a random position from the floor
         return floor.ElementAt(Random.Range(0, floor.Count));
     }
 
@@ -393,9 +318,9 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
                 return true;
             }
         }
-
         return false;
     }
+
 
     // End generate spawn points
 
@@ -435,6 +360,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             // Instantiate the enemy prefab at the position
             GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity) as GameObject;
             enemies.Add(newEnemy);
+            newEnemy.transform.SetParent(enemiesHolder);
 
             // Set a counter
             enemyCounter++;

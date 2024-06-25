@@ -5,147 +5,102 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public enum GameState
+    {
+        DUNGEON_STATE,
+        BATTLE_STATE,
+        IDLE_STATE
+    }
+    public GameState gameState;
+
+    #region Singleton
     public static GameManager instance;
 
-    public RegionData curRegion;
-
-    // Enum
-    public enum GameStates 
+    void Awake()
     {
-        WORLDSTATE,
-        TOWNSTATE,
-        BATTLESTATE,
-        IDLESTATE
+        if(instance == null) 
+            instance = this;
+
+        else if(instance != null)
+            Destroy(gameObject);
+        
+
+        DontDestroyOnLoad(gameObject);
+
+        // if(!GameObject.Find("HeroCharacter")) 
+        // {
+        //     GameObject hero = Instantiate(heroCharacter, nextHeroPosition, Quaternion.identity) as GameObject;
+        //     hero.name = "HeroCharacter";
+        // }
     }
 
-    public GameStates gameState;
+    #endregion
 
     // Hero
     public GameObject heroCharacter;
 
-    // Positions
-    public Vector2 nextHeroPosition;
-    public Vector2 lastHeroPosition; // Battle
-
-    // Scenes
-    public string SceneToLoad;
-    public string LastScene; // Battle
-
     // Bool
-    public bool isWalking = false, canGetEncounter = false, gotAttacked = false;
+    public bool isWalking, canGetEncounter, gotAttacked;
+    public bool inBattle;
 
     // Battle
     public List<GameObject> enemiesToBattle = new();
     public int enemyAmount;
 
-    // Spawnpoint
-    public string NextSpawnPoint;
-    
-    void Awake()
-    {
-        // Check if instance exist
-        if(instance == null) 
-        {
-            // If not, set the instance to this
-            instance = this;
+    // Gamemanager stuff
+    [Header("GameManagementStuff")]
+    // public TextMeshProUGUI timerText; 
+    public bool gameTimerActive; 
+    public float elapsedGameplayTime = 0f;
 
-        } else if(instance != null) // If exist but is not this instance 
-        {
-            // Destroy it
-            Destroy(gameObject);
-        }
-        
+    public bool battleTimerActive;
+    public float elapsedBattleTime = 0f;
+    // public bool menuIsOpen;
 
-        // Set this to be not destroyable
-        DontDestroyOnLoad(gameObject);
-
-        if(!GameObject.Find("HeroCharacter")) 
+    void Start() 
+    {   
+        if(IsSceneActive("DungeonScene"))
         {
-            GameObject hero = Instantiate(heroCharacter, nextHeroPosition, Quaternion.identity) as GameObject;
-            hero.name = "HeroCharacter";
+            gameState = GameState.DUNGEON_STATE;
         }
     }
 
     void Update() 
-    {
-        switch (gameState)
+    {        
+        switch(gameState)
         {
-            case(GameStates.WORLDSTATE):
-                if(isWalking) 
-                {
-                    RandomEncounter();
-                }
+            case(GameState.DUNGEON_STATE):
+                gameTimerActive = true;
+                battleTimerActive = false;
 
-                if(gotAttacked) 
-                {
-                    gameState = GameStates.BATTLESTATE;
-                }
+                inBattle = false;
 
             break;
 
-            case(GameStates.TOWNSTATE):
-
-            break; 
-
-            case(GameStates.BATTLESTATE):
-                // Load battle scene
-                StartBattle();
-
-                // Go to idle state
-                gameState = GameStates.IDLESTATE;
+            case(GameState.BATTLE_STATE):
+                gameTimerActive = false;
+                battleTimerActive = true;
+                
+                inBattle = true;
 
             break;
-
-            case(GameStates.IDLESTATE):
-
-            break;
-            // default:
         }
+
+        UpdateTimer(gameTimerActive, ref elapsedGameplayTime);
+        UpdateTimer(battleTimerActive, ref elapsedBattleTime);
     }
 
-    public void LoadNextScene() 
+    void UpdateTimer(bool condition, ref float timer)
     {
-        SceneManager.LoadScene(SceneToLoad);
-    }
-
-    public void LoadSceneAfterBattle() 
-    {
-        SceneManager.LoadScene(LastScene);
-    }
-
-    private void RandomEncounter() 
-    {
-        if(isWalking && canGetEncounter) 
+        if (condition)
         {
-            // Create random encounter number
-            if(Random.Range(0, 2000) < 10) 
-            {
-                Debug.Log("I got attacked");
-                gotAttacked = true;
-            }
+            timer += Time.deltaTime;
+            // UpdateTimerText(timer);
         }
     }
 
-    private void StartBattle() 
+    private bool IsSceneActive(string scenename) 
     {
-        enemyAmount = Random.Range(1, curRegion.maxEnemiesEncounter + 1);
-
-        // Which enemies
-        for (int i = 0; i < enemyAmount; i++)
-        {
-            enemiesToBattle.Add(curRegion.possibleEnemies[Random.Range(0, curRegion.possibleEnemies.Count)]);
-        }
-
-        // Hero
-        lastHeroPosition = GameObject.Find("HeroCharacter").transform.position; // Save hero position for when leaving the battle
-        LastScene = SceneManager.GetActiveScene().name;
-
-        // Load level
-        SceneManager.LoadScene(curRegion.BattleScene);
-
-        // Reset hero
-        isWalking = false;
-        gotAttacked = false;
-        canGetEncounter = false;
+        return SceneManager.GetActiveScene().name == scenename;
     }
 }

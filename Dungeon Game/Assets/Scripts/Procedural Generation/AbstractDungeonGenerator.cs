@@ -12,7 +12,6 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected List<BoundsInt> roomsList;
     [SerializeField] protected int corridorLength = 14, corridorCount = 5;
     [SerializeField] protected int roomCount = 0;
-    [SerializeField] protected int maxAttempts = 100;
     [SerializeField] [Range(0f, 1f)] protected float changeDirectionProbability = 0.3f;
 
 
@@ -23,6 +22,7 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected GameObject spawnPointPref;
     [SerializeField] protected List<GameObject> spawnPoints = new(); // To store the spawn points
     [SerializeField] protected float minDistanceToFirstRoom = 5f; 
+    [SerializeField] protected Transform spawnPointsHolder;
 
 
     // Player
@@ -37,6 +37,8 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected int enemiesAmount;
     [SerializeField] protected int enemyCounter;
     [SerializeField] protected float checkRadius = 5f; 
+    [SerializeField] protected Transform enemiesHolder;
+
 
     public void GenerateDungeon() 
     {

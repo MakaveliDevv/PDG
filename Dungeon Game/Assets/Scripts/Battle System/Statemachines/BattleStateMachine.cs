@@ -152,14 +152,14 @@ public class BattleStateMachine : MonoBehaviour
             break;
 
             case(BattleStates.WIN):
-                for (int i = 0; i < herosInBattle.Count; i++)
-                {
-                    herosInBattle[i].GetComponent<HeroStateMachine>().currentState = HeroStateMachine.TurnState.WAITING;
+                // for (int i = 0; i < herosInBattle.Count; i++)
+                // {
+                //     herosInBattle[i].GetComponent<HeroStateMachine>().currentState = HeroStateMachine.TurnState.WAITING;
 
-                    GameManager.instance.LoadSceneAfterBattle();
-                    GameManager.instance.gameState = GameManager.GameStates.WORLDSTATE;
-                    GameManager.instance.enemiesToBattle.Clear();
-                }
+                //     GameManager.instance.LoadSceneAfterBattle();
+                //     GameManager.instance.gameState = GameManager.GameStates.WORLDSTATE;
+                //     GameManager.instance.enemiesToBattle.Clear();
+                // }
 
             break;
 
@@ -286,7 +286,7 @@ public class BattleStateMachine : MonoBehaviour
         atkBtns.Add(attackButton);
 
         // Button to go to the magic att panel
-        GameObject magicAttackButton = Instantiate(actionBtn) as GameObject;
+        GameObject magicAttackButton = Instantiate(actionBtn);
         TextMeshProUGUI magicButtonText = magicAttackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
         magicAttackButton.name = "MagicAtk Button";
         magicButtonText.text = "Magic";
@@ -301,7 +301,7 @@ public class BattleStateMachine : MonoBehaviour
         {
             foreach (BaseAttack magicAttAbility in herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks) // Loop through the list of magic attacks
             {
-                GameObject abilityBtn = Instantiate(magicAttButton) as GameObject;
+                GameObject abilityBtn = Instantiate(magicAttButton);
                 TextMeshProUGUI abilityBtnText = abilityBtn.transform.Find("SpellText").gameObject.GetComponent<TextMeshProUGUI>();
                 abilityBtnText.text = magicAttAbility.name;
                 abilityBtn.name = "Magic Att Button: " + abilityBtnText.text + ", " + herosToManage[0].name;
