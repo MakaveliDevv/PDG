@@ -1,14 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
 
-public class HammerSwing : BaseAttack
-{
-    public HammerSwing() 
-    {
-        AttackName = "Hammer Swing";
-        AttackDescription = "A heavy hammer swing meant for destruction";
-        attackDamage = 15f;
-        attackCost = 0;
-    }
-}
+// public class HammerSwing : BaseAction
+// {
+//     public HammerSwing() 
+//     {
+//         actionName = "Hammer Swing";
+//         actionDescription = "A heavy hammer swing meant for destruction";
+//         actionPhysicalDmg = 15f;
+//         actionCost = 0;
+//     }
+// }

@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class BaseAttack : MonoBehaviour
+[CreateAssetMenu(fileName = "Action", 
+menuName = "Actions/Ability")]
+public class BaseAction : ScriptableObject
 {
-    public string AttackName;
-    public string AttackDescription;
-    public float attackDamage;
-    public float attackCost; // Mana cost
+    public string actionName = null;
+    public string actionDescription = null;
+    public float actionPhysicalDmg = 0f;
+    public float actionMagicDmg = 0f;
+    public float actionCost = 0f; // Mana cost
+    public float actionHeal = 0f;
+    public float actionPhysicalDEF = 0f;
+    public float actionMagicalDEF = 0f;
 }

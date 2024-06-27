@@ -88,15 +88,15 @@ public class EnemyStateMachine : MonoBehaviour
                         {
                             if(i != 0) 
                             {
-                                if(BSM.performList[i].attackersGobj == gameObject) 
+                                if(BSM.performList[i].performer == gameObject) 
                                 {
                                     BSM.performList.Remove(BSM.performList[i]);
                                 }
 
                                 // Check if the target of the hero is this enemy
-                                if(BSM.performList[i].attackersTarget == gameObject) 
+                                if(BSM.performList[i].performersTarget == gameObject) 
                                 {
-                                    BSM.performList[i].attackersTarget = BSM.enemiesInBattle[Random.Range(0, BSM.enemiesInBattle.Count)];
+                                    BSM.performList[i].performersTarget = BSM.enemiesInBattle[Random.Range(0, BSM.enemiesInBattle.Count)];
                                 }
                             }
                         }
@@ -114,7 +114,7 @@ public class EnemyStateMachine : MonoBehaviour
                     alive = false;
 
                     // Reset enemy buttons
-                    BSM.EnemyButtons();
+                    // BSM.EnemyButtons();
 
                     // Check if this enemy is alive (turn to CHECK ALIVE state)
                     BSM.battleStates = BattleStateMachine.BattleStates.CHECKALIVE;
@@ -141,18 +141,18 @@ public class EnemyStateMachine : MonoBehaviour
         {
             HandleTurn myAttack = new()
             {
-                Attacker = enemy.TheName,
-                Type = "Enemy",
-                attackersGobj = this.gameObject,
-                attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)] // Randomize the target
+                performerName = enemy.TheName,
+                type = "Enemy",
+                performer = gameObject,
+                performersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)] // Randomize the target
             };
 
-            // Choose attack
-            int num = Random.Range(0, enemy.attacks.Count);
-            myAttack.chosenAttack = enemy.attacks[num];
+            // Choose action
+            int num = Random.Range(0, enemy.physicalAttacks.Count);
+            myAttack.chosenAction = enemy.physicalAttacks[num];
             
             // Debug
-            Debug.Log(gameObject.name + " has choosen " + myAttack.chosenAttack.AttackName + " and does " + myAttack.chosenAttack.attackDamage + " damage");
+            Debug.Log(gameObject.name + " has choosen " + myAttack.chosenAction.actionName + " and does " + myAttack.chosenAction.actionPhysicalDmg + " damage");
 
             BSM.CollectActions(myAttack);
             currentState = TurnState.WAITING;   
@@ -207,7 +207,7 @@ public class EnemyStateMachine : MonoBehaviour
 
     public void DoDamage() 
     {
-        float calc_damage = enemy.curATK + BSM.performList[0].chosenAttack.attackDamage;
+        float calc_damage = enemy.curAtt + BSM.performList[0].chosenAction.actionPhysicalDmg;
         // Get the hsm which represents the hero being attacked
         targetToAttack.GetComponent<HeroStateMachine>().TakeDamge(calc_damage);
     }

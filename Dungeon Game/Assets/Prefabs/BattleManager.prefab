@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4855222877929206741}
   m_Layer: 0
   m_Name: BattleManager
-  m_TagString: Untagged
+  m_TagString: BattleManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49,17 +49,12 @@ MonoBehaviour:
   herosInBattle: []
   enemiesInBattle: []
   heroInput: 0
-  herosToManage: []
-  attackParentPanel: {fileID: 0}
-  actionPanel: {fileID: 0}
-  magicPanel: {fileID: 0}
-  enemySelectPanel: {fileID: 0}
+  heroesToManage: []
+  heroSelected: []
   targetSelectSpacer: {fileID: 0}
   actionSpacer: {fileID: 0}
   magicSpacer: {fileID: 0}
-  actionBtn: {fileID: 7366579815221470558, guid: 868ade008ef8e374a97fede9032d9a09, type: 3}
-  targetButton: {fileID: 5793913476896135804, guid: 986231323837b7d43aa4d338e8b30d23, type: 3}
-  magicAttButton: {fileID: 6894804735302846710, guid: 59a4f1f7dffca33419b53f0ade86e403, type: 3}
+  isListenerAdded: 0
   spawnPoints:
   - {fileID: 0}
   - {fileID: 0}

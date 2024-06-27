@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2409885140549298186}
-  - component: {fileID: -5162169977170715199}
   m_Layer: 0
   m_Name: Poison1
   m_TagString: Untagged
@@ -32,19 +31,3 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5162169977170715199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4535841497102917652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f9cc6c7631f04c41a69ea022a5af167, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AttackName: Poison1
-  AttackDescription: Basic poison spell which drags damage over time.
-  attackDamage: 5
-  attackCost: 5

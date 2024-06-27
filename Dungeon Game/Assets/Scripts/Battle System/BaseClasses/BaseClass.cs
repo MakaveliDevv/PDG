@@ -11,10 +11,21 @@ public class BaseClass
     public float baseMP;
     public float curMP;
 
-    public float baseATK;
-    public float curATK;
-    public float baseDEF;
-    public float curDEF;
+    // Physical att
+    public float baseAtt;
+    public float curAtt;
 
-    public List<BaseAttack> attacks = new();
+    // Magical att
+    public float baseMatt;
+    public float curMatt;
+
+    public float basePhysicalDEF;
+    public float curPhysicalDEF;
+
+    public float baseMattDEF;
+    public float curMattDEF;
+
+    public List<BaseAction> physicalAttacks = new();
+    public List<BaseAction> magicAttacks = new();
+    public List<BaseAction> defense = new();
 }

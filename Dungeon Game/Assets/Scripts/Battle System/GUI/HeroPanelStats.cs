@@ -6,8 +6,14 @@ using UnityEngine.UI;
 
 public class HeroPanelStats : MonoBehaviour
 {
-    public TextMeshProUGUI heroName;
-    public TextMeshProUGUI heroHP;
-    public TextMeshProUGUI heroMP;
-    public Image progressBar;
+    public TextMeshProUGUI Name;
+    public TextMeshProUGUI Level;
+    public TextMeshProUGUI HP;
+    public TextMeshProUGUI MP;
+    public TextMeshProUGUI Att;
+    public TextMeshProUGUI Matt;
+    public TextMeshProUGUI Def;
+    // public Image progressBar;
+
+    public bool isListenerAdded;
 }

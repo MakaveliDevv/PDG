@@ -1,14 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+// using System.Collections;
+// using System.Collections.Generic;
+// using UnityEngine;
 
-public class Fire1Spell : BaseAttack
-{
-    public Fire1Spell () 
-    {
-        AttackName = "Fire1";
-        AttackDescription = "Basic fire spell which burns nothing.";
-        attackDamage = 20f;
-        attackCost = 10f;
-    }
-}
+// public class Fire1Spell : BaseAction
+// {
+//     public Fire1Spell () 
+//     {
+//         actionName = "Fire1";
+//         actionDescription = "Basic fire spell which burns nothing.";
+//         actionPhysicalDmg = 20f;
+//         actionCost = 10f;
+//     }
+// }

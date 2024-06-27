@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,64 +30,125 @@ public class BattleStateMachine : MonoBehaviour
     public BattleStates battleStates;
 
     // LIST
-    [HideInInspector] public List<HandleTurn> performList = new();
-    [HideInInspector] public List<GameObject> herosInBattle = new();
-    [HideInInspector] public List<GameObject> enemiesInBattle = new();
+    public List<HandleTurn> performList = new();
+    public List<GameObject> herosInBattle = new();
+    public List<GameObject> enemiesInBattle = new();
 
     // HERO INPUT
     public HeroGUI heroInput;
-    private HandleTurn handleTurnScript_HeroChoise;
-    [HideInInspector] public List<GameObject> herosToManage = new();
+    private HandleTurn heroTurn;
+    public List<GameObject> heroesToManage = new();
+    [SerializeField] private List<HeroStateMachine> heroSelected = new();
 
     // PANELS UI
-    public GameObject attackParentPanel;
-    public GameObject actionPanel;
-    public GameObject magicPanel;
-    public GameObject enemySelectPanel;
+    // public GameObject attackParentPanel;
+    // public GameObject actionPanel;
+    // public GameObject magicPanel;
+    // public GameObject enemySelectPanel;
+
+    // New Panels
 
     // SPACERS UI
-    public Transform targetSelectSpacer;
-    public Transform actionSpacer;
-    public Transform magicSpacer;
+    // public Transform targetSelectSpacer;
+    // public Transform actionSpacer;
+    // public Transform magicSpacer;
 
     // BUTTONS UI
-    public GameObject actionBtn;
-    public GameObject targetButton;
-    public GameObject magicAttButton;
-    private readonly List<GameObject> atkBtns = new();
-    private readonly List<GameObject> enemyBtns = new();
+    // public GameObject targetButton;
+    // public GameObject magicAttButton;
+    // private readonly List<GameObject> atkBtns = new();
+    private List<GameObject> physicalAtt_btns = new();
+    private List<GameObject> magicalAtt_btns = new();
+    private List<GameObject> defense_btns = new();
+
+    private List<GameObject> enemyTarget_btns = new();
+    private List<GameObject> heroTarget_btns = new();
+
+    // private readonly List<GameObject> enemyBtns = new();
+
+
+    public bool isListenerAdded = false;
+
 
     // SPAWN
     public List<Transform> spawnPoints = new();
 
-    void Awake() 
-    {
-        for (int i = 0; i < GameManager.instance.enemyAmount; i++)
-        {
-            GameObject newEnemy = Instantiate(GameManager.instance.enemiesToBattle[i], spawnPoints[i].position, Quaternion.identity) as GameObject;
-            newEnemy.name = newEnemy.GetComponent<EnemyStateMachine>().enemy.TheName + "_" + (i + 1);
-            newEnemy.GetComponent<EnemyStateMachine>().enemy.TheName = newEnemy.name;
-            enemiesInBattle.Add(newEnemy);
-        }
-    }
+    // void Awake() 
+    // {
+    //     herosInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero").OrderBy(hero => hero.name)); 
+    //     for (int i = 0; i < GameManager.instance.enemyAmount; i++)
+    //     {
+    //         GameObject newEnemy = Instantiate(GameManager.instance.enemiesToBattle[i], spawnPoints[i].position, Quaternion.identity) as GameObject;
+    //         newEnemy.name = newEnemy.GetComponent<EnemyStateMachine>().enemy.TheName + "_" + (i + 1);
+    //         newEnemy.GetComponent<EnemyStateMachine>().enemy.TheName = newEnemy.name;
+    //         enemiesInBattle.Add(newEnemy);
+    //     }
+    // }
 
     void Start()
     {
-        herosInBattle.AddRange(GameObject.FindGameObjectsWithTag("Hero").OrderBy(hero => hero.name)); 
         battleStates = BattleStates.WAIT;
         heroInput = HeroGUI.ACTIVATE;
+        // foreach (var player in heroesToManage)
+        // {
+            // HeroStateMachine HSM = heroesToManage[0].GetComponent<HeroStateMachine>();
+            // HSM.select_btn.GetComponent<Button>().onClick.AddListener( () => ChooseHeroInput() );
 
+            // Debug.Log("Succeed in adding onclick to the button");
+        // }
         // PANELS
-        attackParentPanel.SetActive(false);
-        actionPanel.SetActive(false);
-        enemySelectPanel.SetActive(false);
-        magicPanel.SetActive(false);
+        // attackParentPanel.SetActive(false);
+        // actionPanel.SetActive(false);
+        // enemySelectPanel.SetActive(false);
+        // magicPanel.SetActive(false);
 
-        EnemyButtons();
+        // EnemyButtons();
     }
 
     void Update()
     {
+        foreach (var hero in heroesToManage)
+        {
+            if(hero.TryGetComponent<HeroStateMachine>(out var hsm)) 
+            {
+                var heroPanel = hsm.heroPanelUI;
+
+                var heroPanelStatsClass = heroPanel.GetComponent<HeroPanelStats>();
+
+                if(!heroPanelStatsClass.isListenerAdded) 
+                {
+                    // Find the select button on the panel
+                    var selectHeroPanel_btn = heroPanel.transform.Find("SelectHeroPanelButton").gameObject;
+
+                    // Add it to the player's select button slot
+                    hsm.select_btn = selectHeroPanel_btn;
+
+                    // Add event listener    
+                    var btn = hsm.select_btn.GetComponent<Button>();
+                    btn.onClick.AddListener(SelectHeroInput);
+
+                    heroPanelStatsClass.isListenerAdded = true;
+                }
+
+
+                // heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
+
+            }
+        }
+
+        // if(!isListenerAdded) 
+        // {
+        //     HeroStateMachine HSM = heroesToManage[0].GetComponent<HeroStateMachine>();
+        //     Button btn = HSM.select_btn.GetComponent<Button>();
+        //     // HSM.select_btn.GetComponent<Button>().onClick.AddListener( () => ChooseHeroInput() );
+        //     btn.onClick.AddListener(SelectHeroInput);
+
+        //     Debug.Log("Succeed in adding onclick to the button");
+
+
+        //     isListenerAdded = true;
+        // }
+
         switch (battleStates)
         {
             case(BattleStates.WAIT):
@@ -97,32 +160,32 @@ public class BattleStateMachine : MonoBehaviour
             break;
 
             case(BattleStates.TAKEACTION):
-                GameObject performer = GameObject.Find(performList[0].Attacker);
+                GameObject performer = GameObject.Find(performList[0].performerName);
 
-                if(performList[0].Type == "Enemy") 
+                if(performList[0].type == "Enemy") 
                 {
                     EnemyStateMachine ESM = performer.GetComponent<EnemyStateMachine>();
                     for (int i = 0; i < herosInBattle.Count; i++)
                     {
-                        if(performList[0].attackersTarget == herosInBattle[i])
+                        if(performList[0].performersTarget == herosInBattle[i])
                         {
-                            ESM.targetToAttack = performList[0].attackersTarget;
+                            ESM.targetToAttack = performList[0].performersTarget;
                             ESM.currentState = EnemyStateMachine.TurnState.ACTION; 
             
                         } else 
                         {
-                            performList[0].attackersTarget = herosInBattle[Random.Range(0, herosInBattle.Count)];
+                            performList[0].performersTarget = herosInBattle[Random.Range(0, herosInBattle.Count)];
 
-                            ESM.targetToAttack = performList[0].attackersTarget;
+                            ESM.targetToAttack = performList[0].performersTarget;
                             ESM.currentState = EnemyStateMachine.TurnState.ACTION; 
                         }
                     }
                 }
 
-                if(performList[0].Type == "Hero") 
+                if(performList[0].type == "Hero") 
                 {
                     HeroStateMachine HSM = performer.GetComponent<HeroStateMachine>();
-                    HSM.targetToAttack = performList[0].attackersTarget;
+                    HSM.targetToAttack = performList[0].performersTarget;
                     HSM.currentState = HeroStateMachine.TurnState.ACTION;
                 }
 
@@ -145,7 +208,7 @@ public class BattleStateMachine : MonoBehaviour
                     
                 } else 
                 {
-                    ClearAttackPanel();
+                    // ClearAttackPanel();
                     heroInput = HeroGUI.ACTIVATE;
                 }
 
@@ -171,17 +234,25 @@ public class BattleStateMachine : MonoBehaviour
         switch (heroInput) 
         {
             case(HeroGUI.ACTIVATE):
-                if(herosToManage.Count > 0)
+                // attackButton.GetComponent<Button>().onClick.AddListener( () => Input1() );
+                if(heroesToManage.Count > 0)
                 {
-                    herosToManage[0].transform.Find("Selector").gameObject.SetActive(true);
-                    handleTurnScript_HeroChoise = new HandleTurn(); // Create new handle turn instance
+                  
+                    // Instead of activating the selector on the first hero in the list
+                    // I want to be able to select a specific hero and then a selector will appear on the clicked hero
 
-                    attackParentPanel.SetActive(true);
-                    actionPanel.SetActive(true);
+                    // herosToManage[0].transform.Find("Selector").gameObject.SetActive(true);
+                    // heroTurn = new HandleTurn(); // Create new handle turn instance
+
+                    // heroPanel.SetActive(false);
+                    // battlePanel.SetActive(true);
+
+                    // // attackParentPanel.SetActive(true);
+                    // actionPanel.SetActive(true);
                     
-                    CreateAttackBTNS(); // Populate the attack panel with attack buttons
+                    // CreateAttackBTNS(); // Populate the attack panel with attack buttons
                     
-                    heroInput = HeroGUI.WAITING;
+                    // heroInput = HeroGUI.WAITING;
                 }
 
             break;
@@ -204,134 +275,209 @@ public class BattleStateMachine : MonoBehaviour
         performList.Add(_input);
     }
 
-    public void EnemyButtons() 
-    {
-        // Clean up everything that is already created
-        foreach(GameObject _enemyBtn in enemyBtns) 
-        {
-            Destroy(_enemyBtn);
-        }
-        enemyBtns.Clear();
+    // public void EnemyButtons() 
+    // {
+    //     // Clean up everything that is already created
+    //     foreach(GameObject _enemyBtn in enemyBtns) 
+    //     {
+    //         Destroy(_enemyBtn);
+    //     }
+    //     enemyBtns.Clear();
 
-        // Proceed further with creating buttons
-        foreach (GameObject _enemy in enemiesInBattle)
-        {
-            GameObject newButton = Instantiate(targetButton) as GameObject;
-            newButton.name = "Target: " + _enemy.name;
+    //     // Proceed further with creating buttons
+    //     foreach (GameObject _enemy in enemiesInBattle)
+    //     {
+    //         GameObject newButton = Instantiate(targetButton) as GameObject;
+    //         newButton.name = "Target: " + _enemy.name;
 
-            SelectButton button = newButton.GetComponent<SelectButton>();
-            TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
-            EnemyStateMachine curEnemy = _enemy.GetComponent<EnemyStateMachine>();
+    //         SelectButton button = newButton.GetComponent<SelectButton>();
+    //         TextMeshProUGUI buttonText = newButton.GetComponentInChildren<TextMeshProUGUI>();
+    //         EnemyStateMachine curEnemy = _enemy.GetComponent<EnemyStateMachine>();
             
-            buttonText.text = curEnemy.enemy.TheName;
-            button.enemyObj = _enemy; 
+    //         buttonText.text = curEnemy.enemy.TheName;
+    //         button.enemyObj = _enemy; 
 
-            newButton.transform.SetParent(targetSelectSpacer, false);
-            enemyBtns.Add(newButton);
+    //         newButton.transform.SetParent(targetSelectSpacer, false);
+    //         enemyBtns.Add(newButton);
+    //     }
+    // }
+
+
+    // public void Input1() // Attack button
+    // {
+    //     heroTurn.performerName = herosToManage[0].name;
+    //     heroTurn.performer = herosToManage[0];
+    //     heroTurn.type = "Hero";
+    //     heroTurn.chosenAction = herosToManage[0].GetComponent<HeroStateMachine>().baseHero.attacks[0];
+
+    //     actionPanel.SetActive(false);
+    //     enemySelectPanel.SetActive(true);
+    // }
+
+    // the problem might be because the button isnt correctly assigned
+    public void SelectHeroInput()
+    {
+        Debug.Log("Click detected");
+        Debug.Log("Number of heroes to manage: " + heroesToManage.Count);
+
+        for (int i = 0; i < heroesToManage.Count; i++)
+        {
+            if(heroesToManage[i].TryGetComponent<HeroStateMachine>(out var hsm))
+            {
+                hsm.heroPanelSelector.SetActive(false);
+                Debug.Log("Panel set inactive");
+            }
+            // Debug.Log("Processing hero at index: " + i);
+
+            // if (heroesToManage[i] == null)
+            // {
+            //     Debug.LogError("Hero at index " + i + " is null!");
+            //     continue;
+            // }
+
+            // if (!heroesToManage[i].TryGetComponent<HeroStateMachine>(out var heroStateMachine))
+            // {
+            //     Debug.LogError("HeroStateMachine component is missing on hero at index " + i);
+            //     continue;
+            // }
+
+            // Debug.Log("Click detected after click");
+
+            // if (heroSelected.Contains(heroStateMachine))
+            // {
+            //     Debug.Log("Hero already selected, clearing selection");
+            //     ClearSelection();
+
+            //     heroStateMachine.heroPanelSelector.SetActive(false);
+
+            //     heroTurn.performerName = heroesToManage[i].name;
+            //     heroTurn.performer = heroesToManage[i];
+            //     heroTurn.type = "Hero";
+
+            //     heroSelected.Add(heroStateMachine);
+            // }
+            // else 
+            // {
+                
+            //     heroStateMachine.heroPanelSelector.SetActive(false);
+
+            //     heroTurn.performerName = heroesToManage[i].name;
+            //     heroTurn.performer = heroesToManage[i];
+            //     heroTurn.type = "Hero";
+
+            //     heroSelected.Add(heroStateMachine);
+            // }
         }
     }
 
-    public void Input1() // Attack button
+
+    public void ClearSelection() 
     {
-        handleTurnScript_HeroChoise.Attacker = herosToManage[0].name;
-        handleTurnScript_HeroChoise.attackersGobj = herosToManage[0];
-        handleTurnScript_HeroChoise.Type = "Hero";
-        handleTurnScript_HeroChoise.chosenAttack = herosToManage[0].GetComponent<HeroStateMachine>().baseHero.attacks[0];
+        if(heroSelected.Count > 0) 
+        {
+            heroSelected.Clear();
 
-        actionPanel.SetActive(false);
-        enemySelectPanel.SetActive(true);
+        }
+
+        // Change the battle button to select button again
+        for (int i = 0; i < heroSelected.Count; i++)
+        {
+            heroSelected[i].battle_btn.SetActive(false);
+            heroSelected[i].select_btn.SetActive(true);
+            heroSelected[i].heroPanelSelector.SetActive(true);
+        }
     }
-
+    
     public void ChooseTarget(GameObject _chosenEnemy) // Gets called in the Select button script 
     {
-       handleTurnScript_HeroChoise.attackersTarget = _chosenEnemy;
+       heroTurn.performersTarget = _chosenEnemy;
        heroInput = HeroGUI.DONE;
     }
 
     private void HeroInputDone()
     {
-        performList.Add(handleTurnScript_HeroChoise);
-        ClearAttackPanel();
+        performList.Add(heroTurn);
+        // ClearAttackPanel();
 
-        herosToManage[0].transform.Find("Selector").gameObject.SetActive(false);
-        herosToManage.RemoveAt(0);
+        heroesToManage[0].transform.Find("Selector").gameObject.SetActive(false);
+        heroesToManage.RemoveAt(0);
         heroInput = HeroGUI.ACTIVATE;
     }
 
-    private void ClearAttackPanel()
-    {
-        enemySelectPanel.SetActive(false);
-        actionPanel.SetActive(false);
-        magicPanel.SetActive(false);
-        attackParentPanel.SetActive(false);
+    // private void ClearAttackPanel()
+    // {
+    //     enemySelectPanel.SetActive(false);
+    //     actionPanel.SetActive(false);
+    //     magicPanel.SetActive(false);
+    //     attackParentPanel.SetActive(false);
 
-        foreach (GameObject _atkBtn in atkBtns)
-        {
-            Destroy(_atkBtn);
-        }
-        atkBtns.Clear();
-    }
+    //     foreach (GameObject _atkBtn in atkBtns)
+    //     {
+    //         Destroy(_atkBtn);
+    //     }
+    //     atkBtns.Clear();
+    // }
 
-    private void CreateAttackBTNS() 
-    {
-        // Button to go to the physical att panel
-        GameObject attackButton = Instantiate(actionBtn) as GameObject; 
-        TextMeshProUGUI attackButtonText = attackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
-        attackButton.name = "PhysicalAtk Button"; 
-        attackButtonText.text = "Physical"; 
+    // private void CreateAttackBTNS() 
+    // {
+    //     // Button to go to the physical att panel
+    //     GameObject attackButton = Instantiate(actionBtn); 
+    //     TextMeshProUGUI attackButtonText = attackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
+    //     attackButton.name = "PhysicalAtk Button"; 
+    //     attackButtonText.text = "Physical"; 
 
-        // Add Input1 method to the physical att button AND set the button in the actionSpacer UI and to the list of buttons
-        attackButton.GetComponent<Button>().onClick.AddListener( () => Input1() );
-        attackButton.transform.SetParent(actionSpacer, false);
-        atkBtns.Add(attackButton);
+    //     // Add Input1 method to the physical att button AND set the button in the actionSpacer UI and to the list of buttons
+    //     attackButton.GetComponent<Button>().onClick.AddListener( () => Input1() );
+    //     attackButton.transform.SetParent(actionSpacer, false);
+    //     atkBtns.Add(attackButton);
 
-        // Button to go to the magic att panel
-        GameObject magicAttackButton = Instantiate(actionBtn);
-        TextMeshProUGUI magicButtonText = magicAttackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
-        magicAttackButton.name = "MagicAtk Button";
-        magicButtonText.text = "Magic";
+    //     // Button to go to the magic att panel
+    //     GameObject magicAttackButton = Instantiate(actionBtn);
+    //     TextMeshProUGUI magicButtonText = magicAttackButton.transform.Find("AttackText").gameObject.GetComponent<TextMeshProUGUI>();
+    //     magicAttackButton.name = "MagicAtk Button";
+    //     magicButtonText.text = "Magic";
         
-        // Same as above but with another input method
-        magicAttackButton.GetComponent<Button>().onClick.AddListener( () => Input3() );
-        magicAttackButton.transform.SetParent(actionSpacer, false);
-        atkBtns.Add(magicAttackButton);
+    //     // Same as above but with another input method
+    //     magicAttackButton.GetComponent<Button>().onClick.AddListener( () => Input3() );
+    //     magicAttackButton.transform.SetParent(actionSpacer, false);
+    //     atkBtns.Add(magicAttackButton);
 
-        // Create magic att abilities buttons
-        if(herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks.Count > 0) // Check if the selected hero has at least 1 magic att ability
-        {
-            foreach (BaseAttack magicAttAbility in herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks) // Loop through the list of magic attacks
-            {
-                GameObject abilityBtn = Instantiate(magicAttButton);
-                TextMeshProUGUI abilityBtnText = abilityBtn.transform.Find("SpellText").gameObject.GetComponent<TextMeshProUGUI>();
-                abilityBtnText.text = magicAttAbility.name;
-                abilityBtn.name = "Magic Att Button: " + abilityBtnText.text + ", " + herosToManage[0].name;
+    //     // Create magic att abilities buttons
+    //     if(herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks.Count > 0) // Check if the selected hero has at least 1 magic att ability
+    //     {
+    //         foreach (BaseAction magicAttAbility in herosToManage[0].GetComponent<HeroStateMachine>().baseHero.magicAttacks) // Loop through the list of magic attacks
+    //         {
+    //             GameObject abilityBtn = Instantiate(magicAttButton);
+    //             TextMeshProUGUI abilityBtnText = abilityBtn.transform.Find("SpellText").gameObject.GetComponent<TextMeshProUGUI>();
+    //             abilityBtnText.text = magicAttAbility.name;
+    //             abilityBtn.name = "Magic Att Button: " + abilityBtnText.text + ", " + herosToManage[0].name;
             
-                AttackButton ATB = abilityBtn.GetComponent<AttackButton>(); // Fetch the attack button script from the instantiated button
-                ATB.magicAttackToPerform = magicAttAbility; // Assign the magic att ability to the magic attack to perform
-                abilityBtn.transform.SetParent(magicSpacer, false);
-                atkBtns.Add(abilityBtn);
-            }
-        } else 
-        {
-            // If not then make the button not interactable
-            magicAttackButton.GetComponent<Button>().interactable = false;
-        }
-    }
+    //             AttackButton ATB = abilityBtn.GetComponent<AttackButton>(); // Fetch the attack button script from the instantiated button
+    //             ATB.magicAttackToPerform = magicAttAbility; // Assign the magic att ability to the magic attack to perform
+    //             abilityBtn.transform.SetParent(magicSpacer, false);
+    //             atkBtns.Add(abilityBtn);
+    //         }
+    //     } else 
+    //     {
+    //         // If not then make the button not interactable
+    //         magicAttackButton.GetComponent<Button>().interactable = false;
+    //     }
+    // }
 
-    public void Input3() // Switching to magic attacks 
-    {
-        actionPanel.SetActive(false);
-        magicPanel.SetActive(true);
-    }
+    // public void Input3() // Switching to magic attacks 
+    // {
+    //     actionPanel.SetActive(false);
+    //     magicPanel.SetActive(true);
+    // }
 
-    public void Input4(BaseAttack _chosenMagicSpell) // Magic att Panel
-    {
-        handleTurnScript_HeroChoise.Attacker = herosToManage[0].name;
-        handleTurnScript_HeroChoise.attackersGobj = herosToManage[0];
-        handleTurnScript_HeroChoise.Type = "Hero";
+    // public void Input4(BaseAction _chosenMagicSpell) // Magic att Panel
+    // {
+    //     heroTurn.performerName = herosToManage[0].name;
+    //     heroTurn.performer = herosToManage[0];
+    //     heroTurn.type = "Hero";
 
-        handleTurnScript_HeroChoise.chosenAttack = _chosenMagicSpell;
-        magicPanel.SetActive(false);
-        enemySelectPanel.SetActive(true);
-    }
+    //     heroTurn.chosenAction = _chosenMagicSpell;
+    //     magicPanel.SetActive(false);
+    //     enemySelectPanel.SetActive(true);
+    // }
 }

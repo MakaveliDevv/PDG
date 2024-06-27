@@ -5,12 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public class HandleTurn
 {
-    public string Attacker; // Name of attacker
-    public string Type;
-    public GameObject attackersGobj; // Who attacks
-    public GameObject attackersTarget; // Who is going to be attacked
+    public string performerName;
+    public string type;
+    public GameObject performer;
+    public GameObject performersTarget;
 
-    // Which attack is performed
-    public BaseAttack chosenAttack;
-
+    public BaseAction chosenAction;
 }

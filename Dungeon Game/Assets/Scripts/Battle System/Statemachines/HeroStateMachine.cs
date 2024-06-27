@@ -20,11 +20,11 @@ public class HeroStateMachine : MonoBehaviour
     }
 
     public TurnState currentState;
-    private float maxCooldown = 1f;
-    private float curCooldown;
+    // private float maxCooldown = 1f;
+    // private float curCooldown;
 
-    public Image progressBar;
-    public GameObject selector;
+    // public Image progressBar;
+    // public GameObject selector;
 
     // IENumerator
     public GameObject targetToAttack;
@@ -36,35 +36,63 @@ public class HeroStateMachine : MonoBehaviour
     private bool alive = true;
 
     // Hero panel
-    private HeroPanelStats stats;
-    public GameObject heroPanelUI;
-    private Transform heroPanelSpacer;
+    private HeroPanelStats UI_stats;
+    // public GameObject heroPanelUI;
+    // private Transform heroPanelSpacer;
+    [SerializeField] private Transform heroesPanel;
 
+
+    [Header("Panels")]
+    public GameObject heroPanelUI; // Main hero stats panel
+    public GameObject battlePanel; // Main hero battle panel
+    public GameObject actionPanel; // Choose action panel (attack, defense, buff)
+    public GameObject inputActionPanel; // Choose type of action (if attack: att, matt, if buff: increase stats, if defense: heal, armor, shield, etc)
+    public GameObject targetPanel; // Choose target panel
+    public GameObject descriptionPanel; // Description about the action (optional)
+    public GameObject heroPanelSelector; // Makes the hero panel dark if not selected
+    
+    [Header("ButtonHeroStatsPanel")]
+    public GameObject select_btn; 
+    public GameObject battle_btn;
+
+    [Header("Action Panel buttons")]
+    public GameObject selectAction_btn;
+    public GameObject inputAction_btn; // This one can be either attack, matt or a defense button
+    // public GameObject physicalAtt_btn;
+    // public GameObject magicalAtt_btn;
+    // public GameObject defense_btn;
+    public GameObject target_btn;
 
     void Start()
     {
-        selector.SetActive(false);
-        heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
+        currentState = TurnState.ADDTOLIST;
+        
+        // selector.SetActive(false);
+        // heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
+        
+        BSM = GameObject.FindGameObjectWithTag("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
+        heroesPanel = GameObject.FindGameObjectWithTag("HeroesPanel").transform;
     
         // Create panel
         CreateHeroPanel();
 
-        BSM = GameObject.Find("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
-        currentState = TurnState.PROCESSING;
+        // currentState = TurnState.PROCESSING;
         startPosition = transform.position;
+
+        battlePanel = heroPanelUI.transform.Find("NewBattlePanel").gameObject;
+
+        actionPanel = battlePanel.transform.Find("NewActionPanel").gameObject;
+        inputActionPanel = battlePanel.transform.Find("InputActionPanel").gameObject;
+        targetPanel = battlePanel.transform.Find("NewSelectTargetPanel").gameObject;
+        heroPanelSelector = heroPanelUI.transform.Find("SelectHeroPanelButton").gameObject;
     }
 
     void Update()
     {
         switch (currentState)
         {
-            case (TurnState.PROCESSING):
-                ProgressBar();
-
-            break;
-
             case (TurnState.ADDTOLIST):
-                BSM.herosToManage.Add(this.gameObject);
+                BSM.heroesToManage.Add(gameObject);
 
                 currentState = TurnState.WAITING;
 
@@ -72,6 +100,7 @@ public class HeroStateMachine : MonoBehaviour
 
             case (TurnState.WAITING):
                 // Idle state
+                // When player is choosing an action
 
             break;
 
@@ -87,20 +116,20 @@ public class HeroStateMachine : MonoBehaviour
                 } else 
                 {   
                     // Change tag
-                    this.gameObject.tag = "DeadHero";
+                    gameObject.tag = "DeadHero";
 
                     // Not attackable by enemy
-                    BSM.herosInBattle.Remove(this.gameObject);
+                    BSM.herosInBattle.Remove(gameObject);
 
                     // Not managable
-                    BSM.herosToManage.Remove(this.gameObject);
+                    BSM.heroesToManage.Remove(gameObject);
 
                     // Deactivate the selector
-                    selector.SetActive(false);
+                    // selector.SetActive(false);
 
                     // Reset GUI
-                    BSM.actionPanel.SetActive(false);
-                    BSM.enemySelectPanel.SetActive(false);
+                    // BSM.actionPanel.SetActive(false);
+                    // BSM.enemySelectPanel.SetActive(false);
 
                     // Remove inputs from performlist
                     if(BSM.herosInBattle.Count > 0) 
@@ -109,23 +138,23 @@ public class HeroStateMachine : MonoBehaviour
                         {
                             if(i != 0) 
                             {
-                                if(BSM.performList[i].attackersGobj == this.gameObject) 
+                                if(BSM.performList[i].performer == gameObject) 
                                 {
                                     BSM.performList.Remove(BSM.performList[i]);
                                 }
 
                                 // Check if the target of the enemy is this hero
-                                if(BSM.performList[i].attackersTarget == this.gameObject) 
+                                if(BSM.performList[i].performersTarget == gameObject) 
                                 {
                                     // Change target to random target
-                                    BSM.performList[i].attackersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)];
+                                    BSM.performList[i].performersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)];
                                 }
                             }
                         }
                     }
 
                     // Change color / play animation
-                    SpriteRenderer spriteRenderer = this.gameObject.GetComponent<SpriteRenderer>();
+                    SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
                     if (spriteRenderer != null)
                     {
                         spriteRenderer.material.color = new Color32(105, 105, 105, 255);
@@ -145,17 +174,17 @@ public class HeroStateMachine : MonoBehaviour
         }
     }
 
-    private void ProgressBar() 
-    {
-        curCooldown += Time.deltaTime;
-        float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
-        progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
+    // private void ProgressBar() 
+    // {
+    //     curCooldown += Time.deltaTime;
+    //     float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
+    //     progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
 
-        if(curCooldown >= maxCooldown)
-        {
-            currentState = TurnState.ADDTOLIST;
-        }
-    }
+    //     if(curCooldown >= maxCooldown)
+    //     {
+    //         currentState = TurnState.ADDTOLIST;
+    //     }
+    // }
 
     private IEnumerator TimeForAction() 
     {
@@ -166,8 +195,8 @@ public class HeroStateMachine : MonoBehaviour
         
         actionStarted = true;
 
-        // Animate the enemy near the hero to attack
-        Vector2 targetPosition = new Vector2(targetToAttack.transform.position.x - 1.5f, targetToAttack.transform.position.y);
+        // Animate the hero near the enemy to attack
+        Vector2 targetPosition = new(targetToAttack.transform.position.x - 1.5f, targetToAttack.transform.position.y);
         while(MoveTowardsTarget(targetPosition)) { yield return null; } // Change while loop to something else
 
         // Wait a bit
@@ -189,7 +218,7 @@ public class HeroStateMachine : MonoBehaviour
             BSM.battleStates = BattleStateMachine.BattleStates.WAIT;
 
             // Reset the hero state
-            curCooldown = 0f;
+            // curCooldown = 0f;
             currentState = TurnState.PROCESSING;
         } else 
         {
@@ -210,7 +239,7 @@ public class HeroStateMachine : MonoBehaviour
 
     public void DoDamage() 
     {
-        float calc_damage = baseHero.curATK + BSM.performList[0].chosenAttack.attackDamage;
+        float calc_damage = baseHero.curAtt + BSM.performList[0].chosenAction.actionPhysicalDmg;
         targetToAttack.GetComponent<EnemyStateMachine>().TakeDamge(calc_damage); // Get the esm which represents the hero being attacked
     }
 
@@ -228,20 +257,19 @@ public class HeroStateMachine : MonoBehaviour
 
     private void CreateHeroPanel() 
     {
-        heroPanelUI = Instantiate(heroPanelUI) as GameObject;
-        stats = heroPanelUI.GetComponent<HeroPanelStats>();
+        heroPanelUI = Instantiate(heroPanelUI);
+        UI_stats = heroPanelUI.GetComponent<HeroPanelStats>();
 
-        stats.heroName.text = baseHero.TheName;
-        stats.heroHP.text = "HP: " + baseHero.curHP;
-        stats.heroMP.text = "MP: " + baseHero.curMP;
-        this.progressBar = stats.progressBar;
+        UI_stats.Name.text = baseHero.TheName.ToString();
+        UI_stats.HP.text = baseHero.curHP.ToString();
+        UI_stats.MP.text = baseHero.curMP.ToString();
 
-        heroPanelUI.transform.SetParent(heroPanelSpacer, false);
+        heroPanelUI.transform.SetParent(heroesPanel, false);
     }
 
     private void UpdateHeroPanel() 
     {
-        stats.heroHP.text = "HP: " + baseHero.curHP;
-        stats.heroMP.text = "MP: " + baseHero.curMP;
+        UI_stats.HP.text = "HP: " + baseHero.curHP;
+        UI_stats.MP.text = "MP: " + baseHero.curMP;
     }
 }
