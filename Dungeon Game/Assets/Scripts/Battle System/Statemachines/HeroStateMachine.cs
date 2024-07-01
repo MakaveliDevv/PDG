@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HeroStateMachine : MonoBehaviour
 {
@@ -20,75 +21,74 @@ public class HeroStateMachine : MonoBehaviour
     }
 
     public TurnState currentState;
-    // private float maxCooldown = 1f;
-    // private float curCooldown;
-
-    // public Image progressBar;
-    // public GameObject selector;
-
-    // IENumerator
     public GameObject targetToAttack;
     private Vector2 startPosition;
-    private bool actionStarted = false;
     private float animSpeed = 10f;
 
-    // Dead
-    private bool alive = true;
-
-    // Hero panel
-    private HeroPanelStats UI_stats;
-    // public GameObject heroPanelUI;
-    // private Transform heroPanelSpacer;
+    // Main Panels
+    [Header("Main Panels")]
     [SerializeField] private Transform heroesPanel;
-
-
-    [Header("Panels")]
-    public GameObject heroPanelUI; // Main hero stats panel
-    public GameObject battlePanel; // Main hero battle panel
-    public GameObject actionPanel; // Choose action panel (attack, defense, buff)
-    public GameObject inputActionPanel; // Choose type of action (if attack: att, matt, if buff: increase stats, if defense: heal, armor, shield, etc)
-    public GameObject targetPanel; // Choose target panel
-    public GameObject descriptionPanel; // Description about the action (optional)
-    public GameObject heroPanelSelector; // Makes the hero panel dark if not selected
+    public GameObject heroPanelUI;
+    private HeroPanelStats UI_stats;
     
-    [Header("ButtonHeroStatsPanel")]
-    public GameObject select_btn; 
-    public GameObject battle_btn;
+    // Normal Panels
+    [Header("Panels")]
+    public GameObject heroStatsPanel; // Hero stats panel
+    public GameObject battlePanel; // Hero battle panel
+    public GameObject selectActionPanel; // Choose action type panel (att, matt, def)
+    public GameObject actionPanels;
 
-    [Header("Action Panel buttons")]
-    public GameObject selectAction_btn;
-    public GameObject inputAction_btn; // This one can be either attack, matt or a defense button
-    // public GameObject physicalAtt_btn;
-    // public GameObject magicalAtt_btn;
-    // public GameObject defense_btn;
-    public GameObject target_btn;
+    // Type Action Panel
+    [Header("Sub Panel")]
+    public GameObject wattAction_panel, mattAction_panel, buffAction_Panel; // Panel for the watt buttons
+    public GameObject descriptionPanel, currentActionPanel;
+
+    [Header("Bool")]
+    public bool heroSelected, alive = true, actionStarted; 
+    public bool battlePanel_open; 
+    public bool actionButtonsCreated, typeActionBtnCreated, wattActionBtnCreated, mattActionBtnCreated, buffActionBtnCreated; 
+
+    [Header("Buttons")]
+    public GameObject selectHero_btn, toBattlePanel_btn; 
+    public GameObject selectAction_btn, actionType_btn; // Choose action type button
+    public GameObject backButton;
+    
+    
+    public GameObject heroPanelSelector;
+
+    void Awake() 
+    {
+        BSM = GameObject.FindGameObjectWithTag("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
+        FindUIElements();
+    }
 
     void Start()
     {
+        currentActionPanel = null; 
         currentState = TurnState.ADDTOLIST;
-        
-        // selector.SetActive(false);
-        // heroPanelSpacer = GameObject.Find("BattleCanvas").transform.Find("BattlePanel").transform.Find("HeroPanel").transform.Find("HeroPanelSpacer");
-        
-        BSM = GameObject.FindGameObjectWithTag("BattleManager").GetComponent<BattleStateMachine>(); // Change to instance
-        heroesPanel = GameObject.FindGameObjectWithTag("HeroesPanel").transform;
-    
-        // Create panel
+        startPosition = transform.position;
+    }  
+
+    private void FindUIElements() 
+    {
         CreateHeroPanel();
 
-        // currentState = TurnState.PROCESSING;
-        startPosition = transform.position;
+        heroesPanel = GameObject.FindGameObjectWithTag("HeroesPanel").transform; // Main Panel
+        heroPanelSelector = heroPanelUI.transform.Find("PanelSelector").gameObject; 
 
-        battlePanel = heroPanelUI.transform.Find("NewBattlePanel").gameObject;
+        heroStatsPanel = heroPanelUI.transform.Find("HeroStuff").gameObject; // Stats panel
+        battlePanel = heroPanelUI.transform.Find("BattlePanel").gameObject; // Battle panel
 
-        actionPanel = battlePanel.transform.Find("NewActionPanel").gameObject;
-        inputActionPanel = battlePanel.transform.Find("InputActionPanel").gameObject;
-        targetPanel = battlePanel.transform.Find("NewSelectTargetPanel").gameObject;
-        heroPanelSelector = heroPanelUI.transform.Find("SelectHeroPanelButton").gameObject;
+        selectActionPanel = battlePanel.transform.Find("SelectActionPanel").gameObject; // Action panel
+
+        selectHero_btn = heroPanelUI.transform.Find("SelectHeroPanelButton").gameObject;
+        toBattlePanel_btn = heroPanelUI.transform.Find("ToBattlePanelButton").gameObject;
     }
 
     void Update()
     {
+        IdkWhatToCallIt();
+
         switch (currentState)
         {
             case (TurnState.ADDTOLIST):
@@ -174,18 +174,6 @@ public class HeroStateMachine : MonoBehaviour
         }
     }
 
-    // private void ProgressBar() 
-    // {
-    //     curCooldown += Time.deltaTime;
-    //     float calc_cooldown = curCooldown / maxCooldown; // Calculation of the cool down
-    //     progressBar.transform.localScale = new Vector3(Mathf.Clamp(calc_cooldown, 0, 1), progressBar.transform.localScale.y, progressBar.transform.localScale.z);
-
-    //     if(curCooldown >= maxCooldown)
-    //     {
-    //         currentState = TurnState.ADDTOLIST;
-    //     }
-    // }
-
     private IEnumerator TimeForAction() 
     {
         if(actionStarted) 
@@ -260,7 +248,7 @@ public class HeroStateMachine : MonoBehaviour
         heroPanelUI = Instantiate(heroPanelUI);
         UI_stats = heroPanelUI.GetComponent<HeroPanelStats>();
 
-        UI_stats.Name.text = baseHero.TheName.ToString();
+        UI_stats.Name.text = baseHero.name.ToString();
         UI_stats.HP.text = baseHero.curHP.ToString();
         UI_stats.MP.text = baseHero.curMP.ToString();
 
@@ -272,4 +260,188 @@ public class HeroStateMachine : MonoBehaviour
         UI_stats.HP.text = "HP: " + baseHero.curHP;
         UI_stats.MP.text = "MP: " + baseHero.curMP;
     }
+
+    public void SelectHeroInput()
+    {
+        BSM.heroTurn.performerName = baseHero.name;
+        BSM.heroTurn.performer = gameObject;
+        BSM.heroTurn.type = "Hero";
+
+        heroPanelSelector.SetActive(false);
+        selectHero_btn.SetActive(false);
+        toBattlePanel_btn.SetActive(true);
+        Debug.Log("Panel set inactive: " + baseHero.name);
+    }
+
+
+    // Panel navigation
+    void IdkWhatToCallIt() 
+    {
+        if(!heroSelected) 
+        {
+            var heroSelect_btn = selectHero_btn.GetComponent<Button>();
+            heroSelect_btn.onClick.AddListener(() => SelectHeroInput());
+
+            heroSelected = true;
+            
+        } else 
+        {
+            var toBattle_btn = toBattlePanel_btn.GetComponent<Button>();
+            toBattle_btn.onClick.AddListener(() => OpenBattlePanel());
+        }
+    }
+
+    private void OpenBattlePanel() 
+    {
+        toBattlePanel_btn.SetActive(false);
+        battlePanel.SetActive(true);
+        heroStatsPanel.SetActive(false);
+
+        if(descriptionPanel == null) 
+        {
+            var descrPanel = battlePanel.transform.Find("DescriptionPanel").gameObject;
+            descriptionPanel = descrPanel;
+        }
+
+        battlePanel_open = true;
+            
+        
+        
+        CreateActionTypeButtons();
+    }
+
+    private void CreateActionTypeButtons() 
+    {
+        // Check if buttons are already created
+        if (actionButtonsCreated) 
+            return;
+
+        var _actionPanels = battlePanel.transform.Find("ActionPanels").gameObject; // Find ActionPanels holder
+        actionPanels = _actionPanels; // Assign to variable
+
+        // Physical attack action button
+        InstantiateActionButton(selectAction_btn, actionPanels, (panel) => () => ActivateActionPanel(panel), wattAction_panel, "Weapon Attack", "wattAction_panel");
+
+        // Magic attack action button
+        InstantiateActionButton(selectAction_btn, actionPanels, (panel) => () => ActivateActionPanel(panel), mattAction_panel, "Magic Attack", "mattAction_panel");
+
+        // Buff action button
+        InstantiateActionButton(selectAction_btn, actionPanels, (panel) => () => ActivateActionPanel(panel), buffAction_Panel, "Buff", "defAction_panel");
+
+        // Mark that buttons have been created
+        actionButtonsCreated = true;
+        var backBtn = descriptionPanel.transform.Find("ReturnButton").gameObject;
+
+        backButton = backBtn;
+        backButton.GetComponent<Button>().onClick.AddListener(GoBackToSelectActionPanel);                    
+    }
+
+    private void InstantiateActionButton(GameObject btnPrefab, GameObject panel, System.Func<GameObject, System.Action> actionMethod, GameObject parameter, string btnName, string panelName)
+    {
+        parameter = actionPanels.transform.Find(panelName).gameObject; // Find the action panel
+
+        GameObject attAction_btn = Instantiate(btnPrefab);
+        TextMeshProUGUI attAction_btnText = attAction_btn.transform.Find("Text").gameObject.GetComponent<TextMeshProUGUI>();
+        
+        // Name the btn
+        attAction_btn.name = btnName;
+        attAction_btnText.text = btnName;
+
+        // Add listener
+        attAction_btn.GetComponent<Button>().onClick.AddListener(() => actionMethod(parameter)());
+        attAction_btn.transform.SetParent(panel.transform); 
+    }
+
+
+    private void ActivateActionPanel(GameObject actionPanel)
+    {
+        selectActionPanel.SetActive(false);
+        actionPanels.SetActive(true);
+
+        // Hide previous panel if any
+        if (currentActionPanel != null && currentActionPanel != actionPanel)
+            currentActionPanel.SetActive(false);
+        
+
+        actionPanel.SetActive(true);
+        currentActionPanel = actionPanel;
+
+        // Check if buttons are already created for this panel
+        bool buttonsCreated = false;
+        if (actionPanel == wattAction_panel && wattActionBtnCreated)
+            buttonsCreated = true;
+        
+        else if (actionPanel == mattAction_panel && mattActionBtnCreated)
+            buttonsCreated = true;
+        
+        else if (actionPanel == buffAction_Panel && buffActionBtnCreated)
+            buttonsCreated = true;
+        
+
+        // If buttons are not already created, create them
+        if (!buttonsCreated)
+        {
+            // Clear existing buttons in the panel
+            foreach (Transform child in actionPanel.transform)
+                Destroy(child.gameObject);
+            
+
+            // Create buttons based on the action panel
+            if (actionPanel == wattAction_panel)
+            {
+                CreateActionButtonsForHero(actionPanel, baseHero.physicalAttacks, actionType_btn);
+                wattActionBtnCreated = true;
+            }
+            else if (actionPanel == mattAction_panel)
+            {
+                CreateActionButtonsForHero(actionPanel, baseHero.magicAttacks, actionType_btn);
+                mattActionBtnCreated = true;
+            }
+            else if (actionPanel == buffAction_Panel)
+            {
+                CreateActionButtonsForHero(actionPanel, baseHero.buffs, actionType_btn);
+                buffActionBtnCreated = true;
+                Debug.Log("buff buttons created");
+            }
+        }
+
+        // Ensure visibility of each action panel
+        wattAction_panel.SetActive(actionPanel == wattAction_panel);
+        mattAction_panel.SetActive(actionPanel == mattAction_panel);
+        buffAction_Panel.SetActive(actionPanel == buffAction_Panel);
+    }
+
+    private void CreateActionButtonsForHero(GameObject panel, List<BaseAction> actions, GameObject actionTypeBtnPrefab)
+    {
+        foreach (BaseAction action in actions)
+        {
+            GameObject actionButton = Instantiate(actionTypeBtnPrefab, panel.transform);
+            actionButton.transform.SetParent(panel.transform);
+
+            TextMeshProUGUI buttonText = actionButton.transform.Find("Text").GetComponent<TextMeshProUGUI>();
+            buttonText.text = action.actionName;
+
+            // Add a listener to the button here (if needed)
+            actionButton.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                // Handle button click logic, e.g., choosing this action
+                Debug.Log("Clicked on action: " + action.actionName);
+            });
+        }
+    }
+
+    public void GoBackToSelectActionPanel()
+    {
+        if (currentActionPanel != null)
+        {
+            currentActionPanel.SetActive(false);
+            currentActionPanel = null; // Reset current action panel
+
+            selectActionPanel.SetActive(true);
+        }
+        actionPanels.SetActive(false);
+    }
+
 }
+
+

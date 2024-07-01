@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BaseClass
 {
-    public string TheName;
+    public string name;
     public float baseHP;
     public float curHP;
 
@@ -27,5 +27,5 @@ public class BaseClass
 
     public List<BaseAction> physicalAttacks = new();
     public List<BaseAction> magicAttacks = new();
-    public List<BaseAction> defense = new();
+    public List<BaseAction> buffs = new();
 }

@@ -141,7 +141,7 @@ public class EnemyStateMachine : MonoBehaviour
         {
             HandleTurn myAttack = new()
             {
-                performerName = enemy.TheName,
+                performerName = enemy.name,
                 type = "Enemy",
                 performer = gameObject,
                 performersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)] // Randomize the target

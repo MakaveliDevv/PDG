@@ -14,6 +14,5 @@ public class HeroPanelStats : MonoBehaviour
     public TextMeshProUGUI Matt;
     public TextMeshProUGUI Def;
     // public Image progressBar;
-
-    public bool isListenerAdded;
+    public int heroID;
 }

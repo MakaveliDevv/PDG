@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class BaseHero : BaseClass
 {
+    public int heroID;
     public int STR = 0;
     public int INT = 0;
     public int DEX = 0;
