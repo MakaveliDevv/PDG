@@ -6,22 +6,22 @@ using UnityEngine;
 public class BaseEnemy : BaseClass
 {    
 
-    public enum Type 
-    {
-        GRASS,
-        FIRE,
-        WATER,
-        ELEKTRIC
-    }
+    // public enum Type 
+    // {
+    //     GRASS,
+    //     FIRE,
+    //     WATER,
+    //     ELEKTRIC
+    // }
 
-    public enum Rarity 
-    {
-        COMMON,
-        UNCOMMON,
-        RARE,
-        SUPERRARE
-    }    
+    // public enum Rarity 
+    // {
+    //     COMMON,
+    //     UNCOMMON,
+    //     RARE,
+    //     SUPERRARE
+    // }    
 
-    [SerializeField] private Type enemyType;
-    [SerializeField] private Rarity rarity;
+    // [SerializeField] private Type enemyType;
+    // [SerializeField] private Rarity rarity;
 }

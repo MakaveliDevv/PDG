@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,9 +6,10 @@ public class GameManager : MonoBehaviour
 {
     public enum GameState
     {
-        DUNGEON_STATE,
-        BATTLE_STATE,
-        IDLE_STATE
+        MAINMENU,
+        DUNGEON,
+        BATTLE,
+        ENDGAME
     }
     public GameState gameState;
 
@@ -61,7 +61,7 @@ public class GameManager : MonoBehaviour
     {   
         if(IsSceneActive("DungeonScene"))
         {
-            gameState = GameState.DUNGEON_STATE;
+            gameState = GameState.DUNGEON;
         }
     }
 
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
     {        
         switch(gameState)
         {
-            case(GameState.DUNGEON_STATE):
+            case(GameState.DUNGEON):
                 gameTimerActive = true;
                 battleTimerActive = false;
 
@@ -77,11 +77,11 @@ public class GameManager : MonoBehaviour
 
             break;
 
-            case(GameState.BATTLE_STATE):
-                gameTimerActive = false;
-                battleTimerActive = true;
+            case(GameState.BATTLE):
+                // Start battle
+                StartBatlle();
                 
-                inBattle = true;
+                // StartBattleScene();
 
             break;
         }
@@ -102,5 +102,19 @@ public class GameManager : MonoBehaviour
     private bool IsSceneActive(string scenename) 
     {
         return SceneManager.GetActiveScene().name == scenename;
+    }
+
+    private void StartBattleScene() 
+    {
+        SceneManager.LoadScene("BattleScene");
+    }
+
+    private void StartBatlle() 
+    {
+        gameTimerActive = false;
+        battleTimerActive = true;
+        inBattle = true;
+
+        // Open battle UI
     }
 }

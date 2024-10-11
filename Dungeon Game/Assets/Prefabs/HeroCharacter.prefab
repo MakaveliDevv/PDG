@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 992315407546551685}
   - component: {fileID: 6800636768607693400}
   - component: {fileID: 3566095094086072983}
-  - component: {fileID: 5566720805938938958}
+  - component: {fileID: 5635069902311498359}
   m_Layer: 0
   m_Name: HeroCharacter
   m_TagString: Untagged
@@ -52,6 +52,8 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -160,7 +162,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &5566720805938938958
+--- !u!114 &5635069902311498359
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -169,7 +171,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7629995059607858149}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26e9cf6f5131de046914267630d5678e, type: 3}
+  m_Script: {fileID: 11500000, guid: 178240e07fda8964cb67e969dda044f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  isMoving: 0
+  timeToMove: 0.5

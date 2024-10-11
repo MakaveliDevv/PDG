@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 6634853924308008401}
   - component: {fileID: 903731229963774207}
   m_Layer: 5
-  m_Name: HeroPanel 1
+  m_Name: HeroPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 {
-    // [SerializeField] [Range(.1f, 1f)] private float roomPercent = .8f;
-
     protected override void RunProceduralGeneration()
     {
         DungeonGenerator();
@@ -13,8 +11,8 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private void DungeonGenerator()
     {
-        HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
-        List<List<Vector2Int>> corridors = new List<List<Vector2Int>>();
+        HashSet<Vector2Int> floorPositions = new();
+        List<List<Vector2Int>> corridors = new();
 
         Vector2Int currentPosition = startPosition;
         var currentDirection = Direction2D.GetRandomCardinalDirection();

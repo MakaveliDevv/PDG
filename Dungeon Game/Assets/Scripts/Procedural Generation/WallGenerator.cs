@@ -6,15 +6,6 @@ using UnityEngine.Tilemaps;
 
 public static class WallGenerator
 {
-    // public static void CreateWalls(HashSet<Vector2Int> _floorPositions, TilemapVisualizer _tilemapVisualizer) 
-    // {
-    //     var basicWallPosition = FindWallsInDirections(_floorPositions, Direction2D.cardinalDirectionsList);
-    //     foreach (var _position in basicWallPosition)
-    //     {
-    //         _tilemapVisualizer.PaintSingleBasicWall(_position);   
-    //     }
-    // }
-
     public static HashSet<Vector2Int> CreateWall(HashSet<Vector2Int> floorPositions, TilemapVisualizer tilemapVisualizer)
     {
         List<Vector2Int> directionList = Direction2D.cardinalDirectionsList; 

@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,8 +5,7 @@ using Random = UnityEngine.Random;
 
 public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator
 {
-    [SerializeField] protected SimpleRandomWalkSO randomWalkParameters; // Scriptable object dungeon
-
+    [SerializeField] protected SimpleRandomWalkSO randomWalkParameters; 
     protected override void RunProceduralGeneration() 
     {
         HashSet<Vector2Int> floorPositions = StartRandomWalk(randomWalkParameters, startPosition);
