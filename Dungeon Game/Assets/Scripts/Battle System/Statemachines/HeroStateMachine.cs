@@ -8,7 +8,7 @@ public class HeroStateMachine : MonoBehaviour
 {
     private BattleStateMachine BSM; 
 
-    public BaseHero baseHero;
+    public HeroStats baseHero;
     
     public enum TurnState 
     {
@@ -70,7 +70,7 @@ public class HeroStateMachine : MonoBehaviour
 
     private void FindUIElements() 
     {
-        CreateHeroPanel();
+        // CreateHeroPanel();
 
         heroesPanel = GameObject.FindGameObjectWithTag("HeroesPanel").transform; // Main Panel
         heroPanelSelector = heroPanelUI.transform.Find("PanelSelector").gameObject; 
@@ -232,33 +232,33 @@ public class HeroStateMachine : MonoBehaviour
 
     public void TakeDamge(float _damageAmount) 
     {
-        baseHero.curHP -= _damageAmount;
-        if(baseHero.curHP <= 0) 
+        baseHero.currentHP -= _damageAmount;
+        if(baseHero.currentHP <= 0) 
         {
-            baseHero.curHP = 0;
+            baseHero.currentHP = 0;
             currentState = TurnState.DEAD;
         }
 
-        UpdateHeroPanel();
+        // UpdateHeroPanel();
     }
 
-    private void CreateHeroPanel() 
-    {
-        heroPanelUI = Instantiate(heroPanelUI);
-        UI_stats = heroPanelUI.GetComponent<HeroPanelStats>();
+    // private void CreateHeroPanel() 
+    // {
+    //     heroPanelUI = Instantiate(heroPanelUI);
+    //     UI_stats = heroPanelUI.GetComponent<HeroPanelStats>();
 
-        UI_stats.Name.text = baseHero.name.ToString();
-        UI_stats.HP.text = baseHero.curHP.ToString();
-        UI_stats.MP.text = baseHero.curMP.ToString();
+    //     UI_stats.heroName.text = baseHero.name.ToString();
+    //     UI_stats.HP.text = baseHero.curHP.ToString();
+    //     UI_stats.MP.text = baseHero.curMP.ToString();
 
-        heroPanelUI.transform.SetParent(heroesPanel, false);
-    }
+    //     heroPanelUI.transform.SetParent(heroesPanel, false);
+    // }
 
-    private void UpdateHeroPanel() 
-    {
-        UI_stats.HP.text = "HP: " + baseHero.curHP;
-        UI_stats.MP.text = "MP: " + baseHero.curMP;
-    }
+    // private void UpdateHeroPanel() 
+    // {
+    //     UI_stats.HP.text = "HP: " + baseHero.curHP;
+    //     UI_stats.MP.text = "MP: " + baseHero.curMP;
+    // }
 
     public void SelectHeroInput()
     {

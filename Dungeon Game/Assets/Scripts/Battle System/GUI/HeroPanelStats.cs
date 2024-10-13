@@ -1,18 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEngine;
-using UnityEngine.UI;
 
-public class HeroPanelStats : MonoBehaviour
+// Create a new HeroPanelStats to assign it to the hero
+[System.Serializable]
+public class HeroPanelStats
 {
-    public TextMeshProUGUI Name;
-    public TextMeshProUGUI Level;
-    public TextMeshProUGUI HP;
-    public TextMeshProUGUI MP;
-    public TextMeshProUGUI Att;
-    public TextMeshProUGUI Matt;
-    public TextMeshProUGUI Def;
+    public TextMeshProUGUI heroName;
+    public TextMeshProUGUI lvlText;
+    public TextMeshProUGUI HPText;
+    public TextMeshProUGUI MPText;
+    public TextMeshProUGUI AttText;
+    public TextMeshProUGUI MattText;
+    public TextMeshProUGUI DefText;
     // public Image progressBar;
     public int heroID;
 }

@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyStateMachine : MonoBehaviour
@@ -141,7 +139,7 @@ public class EnemyStateMachine : MonoBehaviour
         {
             HandleTurn myAttack = new()
             {
-                performerName = enemy.name,
+                // performerName = enemy.name,
                 type = "Enemy",
                 performer = gameObject,
                 performersTarget = BSM.herosInBattle[Random.Range(0, BSM.herosInBattle.Count)] // Randomize the target
@@ -214,10 +212,10 @@ public class EnemyStateMachine : MonoBehaviour
 
     public void TakeDamge(float _damageAmount) 
     {
-        enemy.curHP -= _damageAmount;
-        if(enemy.curHP <= 0) 
+        enemy.currentHP -= _damageAmount;
+        if(enemy.currentHP <= 0) 
         {
-            enemy.curHP = 0;
+            enemy.currentHP = 0;
             currentState = TurnState.DEAD;
         }
     } 

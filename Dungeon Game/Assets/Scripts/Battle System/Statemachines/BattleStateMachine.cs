@@ -8,6 +8,7 @@ public class BattleStateMachine : MonoBehaviour
     // ENUMS
     public enum BattleStates 
     {
+        IDLE,
         WAIT,
         TAKEACTION,
         PERFORMACTION,
@@ -83,8 +84,9 @@ public class BattleStateMachine : MonoBehaviour
 
     void Start()
     {
-        battleStates = BattleStates.WAIT;
-        heroInput = HeroGUI.ACTIVATE;
+        battleStates = BattleStates.IDLE;
+        // battleStates = BattleStates.WAIT;
+        // heroInput = HeroGUI.ACTIVATE;
         // foreach (var player in heroesToManage)
         // {
             // HeroStateMachine HSM = heroesToManage[0].GetComponent<HeroStateMachine>();

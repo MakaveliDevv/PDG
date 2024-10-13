@@ -79,8 +79,8 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             }
         }
 
-        // Spawn the player (assuming roomsList[0] is the first room)
-        SpawnPlayer(heroPref);
+        // Spawn the player
+        SpawnPlayer(GameManager.instance.mainHeroPrefab);
 
         // Visualize spawn points using TilemapVisualizer
         tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
@@ -104,21 +104,21 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return newCorridor;
     }
 
-    private HashSet<Vector2Int> CreateRoomAtPosition(Vector2Int position)
-    {
-        var roomFloor = StartRandomWalk(randomWalkParameters, position);
-        var roomBounds = CalculateBounds(roomFloor);
+    // private HashSet<Vector2Int> CreateRoomAtPosition(Vector2Int position)
+    // {
+    //     var roomFloor = StartRandomWalk(randomWalkParameters, position);
+    //     var roomBounds = CalculateBounds(roomFloor);
 
-        // Ensure there are no overlaps with existing rooms
-        if (roomsList.Any(bounds => BoundsOverlap(bounds, roomBounds)))
-        {
-            return new HashSet<Vector2Int>(); // Return an empty set if overlapping
-        }
+    //     // Ensure there are no overlaps with existing rooms
+    //     if (roomsList.Any(bounds => BoundsOverlap(bounds, roomBounds)))
+    //     {
+    //         return new HashSet<Vector2Int>(); // Return an empty set if overlapping
+    //     }
 
-        roomsList.Add(roomBounds); // Add room bounds to roomsList
-        roomCount++;
-        return roomFloor;
-    }
+    //     roomsList.Add(roomBounds); // Add room bounds to roomsList
+    //     roomCount++;
+    //     return roomFloor;
+    // }
 
     private HashSet<Vector2Int> CreateRooms(List<List<Vector2Int>> corridors)
     {
@@ -325,12 +325,12 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
     // Spawn enemy
     private bool CanSpawnEnemyAt(Vector2Int position)
     {
-        foreach (var enemy in enemies)
+        foreach (var enemy in GameManager.instance.enemies)
         {
             Vector2 enemyPosition = new(enemy.transform.position.x, enemy.transform.position.y);
             float distance = Vector2.Distance(position, enemyPosition);
 
-            if (distance < checkRadius)
+            if (distance < GameManager.instance.checkForSpawnPointRadius)
             {
                 return false;
             }            
@@ -342,31 +342,29 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
     private void SpawnEnemyAt(Vector2Int position)
     {
         // Get amount of enemies
-        float amount = Random.Range(0, enemiesAmount + 1);
+        float amount = Random.Range(0, GameManager.instance.enemiesAmount + 1);
 
         // Get type of enemies
-        int typeIndex = Random.Range(0, enemyTypes.Count); 
+        int typeIndex = Random.Range(0, GameManager.instance.enemyTypes.Count); 
 
-        GameObject enemyPrefab = enemyTypes[typeIndex];
+        GameObject enemyPrefab = GameManager.instance.enemyTypes[typeIndex];
 
         Vector2 spawnPosition = new(position.x, position.y);
-
 
         // Spawn the enemies at the position
         for (int i = 0; i < amount; i++)
         {
             // Instantiate the enemy prefab at the position
             GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity) as GameObject;
-            enemies.Add(newEnemy);
-            newEnemy.transform.SetParent(enemiesHolder);
+            GameManager.instance.enemies.Add(newEnemy);
+            newEnemy.transform.SetParent(GameManager.instance.enemiesInSceneParentGO);
 
             // Set a counter
-            enemyCounter++;
+            GameManager.instance.enemyCounter++;
         }
 
         // Debug.Log($"Spawned {amount} of {enemyPrefab.name} at position {position}");
     }
-    // End spawn enemy
 
     private void SpawnPlayer(GameObject _player) 
     {
@@ -377,9 +375,21 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         Vector3 roomCenter = roomsList[0].center;
 
         // Spawn the player at the center
-        GameObject newPlayer = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
-        newPlayer.name = "HeroCharacter";
-        heroes.Add(newPlayer);
+        GameObject hero = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
+        hero.name = "mainHero";
+
+        // Fetch the HeroManager script
+        HeroManager heroManager = hero.GetComponent<HeroManager>();
+        GameManager.instance.heroes.Add(heroManager.heroStats.heroID, heroManager);
+
+        // Add it to the dictionary entry
+        var entry = new DictionaryEntry<int, HeroManager> 
+        {
+            Key = heroManager.heroPanelStats.heroID,
+            Value = heroManager
+        };
+
+        GameManager.instance.heroesEntry.Add(entry);
     }
 
     private void OnDrawGizmos()

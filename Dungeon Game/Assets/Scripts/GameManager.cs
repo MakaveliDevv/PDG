@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
     public enum GameState
     {
         MAINMENU,
@@ -11,51 +12,43 @@ public class GameManager : MonoBehaviour
         BATTLE,
         ENDGAME
     }
+
     public GameState gameState;
 
-    #region Singleton
-    public static GameManager instance;
+    [Header("Game Management")]
+    public bool isGameplayTimerActive; 
+    public float elapsedGameplayTime = 0f;
+    public bool isBattleTimerActive;
+    public float elapsedBattleTime = 0f;
+
+    [Header("UI Management")]
+    [SerializeField] private UIManager uIManager;
+
+    [Header("Hero Stuff")]
+    public GameObject mainHeroPrefab; 
+    public Dictionary<int, HeroManager> heroes = new();
+    public List<DictionaryEntry<int, HeroManager>> heroesEntry = new();
+
+    [Header("Enemy Stuff")]
+    public List<GameObject> enemyTypes = new();
+    public List<GameObject> enemies = new();
+    public Transform enemiesInSceneParentGO;
+    public int enemiesAmount;
+    public int enemyCounter;
+    public float checkForSpawnPointRadius = 5f; 
 
     void Awake()
     {
-        if(instance == null) 
+         if(instance != null && instance != this) 
+        {
+            Destroy(gameObject); // Prevent multiple GameManager instances
+        }
+        else 
+        {
             instance = this;
-
-        else if(instance != null)
-            Destroy(gameObject);
-        
-
-        DontDestroyOnLoad(gameObject);
-
-        // if(!GameObject.Find("HeroCharacter")) 
-        // {
-        //     GameObject hero = Instantiate(heroCharacter, nextHeroPosition, Quaternion.identity) as GameObject;
-        //     hero.name = "HeroCharacter";
-        // }
+            DontDestroyOnLoad(gameObject);
+        }
     }
-
-    #endregion
-
-    // Hero
-    public GameObject heroCharacter;
-
-    // Bool
-    public bool isWalking, canGetEncounter, gotAttacked;
-    public bool inBattle;
-
-    // Battle
-    public List<GameObject> enemiesToBattle = new();
-    public int enemyAmount;
-
-    // Gamemanager stuff
-    [Header("GameManagementStuff")]
-    // public TextMeshProUGUI timerText; 
-    public bool gameTimerActive; 
-    public float elapsedGameplayTime = 0f;
-
-    public bool battleTimerActive;
-    public float elapsedBattleTime = 0f;
-    // public bool menuIsOpen;
 
     void Start() 
     {   
@@ -70,10 +63,10 @@ public class GameManager : MonoBehaviour
         switch(gameState)
         {
             case(GameState.DUNGEON):
-                gameTimerActive = true;
-                battleTimerActive = false;
+                isGameplayTimerActive = true;
+                isBattleTimerActive = false;
 
-                inBattle = false;
+                // inBattle = false;
 
             break;
 
@@ -86,8 +79,8 @@ public class GameManager : MonoBehaviour
             break;
         }
 
-        UpdateTimer(gameTimerActive, ref elapsedGameplayTime);
-        UpdateTimer(battleTimerActive, ref elapsedBattleTime);
+        UpdateTimer(isGameplayTimerActive, ref elapsedGameplayTime);
+        UpdateTimer(isBattleTimerActive, ref elapsedBattleTime);
     }
 
     void UpdateTimer(bool condition, ref float timer)
@@ -104,17 +97,20 @@ public class GameManager : MonoBehaviour
         return SceneManager.GetActiveScene().name == scenename;
     }
 
-    private void StartBattleScene() 
-    {
-        SceneManager.LoadScene("BattleScene");
-    }
-
     private void StartBatlle() 
     {
-        gameTimerActive = false;
-        battleTimerActive = true;
-        inBattle = true;
+        isGameplayTimerActive = false;
+        isBattleTimerActive = true;
+        // inBattle = true;
 
         // Open battle UI
     }
+}
+
+
+[System.Serializable]
+public class DictionaryEntry<TKey, TValue> 
+{
+    public TKey Key;
+    public TValue Value;
 }

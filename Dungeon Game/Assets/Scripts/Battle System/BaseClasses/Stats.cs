@@ -1,30 +1,29 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseClass
-{
-    public string name;
-    public float baseHP;
-    public float curHP;
+public class Stats
+{    
+    [Header("HP & MP")]
+    public float maxHP;
+    public float currentHP;
+    public float maxMP;
+    public float currentMP;
 
-    public float baseMP;
-    public float curMP;
-
-    // Physical att
+    [Header("Attack Stats")]
     public float baseAtt;
     public float curAtt;
-
-    // Magical att
     public float baseMatt;
     public float curMatt;
 
+    [Header("Defense Stats")]
     public float basePhysicalDEF;
     public float curPhysicalDEF;
-
     public float baseMattDEF;
     public float curMattDEF;
 
+    
+
+    [Header("Attacks")]
     public List<BaseAction> physicalAttacks = new();
     public List<BaseAction> magicAttacks = new();
     public List<BaseAction> buffs = new();
