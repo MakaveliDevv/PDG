@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-         if(instance != null && instance != this) 
+        if(instance != null && instance != this) 
         {
             Destroy(gameObject); // Prevent multiple GameManager instances
         }
@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
         }
+
+        uIManager.Initialize();
     }
 
     void Start() 

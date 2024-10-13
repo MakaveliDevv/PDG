@@ -1,30 +1,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Stats
-{    
-    [Header("HP & MP")]
-    public float maxHP;
-    public float currentHP;
-    public float maxMP;
-    public float currentMP;
+[System.Serializable]
+public class Stat
+{
+    [SerializeField] private float baseValue;
+    [SerializeField] private List<float> modifiers = new();
 
-    [Header("Attack Stats")]
-    public float baseAtt;
-    public float curAtt;
-    public float baseMatt;
-    public float curMatt;
+    public float GetValue() 
+    {
+        float finalValue = baseValue;
+        foreach (var modifier in modifiers)
+        {
+            finalValue += modifier;
+        }
 
-    [Header("Defense Stats")]
-    public float basePhysicalDEF;
-    public float curPhysicalDEF;
-    public float baseMattDEF;
-    public float curMattDEF;
+        return finalValue;
+    }   
 
-    
+    public void SetValue(float value) 
+    {
+        baseValue = value;
+    } 
 
-    [Header("Attacks")]
-    public List<BaseAction> physicalAttacks = new();
-    public List<BaseAction> magicAttacks = new();
-    public List<BaseAction> buffs = new();
+    public float ReturnBaseValue() 
+    {
+        return baseValue;
+    }
 }

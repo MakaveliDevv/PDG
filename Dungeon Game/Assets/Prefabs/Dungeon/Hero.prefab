@@ -32,7 +32,8 @@ Transform:
   m_LocalPosition: {x: -26, y: 0.6093799, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8834605250556214247}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6906068310032082393
@@ -174,37 +175,150 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7cdc5db720bbd4c8f4cf68cccf9117, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToMove: 0.2
   heroStats:
-    maxHP: 0
-    currentHP: 0
-    maxMP: 0
-    currentMP: 0
-    baseAtt: 0
-    curAtt: 0
-    baseMatt: 0
-    curMatt: 0
-    basePhysicalDEF: 0
-    curPhysicalDEF: 0
-    baseMattDEF: 0
-    curMattDEF: 0
+    heroID: 0
+    name: Main Hero
+    level: 1
+    EXP: 0
+    maxHP:
+      baseValue: 100
+      modifiers: []
+    currentHP:
+      baseValue: 0
+      modifiers: []
+    maxMP:
+      baseValue: 100
+      modifiers: []
+    currentMP:
+      baseValue: 0
+      modifiers: []
+    STR:
+      baseValue: 10
+      modifiers: []
+    INT:
+      baseValue: 10
+      modifiers: []
+    DEX:
+      baseValue: 10
+      modifiers: []
+    LUK:
+      baseValue: 10
+      modifiers: []
+    weaponAttack:
+      baseValue: 25
+      modifiers: []
+    magicAttack:
+      baseValue: 10
+      modifiers: []
+    weaponDEF:
+      baseValue: 25
+      modifiers: []
+    magicDEF:
+      baseValue: 25
+      modifiers: []
     physicalAttacks: []
     magicAttacks: []
     buffs: []
-    heroID: 0
-    name: 
-    level: 1
-    EXP: 0
-    STR: 0
-    INT: 0
-    DEX: 0
-    LUK: 0
-  heroPanelStats:
-    heroName: {fileID: 0}
-    lvlText: {fileID: 0}
-    HPText: {fileID: 0}
-    MPText: {fileID: 0}
-    AttText: {fileID: 0}
-    MattText: {fileID: 0}
-    DefText: {fileID: 0}
-    heroID: 0
+    heroName_text: {fileID: 0}
+    lvl_text: {fileID: 0}
+    hp_text: {fileID: 0}
+    mp_text: {fileID: 0}
+    watt_text: {fileID: 0}
+    matt_text: {fileID: 0}
+    weaponDef_text: {fileID: 0}
+    magicDef_text: {fileID: 0}
+    icon: {fileID: 21300000, guid: 8fa024343012df24093b1c0d3dbae285, type: 3}
+    heroPanelUI: {fileID: 0}
+  timeToMove: 0.2
+--- !u!1 &8737899637850468474
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8834605250556214247}
+  - component: {fileID: 693360744538667525}
+  - component: {fileID: 4886118350573144669}
+  m_Layer: 0
+  m_Name: Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8834605250556214247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8737899637850468474}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2629689240232813387}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &693360744538667525
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8737899637850468474}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!81 &4886118350573144669
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8737899637850468474}
+  m_Enabled: 1

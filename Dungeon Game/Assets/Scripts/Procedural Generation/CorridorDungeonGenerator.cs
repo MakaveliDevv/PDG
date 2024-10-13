@@ -319,9 +319,6 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return false;
     }
 
-
-    // End generate spawn points
-
     // Spawn enemy
     private bool CanSpawnEnemyAt(Vector2Int position)
     {
@@ -367,26 +364,26 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
     }
 
     private void SpawnPlayer(GameObject _player) 
-    {
-        // Get the last room index
-        // int lastRoomIndex = roomsList.Count > 0 ? roomsList.Count - 1 : -1;
-        
-        // Get the center from that room
+    {     
         Vector3 roomCenter = roomsList[0].center;
 
         // Spawn the player at the center
-        GameObject hero = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
-        hero.name = "mainHero";
+        GameObject heroGameObject = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
+        heroGameObject.name = "Main Hero";
 
         // Fetch the HeroManager script
-        HeroManager heroManager = hero.GetComponent<HeroManager>();
-        GameManager.instance.heroes.Add(heroManager.heroStats.heroID, heroManager);
+        HeroManager hero = heroGameObject.GetComponent<HeroManager>();
+        UIManager.instance.InstantiateHeroPanelUI(hero);
+
+        GameManager.instance.heroes.Add(hero.heroStats.heroID, hero);
+        hero.heroStats.heroID = 1;
+        int heroID = hero.heroStats.heroID;
 
         // Add it to the dictionary entry
         var entry = new DictionaryEntry<int, HeroManager> 
         {
-            Key = heroManager.heroPanelStats.heroID,
-            Value = heroManager
+            Key = heroID,
+            Value = hero
         };
 
         GameManager.instance.heroesEntry.Add(entry);

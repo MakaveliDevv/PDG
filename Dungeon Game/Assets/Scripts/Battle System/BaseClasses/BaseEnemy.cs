@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class BaseEnemy : Stats
+public class BaseEnemy : CharacterStats
 {    
 
     // public enum Type 

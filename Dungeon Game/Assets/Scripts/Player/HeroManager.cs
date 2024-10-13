@@ -3,24 +3,26 @@ using UnityEngine;
 
 public class HeroManager : MonoBehaviour
 {
-    public float timeToMove = .2f;
     public HeroStats heroStats;
-    public HeroPanelStats heroPanelStats;
     private HeroMovement heroMovement;
     private GameObject hero;
     private Rigidbody2D rb;
     private bool inRangeForBattle;
+    public float timeToMove = .2f;
+    private bool isPanelOpen;
 
     void Awake() 
     {
         heroMovement = new();
         rb = GetComponent<Rigidbody2D>();
         hero = gameObject;
+
+        // heroStats = new();
     }
 
     void Start() 
     {
-
+        // heroStats.AssignStats();
     }
 
     void Update() 
@@ -30,6 +32,7 @@ public class HeroManager : MonoBehaviour
 
     public void InputManagment()
     {
+        // Movement
         if(Input.GetKey(KeyCode.W) && !heroMovement.isMoving) 
         {
             StartCoroutine(PlayerMovement(Vector3.up));
@@ -49,6 +52,33 @@ public class HeroManager : MonoBehaviour
         {
             StartCoroutine(PlayerMovement(Vector3.right));
         }
+
+        // Toggle hero panel
+        if(Input.GetKeyDown(KeyCode.Tab)) 
+        {
+            ToggleHeroPanel();
+        }
+    }
+
+    private void ToggleHeroPanel() 
+    {
+        // Close Panel
+        if(heroStats.heroPanelUI.activeInHierarchy)
+        {
+            heroStats.heroPanelUI.SetActive(false);
+            isPanelOpen = false;
+        }
+        else 
+        {
+            // Open Panel
+            heroStats.heroPanelUI.SetActive(true);
+            isPanelOpen = true;
+        }
+    }
+
+    private void AssignStatValues() 
+    {
+
     }
 
     private IEnumerator PlayerMovement(Vector2 direction) 
