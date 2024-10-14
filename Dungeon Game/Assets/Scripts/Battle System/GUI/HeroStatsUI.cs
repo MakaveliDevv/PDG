@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 // Create a new HeroPanelStats to assign it to the hero
 [System.Serializable]
-public class HeroStats : CharacterStats
+public class HeroManagerUI : CharacterStats
 {
     [Header("Hero Panel Elements")]
     public TextMeshProUGUI heroName_text;
@@ -56,6 +56,16 @@ public class HeroStats : CharacterStats
         return parent.GetComponent<TextMeshProUGUI>();
     }
 
+    private Button GetButtonComponent(Transform parent, int[] path) 
+    {
+        foreach (var index in path)
+        {
+            parent = parent.GetChild(index);
+        }
+
+        return parent.GetComponent<Button>();
+    }
+
     public void AssignStats() 
     {   
         currentHP = maxHP;
@@ -77,23 +87,14 @@ public class HeroStats : CharacterStats
         magicDef_text.text = magicDEF.GetValue().ToString(); // Magic def
     }
 
-    private void AssignImage() 
+    // To battle panel button
+    private void OpenBattlePanel() 
     {
+        Transform heroStuff = heroPanelUI.transform.GetChild(0);
+        Transform battlePanel = heroPanelUI.transform.GetChild(1);
 
+        Button btn = heroStuff.transform.GetChild(2).GetComponent<Button>();
+
+        // btn.onClick.RemoveListener();
     }
-
-    // public void AssignStats() 
-    // {        
-    //     heroName_text.text = characterStats.name.ToString();
-    //     lvl_text.text = characterStats.level.ToString();
-
-    //     hp_text.text = characterStats.currentHP.GetValue().ToString(); // HP
-    //     mp_text.text = characterStats.currentMP.GetValue().ToString(); // MP
-
-    //     watt_text.text = characterStats.weaponAttack.GetValue().ToString(); // Weapon Attack
-    //     matt_text.text = characterStats.magicAttack.GetValue().ToString(); // Magic Attack
-
-    //     weaponDef_text.text = characterStats.weaponDEF.GetValue().ToString(); // Weapon def
-    //     magicDef_text.text = characterStats.magicDEF.GetValue().ToString(); // Magic def
-    // }
 }

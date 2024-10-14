@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class HeroManager : MonoBehaviour
 {
-    public HeroStats heroStats;
+    public HeroManagerUI heroStats;
     private HeroMovement heroMovement;
     private GameObject hero;
     private Rigidbody2D rb;
@@ -16,13 +16,11 @@ public class HeroManager : MonoBehaviour
         heroMovement = new();
         rb = GetComponent<Rigidbody2D>();
         hero = gameObject;
-
-        // heroStats = new();
     }
 
     void Start() 
     {
-        // heroStats.AssignStats();
+
     }
 
     void Update() 
@@ -76,10 +74,6 @@ public class HeroManager : MonoBehaviour
         }
     }
 
-    private void AssignStatValues() 
-    {
-
-    }
 
     private IEnumerator PlayerMovement(Vector2 direction) 
     {

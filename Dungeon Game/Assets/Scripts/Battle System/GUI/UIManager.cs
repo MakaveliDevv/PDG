@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -40,9 +39,6 @@ public class UIManager
         
         hero.heroStats.heroPanelUI = newHeroPanel;
         hero.heroStats.AssignHeroUIElements();
-
-        // Pass the stats to the UI
-        // hero.heroStats.AssignStats();
 
         return newHeroPanel;
     }
