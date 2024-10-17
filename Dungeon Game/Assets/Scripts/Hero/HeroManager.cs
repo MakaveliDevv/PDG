@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class HeroManager : MonoBehaviour
@@ -18,8 +19,18 @@ public class HeroManager : MonoBehaviour
         heroUIManager.CustomAwake();
     }
 
+    void Start() 
+    {
+        heroUIManager.CustomStart();
+    }
+
     void Update() 
     {
+        if(inRangeForBattle) 
+        {
+            heroUIManager.SelectHero();
+        }
+        
         InputManagment();
     }
 
@@ -52,10 +63,10 @@ public class HeroManager : MonoBehaviour
             heroUIManager.ToggleHeroPanel();
         }
 
-        if(heroUIManager.isPanelOpen) 
-        {
-            heroUIManager.ToggleBattlePanel();
-        }
+        // if(heroUIManager.isPanelOpen) 
+        // {
+        //     heroUIManager.ToggleBattlePanel();
+        // }
     }
 
     private IEnumerator PlayerMovement(Vector2 direction) 
@@ -86,14 +97,33 @@ public class HeroManager : MonoBehaviour
             // Fetch the EnemyManagement component
             if(collider.TryGetComponent<EnemyManagement>(out var enemy)) 
             {
+                Debug.Log("Fetched the EnemyManagement component");
+
                 var entry = new DictionaryEntry<GameObject, EnemyManagement> 
                 {
                     Key = collider.gameObject,
                     Value = enemy
                 };
+    
+                // Check if this entry already exists in the enemiesToBattle list
+                bool entryExists = GameManager.instance.enemiesToBattle.Any(e => e.Value == enemy);
 
-                GameManager.instance.enemiesToBattle.Add(entry);
-                heroUIManager.CreateSelectTargetButtons();
+                // Add the entry only if it doesn't already exist
+                if (!entryExists) 
+                {
+                    GameManager.instance.enemiesToBattle.Add(entry);
+                    Debug.Log("Added new enemy to enemiesToBattle list.");
+                }
+                else
+                {
+                    Debug.Log("Enemy already exists in the enemiesToBattle list.");
+                }
+
+                heroUIManager.CreateSelectTargetButtons();  // Create buttons if needed
+            }
+            else 
+            {
+                Debug.Log("No component found!");
             }
         }
     }
@@ -104,5 +134,10 @@ public class HeroManager : MonoBehaviour
         {
             inRangeForBattle = false;
         }
+    }
+
+    private void BattleMode(bool _bool) 
+    {
+
     }
 }

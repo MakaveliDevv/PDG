@@ -30,7 +30,7 @@ public class UIManager
     }
 
     // Use this when a hero gets instantiated into the scene
-    public GameObject InstantiateHeroPanelUI(HeroManager hero) 
+    public void InstantiateHeroPanelUI(HeroManager hero) 
     {
         GameObject newHeroPanel = GameObject.Instantiate(heroPanelUI);
         newHeroPanel.transform.SetParent(heroesPanel.transform);
@@ -41,7 +41,7 @@ public class UIManager
         hero.heroUIManager.heroPanelUI = newHeroPanel;
         hero.heroUIManager.AssignHeroUIElements();
 
-        return newHeroPanel;
+        // return newHeroPanel;
     }
 
     private void AddToDictionary<TKey, TValue>

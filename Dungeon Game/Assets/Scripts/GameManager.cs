@@ -19,9 +19,9 @@ public class GameManager : MonoBehaviour
     [Header("Game Management")]
     public EnemyManagement EnemyToAttack;
     private bool isGameplayTimerActive; 
-    private float elapsedGameplayTime = 0f;
+    [SerializeField] private float elapsedGameplayTime = 0f;
     private bool isBattleTimerActive;
-    private float elapsedBattleTime = 0f;
+    [SerializeField] private float elapsedBattleTime = 0f;
 
     [Header("UI Management")]
     [SerializeField] private UIManager uIManager;
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
     public List<DictionaryEntry<GameObject, EnemyManagement>>  enemiesToBattle;
     public List<GameObject> enemyTypes = new();
     [HideInInspector] public List<GameObject> enemiesInGame = new();
-    [HideInInspector] public Transform enemiesInSceneGameObjectContainer;
+    public Transform enemiesInSceneGameObjectContainer;
     public int amountOfEnemiesToGenerate;
     [HideInInspector] public int enemyCounter;
     public float checkForSpawnPointRadius = 5f; 

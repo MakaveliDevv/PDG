@@ -24,12 +24,15 @@ public class HeroUIManagement : HeroStats
 
     public Transform heroStuff;
     public Transform battlePanel;
+    public Transform buttonInputContainer;
     public bool battlePanelOpened; 
+    public bool isheroSelected;
 
-    // public void CustomStart() 
-    // {
-    //     heroStuff = heroPanelUI.transform.GetChild(0);
-    // }
+    public void CustomStart() 
+    {
+        battlePanel = heroPanelUI.transform.GetChild(1);
+        buttonInputContainer = battlePanel.GetChild(0).GetChild(1);
+    }
 
     public void AssignHeroUIElements() 
     {
@@ -103,13 +106,39 @@ public class HeroUIManagement : HeroStats
         }
     }
 
+    public void SelectHero() 
+    {
+        if(!isheroSelected) 
+        {
+            Button btn = heroStuff.transform.GetChild(2).GetComponent<Button>();
+            btn.onClick.RemoveAllListeners();
+            
+            // Go through the list of Heroes
+            for (int i = 0; i < GameManager.instance.heroes.Count; i++)
+            {
+                // Get the name of the heroes
+                var hero = GameManager.instance.heroes.ElementAt(i);
+                
+                // Compare this name with that name
+                if(name == hero.Value.name)
+                {
+                    // Only then add the listener 
+                    btn.onClick.AddListener(() => 
+                    {
+                        Debug.Log($"{name} is equal to {hero.Value.name}");
+                    });
+                }
+            }
+
+            isheroSelected = true;
+        }
+    }
 
     // To battle panel button
     public void ToggleBattlePanel() 
     {
         if(!battlePanelOpened) 
         {        
-            battlePanel = heroPanelUI.transform.GetChild(1);
             Button btn = heroStuff.transform.GetChild(2).GetComponent<Button>();
             
             btn.onClick.RemoveAllListeners();
@@ -137,7 +166,7 @@ public class HeroUIManagement : HeroStats
     // Create buttons method
     public void CreateSelectTargetButtons() 
     {
-        Transform buttonInputContainer = battlePanel.GetChild(0).GetChild(1);
+        // Transform buttonInputContainer = battlePanel.GetChild(0).GetChild(1);
          
         for (int i = 0; i < GameManager.instance.enemiesToBattle.Count; i++)
         {

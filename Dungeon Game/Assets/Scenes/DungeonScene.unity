@@ -1926,6 +1926,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameState: 2
   EnemyToAttack: {fileID: 0}
+  elapsedGameplayTime: 0
+  elapsedBattleTime: 0
   uIManager:
     heroesPanel: {fileID: 3073326447497491660}
     buttonPrefab: {fileID: 1423206172430289659, guid: 0c06e23da34d04f41a5a5c898a855b6f, type: 3}
@@ -1938,7 +1940,7 @@ MonoBehaviour:
   enemyTypes:
   - {fileID: 3826202874038174869, guid: 03c16424a56c1b1438e39495610f20a2, type: 3}
   enemiesInGame: []
-  enemiesInSceneGameObjectContainer: {fileID: 0}
+  enemiesInSceneGameObjectContainer: {fileID: 1442319461}
   amountOfEnemiesToGenerate: 10
   enemyCounter: 0
   checkForSpawnPointRadius: 5
