@@ -1,14 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public class UIManager
 {
     public static UIManager instance;
-
-    [SerializeField] private GameObject heroesPanel;
+    public GameObject heroesPanel, buttonPrefab;
     public List<DictionaryEntry<HeroManager, GameObject>> heroPanelStatsEntry = new();
     private readonly Dictionary<HeroManager, GameObject> heroPanelStats = new(); // GameObject and the hero panel of the game object
+    public List<DictionaryEntry<string, Button>> targetButtonsEntry;
 
     // [SerializeField] private List<DictionaryEntry<HeroManager, HeroPanelStats>> heroPanelStatsEntry;
     // private Dictionary<HeroManager, HeroPanelStats> heroPanelStats; // GameObject and the hero panel of the game object
@@ -37,8 +38,8 @@ public class UIManager
 
         AddToDictionary(heroPanelStats, hero, newHeroPanel, heroPanelStatsEntry);
         
-        hero.heroStats.heroPanelUI = newHeroPanel;
-        hero.heroStats.AssignHeroUIElements();
+        hero.heroUIManager.heroPanelUI = newHeroPanel;
+        hero.heroUIManager.AssignHeroUIElements();
 
         return newHeroPanel;
     }

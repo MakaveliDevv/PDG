@@ -19,7 +19,7 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected List<GameObject> spawnPoints = new(); // To store the spawn points
     [SerializeField] protected GameObject spawnPointPref;
     [SerializeField] protected Transform spawnPointsHolder;
-    [SerializeField] protected int maxSpawnPoints = 10;
+    [SerializeField] protected int maxSpawnPoints = 20;
     [SerializeField] protected float minDistanceToFirstRoom = 5f; 
 
     void Start() 
@@ -35,11 +35,10 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
         GameManager.instance.enemyCounter = 0;
 
         DestroyAtNewGeneration(spawnPoints);
-        DestroyAtNewGeneration(GameManager.instance.enemies);
+        DestroyAtNewGeneration(GameManager.instance.enemiesInGame);
 
         // Clear dictionary
         GameManager.instance.heroes.Clear();
-        GameManager.instance.heroesEntry.Clear();
 
         RunProceduralGeneration();
     }

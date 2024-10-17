@@ -3,24 +3,19 @@ using UnityEngine;
 
 public class HeroManager : MonoBehaviour
 {
-    public HeroManagerUI heroStats;
+    public HeroUIManagement heroUIManager;
     private HeroMovement heroMovement;
     private GameObject hero;
     private Rigidbody2D rb;
     private bool inRangeForBattle;
     public float timeToMove = .2f;
-    private bool isPanelOpen;
 
     void Awake() 
     {
         heroMovement = new();
         rb = GetComponent<Rigidbody2D>();
         hero = gameObject;
-    }
-
-    void Start() 
-    {
-
+        heroUIManager.CustomAwake();
     }
 
     void Update() 
@@ -54,26 +49,14 @@ public class HeroManager : MonoBehaviour
         // Toggle hero panel
         if(Input.GetKeyDown(KeyCode.Tab)) 
         {
-            ToggleHeroPanel();
+            heroUIManager.ToggleHeroPanel();
+        }
+
+        if(heroUIManager.isPanelOpen) 
+        {
+            heroUIManager.ToggleBattlePanel();
         }
     }
-
-    private void ToggleHeroPanel() 
-    {
-        // Close Panel
-        if(heroStats.heroPanelUI.activeInHierarchy)
-        {
-            heroStats.heroPanelUI.SetActive(false);
-            isPanelOpen = false;
-        }
-        else 
-        {
-            // Open Panel
-            heroStats.heroPanelUI.SetActive(true);
-            isPanelOpen = true;
-        }
-    }
-
 
     private IEnumerator PlayerMovement(Vector2 direction) 
     {
@@ -97,7 +80,21 @@ public class HeroManager : MonoBehaviour
     {
         if(collider.CompareTag("Enemy")) 
         {
+            Debug.Log($"Made contact with the {collider.gameObject.name}");
             inRangeForBattle = true;
+
+            // Fetch the EnemyManagement component
+            if(collider.TryGetComponent<EnemyManagement>(out var enemy)) 
+            {
+                var entry = new DictionaryEntry<GameObject, EnemyManagement> 
+                {
+                    Key = collider.gameObject,
+                    Value = enemy
+                };
+
+                GameManager.instance.enemiesToBattle.Add(entry);
+                heroUIManager.CreateSelectTargetButtons();
+            }
         }
     }
 

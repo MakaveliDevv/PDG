@@ -1,0 +1,87 @@
+using UnityEngine;
+
+public class EnemyManagement : MonoBehaviour 
+{
+    public EnemyStats enemyStats;
+
+    void Start() 
+    {
+        enemyStats.CustomAwake();
+    }
+}
+
+[System.Serializable]
+public class EnemyStats : CharacterStats 
+{
+    [Header("Enemy Info")]
+    public string name;
+    public int level = 1;
+
+    public override void CustomAwake() 
+    {
+        base.CustomAwake();
+        
+        maxHP.SetValue(Random.Range(maxHP.ReturnMinValue(), maxHP.ReturnMaxValue()));
+        maxMP.SetValue(Random.Range(maxMP.ReturnMinValue(), maxMP.ReturnMaxValue()));
+        
+        STR.SetValue(Random.Range(STR.ReturnMinValue(), STR.ReturnMaxValue()));
+        DEX.SetValue(Random.Range(DEX.ReturnMinValue(), DEX.ReturnMaxValue()));
+        INT.SetValue(Random.Range(INT.ReturnMinValue(), INT.ReturnMaxValue()));
+        LUK.SetValue(Random.Range(LUK.ReturnMinValue(), LUK.ReturnMaxValue()));
+        
+        ApplyStatFormulas();
+        // STR:
+            // - Weapon Attack (random.range)
+            // - Weapon DEF (random.range)
+                // Weapon Attack: is determined by the amount of STR -> every 1 point of STR gives you a 3 weapon attack.
+                // Weapon DEF: is also determined by the amount of STR -> every 1 point of STR gives you a 2 weapon DEF
+
+        // DEX:
+            // - Accuracy (hit or miss)
+            // - Evading (hit or miss from enemy)       
+                // Accuracy: is determined by the amount of DEX -> the standard percentage of a hit is at default 60%. (so there is a 60% chance that you hit the target and dont miss)
+                // -Every 2 points on DEX increases the amount with 1%.  
+                // Evading: is also determiend by the amount of DEX -> the standard evasion is at 35%. (so there is a 35% chance to evade the attack)
+                // -Every 3 points on DEX increases the amount with 1%
+
+        // INT:
+            // - Magic Attack (random.range)
+            // - Magic DEF (random.range)
+                // Magic Attack: is determined by the amount of INT -> every 1 point of INT gives you a 2 magic attack
+                // Magic DEF: is also determined by the amount of INT -> every 1 point of INT gives you a 1 magic DEF
+        
+        // LUK:
+            // - Chance in obtaining better items after a fight
+            // - Chance to obtain a better item from a chest
+                // The default chance to obtain a rare item after a fight is at 35%
+                // The default chance to obtain a rare item from a chest is at 20%
+                // Every point of LUK increases the chance of obtaining a rare item after a fight with 1.25%
+                // Every point of LUK increases the chance of obtaining a rare item from a chest with  0.75%
+
+    }
+
+    private void ApplyStatFormulas()
+    {
+        // STR-based formulas
+        weaponAttack.SetValue(Mathf.RoundToInt(STR.GetValue() * 3)); // 1 STR = 3 weapon attack
+        weaponDEF.SetValue(Mathf.FloorToInt(STR.GetValue() * 2));    // 1 STR = 2 weapon DEF
+        
+        // DEX-based formulas for accuracy and evasion
+        accuracy.SetValue(Mathf.RoundToInt(60 + (DEX.GetValue() / 2))); // Base accuracy is 60%, every 2 DEX adds 1%
+        evasion.SetValue(Mathf.RoundToInt(35 + (DEX.GetValue() / 3))); // Base evasion is 35%, every 3 DEX adds 1%
+
+        Debug.Log($"{name}'s Accuracy: {accuracy}%");
+        Debug.Log($"{name}'s Evasion: {evasion}%");
+
+        // INT-based formulas
+        magicAttack.SetValue(Mathf.RoundToInt(INT.GetValue() * 2));   // 1 INT = 2 magic attack
+        magicDEF.SetValue(Mathf.RoundToInt(INT.GetValue() * 1.25f));      // 1 INT = 1 magic DEF
+
+        // LUK-based formulas for item drop rates
+        rareItemDropChance.SetValue(Mathf.RoundToInt(35 + (LUK.GetValue() * 1.05f))); // Base is 35%, every 1 LUK adds 1.25%
+        rareChestItemChance.SetValue(Mathf.RoundToInt(20 + (LUK.GetValue() * 1.025f))); // Base is 20%, every 1 LUK adds 0.75%
+
+        Debug.Log($"{name}'s Rare Item Drop Chance: {rareItemDropChance}%");
+        Debug.Log($"{name}'s Rare Chest Item Chance: {rareChestItemChance}%");
+    }
+}

@@ -17,7 +17,14 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         Vector2Int currentPosition = startPosition;
         var currentDirection = Direction2D.GetRandomCardinalDirection();
 
+        // Generate the initial room at the starting position
+        var initialRoom = StartRandomWalk(randomWalkParameters, currentPosition);
+        floorPositions.UnionWith(initialRoom);
+        roomsList.Add(CalculateBounds(initialRoom)); // Add the initial room bounds to roomsList
+        roomCount++;
+
         // Generate the primary corridor path from the starting position
+        currentPosition = GetRoomCenter(roomsList[0]); // Update to the center of the first room
         var primaryCorridor = ProceduralGenerationAlgorithms.RandomWalkCorridor(currentPosition, currentDirection, corridorLength);
         corridors.Add(primaryCorridor);
         floorPositions.UnionWith(primaryCorridor);
@@ -53,11 +60,11 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         // Find all dead ends and potentially create rooms at dead ends
         List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
-        CreateRoomsAtDeadEnd(deadEnds, roomPositions);
+        // CreateRoomsAtDeadEnd(deadEnds, roomPositions);
 
         floorPositions.UnionWith(roomPositions);
 
-        // Increase brush size for corridors (if desired)
+        // Increase brush size for corridors
         for (int i = 0; i < corridors.Count; i++)
         {
             corridors[i] = IncreaseBrushSize(corridors[i]);
@@ -72,11 +79,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floorPositions, walls, maxSpawnPoints);
         foreach (Vector2Int point in floorSpawnPoints)
         {
-            if (CanSpawnEnemyAt(point))
-            {
-                SpawnSpawnPointAt(point);
-                SpawnEnemyAt(point);
-            }
+           HandleEnemySpawning(point);
         }
 
         // Spawn the player
@@ -104,22 +107,6 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return newCorridor;
     }
 
-    // private HashSet<Vector2Int> CreateRoomAtPosition(Vector2Int position)
-    // {
-    //     var roomFloor = StartRandomWalk(randomWalkParameters, position);
-    //     var roomBounds = CalculateBounds(roomFloor);
-
-    //     // Ensure there are no overlaps with existing rooms
-    //     if (roomsList.Any(bounds => BoundsOverlap(bounds, roomBounds)))
-    //     {
-    //         return new HashSet<Vector2Int>(); // Return an empty set if overlapping
-    //     }
-
-    //     roomsList.Add(roomBounds); // Add room bounds to roomsList
-    //     roomCount++;
-    //     return roomFloor;
-    // }
-
     private HashSet<Vector2Int> CreateRooms(List<List<Vector2Int>> corridors)
     {
         HashSet<Vector2Int> roomPositions = new();
@@ -130,6 +117,8 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             Vector2Int roomPosition = corridor[corridor.Count / 2];
             var roomFloor = StartRandomWalk(randomWalkParameters, roomPosition);
             var roomBounds = CalculateBounds(roomFloor);
+
+            Debug.Log($"New Room Bounds: {roomBounds}");
 
             // Check for overlaps
             bool overlaps = roomBoundsList.Any(bounds => BoundsOverlap(bounds, roomBounds));
@@ -200,80 +189,95 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             }
         }
     }
-
-    // Generate spawn points
-
-    private void SpawnSpawnPointAt(Vector2Int position) 
-    {
-        Vector2 spawnPosition = new(position.x, position.y);
-
-        GameObject spawnPoint = Instantiate(spawnPointPref, spawnPosition, Quaternion.identity);
-        spawnPoints.Add(spawnPoint);
-        spawnPoint.transform.SetParent(spawnPointsHolder);
-    }
-
+    
     private HashSet<Vector2Int> GenerateSpawnPoints(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, int maxSpawnPoints)
     {
-        HashSet<Vector2Int> floorSpawnPoints = new(); 
-
-        float minDistanceToWallSquared = 5f;
-        float minDistanceBetweenSpawnsSquared = 10f; // Minimum squared distance between spawn points
+        HashSet<Vector2Int> floorSpawnPoints = new();
         int maxAttemptsPerPoint = 10;
 
+        // Precompute constants for readability
+        float minDistanceToWallSquared = 5f;
+        float minDistanceBetweenSpawnsSquared = 10f;
+
         BoundsInt firstRoomBounds = roomsList[0];
-        Vector2Int firstRoomCenter = new((firstRoomBounds.min.x + firstRoomBounds.max.x) / 2, (firstRoomBounds.min.y + firstRoomBounds.max.y) / 2);
+        Vector2Int firstRoomCenter = GetRoomCenter(firstRoomBounds);
+        float minDistanceToFirstRoomSquared = 3f * 3f;
 
         for (int i = 0; i < maxSpawnPoints; i++)
         {
-            int attempts = 0;
-            Vector2Int spawnPoint;
-            bool validSpawnPoint = false;
-
-            while (!validSpawnPoint && attempts < maxAttemptsPerPoint * floor.Count)
+            Vector2Int spawnPoint = FindValidSpawnPoint(floor, walls, floorSpawnPoints, maxAttemptsPerPoint, firstRoomBounds, firstRoomCenter, minDistanceToWallSquared, minDistanceBetweenSpawnsSquared, minDistanceToFirstRoomSquared);
+            
+            if (spawnPoint != Vector2Int.zero) // zero means no valid spawn point was found
             {
-                spawnPoint = floor.ElementAt(Random.Range(0, floor.Count));
-
-                // Check if the spawn point is within the first room
-                if (IsWithinBounds(spawnPoint, firstRoomBounds))
-                {
-                    attempts++;
-                    continue;
-                }
-
-                // Check if the spawn point is too close to any wall
-                if (IsTooCloseToWall(spawnPoint, walls, minDistanceToWallSquared))
-                {
-                    spawnPoint = FindSpawnPointAwayFromWall(floor, walls, minDistanceToWallSquared);
-                }
-
-                // Check if the spawn point is far enough from the center of the first room
-                float distanceToFirstRoomCenterSquared = (spawnPoint - firstRoomCenter).sqrMagnitude;
-                if (distanceToFirstRoomCenterSquared < minDistanceToFirstRoom * minDistanceToFirstRoom)
-                {
-                    attempts++;
-                    continue;
-                }
-
-                // Check if the spawn point is far enough from existing spawn points
-                if (floorSpawnPoints.Any(existingSpawn => (existingSpawn - spawnPoint).sqrMagnitude < minDistanceBetweenSpawnsSquared))
-                {
-                    attempts++;
-                    continue;
-                }
-
-                // Check if the spawn point is accessible
-                if (SpawnPointAccesible(spawnPoint, walls))
-                {
-                    floorSpawnPoints.Add(spawnPoint);
-                    validSpawnPoint = true;
-                }
-
-                attempts++;
+                floorSpawnPoints.Add(spawnPoint);
             }
         }
 
         return floorSpawnPoints;
     }
+
+    private Vector2Int FindValidSpawnPoint(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, HashSet<Vector2Int> floorSpawnPoints, int maxAttempts, BoundsInt firstRoomBounds, Vector2Int firstRoomCenter, float minDistanceToWallSquared, float minDistanceBetweenSpawnsSquared, float minDistanceToFirstRoomSquared)
+    {
+        for (int attempt = 0; attempt < maxAttempts * floor.Count; attempt++)
+        {
+            Vector2Int spawnPoint = floor.ElementAt(Random.Range(0, floor.Count));
+
+            if (IsWithinBounds(spawnPoint, firstRoomBounds) || IsTooCloseToWall(spawnPoint, walls, minDistanceToWallSquared))
+                continue;
+
+            if (!IsFarEnoughFromFirstRoom(spawnPoint, firstRoomCenter, minDistanceToFirstRoomSquared))
+                continue;
+
+            if (IsTooCloseToExistingSpawns(spawnPoint, floorSpawnPoints, minDistanceBetweenSpawnsSquared))
+                continue;
+
+            if (SpawnPointAccessible(spawnPoint, walls))
+                return spawnPoint;
+        }
+
+        return Vector2Int.zero; // Return zero if no valid spawn point found
+    }
+
+    private bool IsFarEnoughFromFirstRoom(Vector2Int spawnPoint, Vector2Int roomCenter, float minDistanceSquared)
+    {
+        return (spawnPoint - roomCenter).sqrMagnitude >= minDistanceSquared;
+    }
+
+    private bool IsTooCloseToExistingSpawns(Vector2Int spawnPoint, HashSet<Vector2Int> existingSpawns, float minDistanceSquared)
+    {
+        return existingSpawns.Any(existingSpawn => (existingSpawn - spawnPoint).sqrMagnitude < minDistanceSquared);
+    }
+
+    private Vector2Int GetRoomCenter(BoundsInt roomBounds)
+    {
+        return new Vector2Int((roomBounds.min.x + roomBounds.max.x) / 2, (roomBounds.min.y + roomBounds.max.y) / 2);
+    }
+
+    private bool IsTooCloseToWall(Vector2Int position, HashSet<Vector2Int> walls, float minDistanceSquared)
+    {
+        foreach (Vector2Int wall in walls)
+        {
+            if ((position - wall).sqrMagnitude < minDistanceSquared)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private bool SpawnPointAccessible(Vector2Int spawnPoint, HashSet<Vector2Int> walls)
+    {
+        foreach (var direction in Direction2D.cardinalDirectionsList)
+        {
+            Vector2Int neighbor = spawnPoint + direction;
+            if (!walls.Contains(neighbor))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private bool IsWithinBounds(Vector2Int position, BoundsInt bounds)
     {
@@ -281,86 +285,57 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             position.y >= bounds.yMin && position.y < bounds.yMax;
     }
 
-    private bool SpawnPointAccesible(Vector2Int position, HashSet<Vector2Int> walls)
+    private void HandleEnemySpawning(Vector2Int spawnPosition)
     {
-        foreach (var direction in Direction2D.cardinalDirectionsList)
+        // Check if the total number of spawned enemies has reached the limit
+        if (GameManager.instance.enemyCounter >= GameManager.instance.amountOfEnemiesToGenerate)
         {
-            Vector2Int neighborPosition = position + direction;
-            if (!walls.Contains(neighborPosition))
-            {
-                return true;
-            }
+            Debug.Log("Enemy limit reached.");
+            return;
         }
-        return false;
+
+        // Ensure this spawn point is valid (no nearby enemies)
+        if (!CanSpawnEnemyAt(spawnPosition))
+        {
+            Debug.Log("Cannot spawn enemy too close to an existing one.");
+            return;
+        }
+
+        // Get a random enemy type from the available enemy types
+        int enemyTypeIndex = Random.Range(0, GameManager.instance.enemyTypes.Count);
+        GameObject enemyPrefab = GameManager.instance.enemyTypes[enemyTypeIndex];
+
+        // Convert spawn position to world space
+        Vector2 worldPosition = new Vector2(spawnPosition.x, spawnPosition.y);
+
+        // Instantiate the enemy at the position
+        GameObject newEnemy = Instantiate(enemyPrefab, worldPosition, Quaternion.identity);
+        GameManager.instance.enemiesInGame.Add(newEnemy);
+
+        // Set the enemy as a child of the designated enemies parent object
+        newEnemy.transform.SetParent(GameManager.instance.enemiesInSceneGameObjectContainer);
+
+        // Increment the enemy counter
+        GameManager.instance.enemyCounter++;
+
+        Debug.Log($"Spawned {enemyPrefab.name} at {worldPosition}. Total enemies: {GameManager.instance.enemyCounter}");
     }
 
-    private Vector2Int FindSpawnPointAwayFromWall(HashSet<Vector2Int> floor, HashSet<Vector2Int> walls, float minDistanceToWallSquared)
-    {
-        foreach (Vector2Int position in floor)
-        {
-            if (!IsTooCloseToWall(position, walls, minDistanceToWallSquared))
-            {
-                return position;
-            }
-        }
-        return floor.ElementAt(Random.Range(0, floor.Count));
-    }
-
-    private bool IsTooCloseToWall(Vector2Int position, HashSet<Vector2Int> walls, float minDistanceSquared)
-    {
-        foreach (Vector2Int wallPosition in walls)
-        {
-            float distanceSquared = (position - wallPosition).sqrMagnitude;
-            if (distanceSquared < minDistanceSquared)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Spawn enemy
     private bool CanSpawnEnemyAt(Vector2Int position)
     {
-        foreach (var enemy in GameManager.instance.enemies)
+        foreach (var enemy in GameManager.instance.enemiesInGame)
         {
             Vector2 enemyPosition = new(enemy.transform.position.x, enemy.transform.position.y);
             float distance = Vector2.Distance(position, enemyPosition);
 
+            // Check if the position is too close to an existing enemy
             if (distance < GameManager.instance.checkForSpawnPointRadius)
             {
                 return false;
-            }            
+            }
         }
 
         return true;
-    }
-
-    private void SpawnEnemyAt(Vector2Int position)
-    {
-        // Get amount of enemies
-        float amount = Random.Range(0, GameManager.instance.enemiesAmount + 1);
-
-        // Get type of enemies
-        int typeIndex = Random.Range(0, GameManager.instance.enemyTypes.Count); 
-
-        GameObject enemyPrefab = GameManager.instance.enemyTypes[typeIndex];
-
-        Vector2 spawnPosition = new(position.x, position.y);
-
-        // Spawn the enemies at the position
-        for (int i = 0; i < amount; i++)
-        {
-            // Instantiate the enemy prefab at the position
-            GameObject newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity) as GameObject;
-            GameManager.instance.enemies.Add(newEnemy);
-            newEnemy.transform.SetParent(GameManager.instance.enemiesInSceneParentGO);
-
-            // Set a counter
-            GameManager.instance.enemyCounter++;
-        }
-
-        // Debug.Log($"Spawned {amount} of {enemyPrefab.name} at position {position}");
     }
 
     private void SpawnPlayer(GameObject _player) 
@@ -375,9 +350,8 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         HeroManager hero = heroGameObject.GetComponent<HeroManager>();
         UIManager.instance.InstantiateHeroPanelUI(hero);
 
-        GameManager.instance.heroes.Add(hero.heroStats.heroID, hero);
-        hero.heroStats.heroID = 1;
-        int heroID = hero.heroStats.heroID;
+        hero.heroUIManager.heroID = 1;
+        int heroID = hero.heroUIManager.heroID;
 
         // Add it to the dictionary entry
         var entry = new DictionaryEntry<int, HeroManager> 
@@ -386,7 +360,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             Value = hero
         };
 
-        GameManager.instance.heroesEntry.Add(entry);
+        GameManager.instance.heroes.Add(entry);
     }
 
     private void OnDrawGizmos()
@@ -412,7 +386,8 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             {
                 DrawRoomBounds(currentRoom, Color.yellow); // Merged room in yellow
             }
-            else if (i == 0)
+            else 
+            if (i == 0)
             {
                 DrawRoomBounds(currentRoom, Color.green); // First room in red
             }
@@ -450,10 +425,29 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
     private BoundsInt CalculateBounds(HashSet<Vector2Int> positions)
     {
+        if (positions.Count == 0)
+        {
+            Debug.LogError("CalculateBounds called with an empty positions set.");
+            return new BoundsInt(Vector3Int.zero, Vector3Int.zero);
+        }
+
+        // Log positions
+        Debug.Log($"Positions: {string.Join(", ", positions.Select(p => p.ToString()).ToArray())}");
+
         Vector2Int min = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Min(acc.x, pos.x), Mathf.Min(acc.y, pos.y)));
         Vector2Int max = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Max(acc.x, pos.x), Mathf.Max(acc.y, pos.y)));
-        return new BoundsInt(new Vector3Int(min.x, min.y, 0), new Vector3Int(max.x - min.x + 1, max.y - min.y + 1, 1));
-    }
+        BoundsInt bounds = new BoundsInt(new Vector3Int(min.x, min.y, 0), new Vector3Int(max.x - min.x + 1, max.y - min.y + 1, 1));
+        
+        Debug.Log($"Room Bounds: Min: {min}, Max: {max}, Size: {bounds.size}");
+        return bounds;
+}
+
+    // private BoundsInt CalculateBounds(HashSet<Vector2Int> positions)
+    // {
+    //     Vector2Int min = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Min(acc.x, pos.x), Mathf.Min(acc.y, pos.y)));
+    //     Vector2Int max = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Max(acc.x, pos.x), Mathf.Max(acc.y, pos.y)));
+    //     return new BoundsInt(new Vector3Int(min.x, min.y, 0), new Vector3Int(max.x - min.x + 1, max.y - min.y + 1, 1));
+    // }
 
     private bool BoundsOverlap(BoundsInt boundsA, BoundsInt boundsB)
     {

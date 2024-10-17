@@ -15,26 +15,28 @@ public class GameManager : MonoBehaviour
 
     public GameState gameState;
 
+    // Game Management
     [Header("Game Management")]
-    public bool isGameplayTimerActive; 
-    public float elapsedGameplayTime = 0f;
-    public bool isBattleTimerActive;
-    public float elapsedBattleTime = 0f;
+    public EnemyManagement EnemyToAttack;
+    private bool isGameplayTimerActive; 
+    private float elapsedGameplayTime = 0f;
+    private bool isBattleTimerActive;
+    private float elapsedBattleTime = 0f;
 
     [Header("UI Management")]
     [SerializeField] private UIManager uIManager;
 
     [Header("Hero Stuff")]
     public GameObject mainHeroPrefab; 
-    public Dictionary<int, HeroManager> heroes = new();
-    public List<DictionaryEntry<int, HeroManager>> heroesEntry = new();
+    public List<DictionaryEntry<int, HeroManager>> heroes = new();
 
     [Header("Enemy Stuff")]
+    public List<DictionaryEntry<GameObject, EnemyManagement>>  enemiesToBattle;
     public List<GameObject> enemyTypes = new();
-    public List<GameObject> enemies = new();
-    public Transform enemiesInSceneParentGO;
-    public int enemiesAmount;
-    public int enemyCounter;
+    [HideInInspector] public List<GameObject> enemiesInGame = new();
+    [HideInInspector] public Transform enemiesInSceneGameObjectContainer;
+    public int amountOfEnemiesToGenerate;
+    [HideInInspector] public int enemyCounter;
     public float checkForSpawnPointRadius = 5f; 
 
     void Awake()

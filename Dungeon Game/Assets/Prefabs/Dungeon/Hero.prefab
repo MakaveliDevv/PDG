@@ -175,11 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa7cdc5db720bbd4c8f4cf68cccf9117, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heroStats:
-    heroID: 0
-    name: Main Hero
-    level: 1
-    EXP: 0
+  heroUIManager:
     maxHP:
       baseValue: 100
       modifiers: []
@@ -193,10 +189,10 @@ MonoBehaviour:
       baseValue: 0
       modifiers: []
     STR:
-      baseValue: 10
+      baseValue: 0
       modifiers: []
     INT:
-      baseValue: 10
+      baseValue: 0
       modifiers: []
     DEX:
       baseValue: 10
@@ -208,17 +204,21 @@ MonoBehaviour:
       baseValue: 25
       modifiers: []
     magicAttack:
-      baseValue: 10
+      baseValue: 15
       modifiers: []
     weaponDEF:
-      baseValue: 25
+      baseValue: 15
       modifiers: []
     magicDEF:
-      baseValue: 25
+      baseValue: 10
       modifiers: []
     physicalAttacks: []
     magicAttacks: []
     buffs: []
+    heroID: 0
+    name: Main Hero
+    level: 1
+    EXP: 0
     heroName_text: {fileID: 0}
     lvl_text: {fileID: 0}
     hp_text: {fileID: 0}
@@ -229,6 +229,7 @@ MonoBehaviour:
     magicDef_text: {fileID: 0}
     icon: {fileID: 21300000, guid: 8fa024343012df24093b1c0d3dbae285, type: 3}
     heroPanelUI: {fileID: 0}
+    isPanelOpen: 0
   timeToMove: 0.2
 --- !u!1 &8737899637850468474
 GameObject:

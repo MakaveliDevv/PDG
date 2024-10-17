@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 4141703802479890568}
   - component: {fileID: 6479690081295705864}
   - component: {fileID: 3513058010729684338}
+  - component: {fileID: 5535094640299742667}
   m_Layer: 0
-  m_Name: Triangle
-  m_TagString: Untagged
+  m_Name: Enemy
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -50,6 +51,8 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -115,7 +118,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -131,3 +134,101 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5535094640299742667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3826202874038174869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e20bc3c99e3aee84a98bd1c143153164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyStats:
+    maxHP:
+      baseValue: 0
+      modifiers: []
+      minValue: 50
+      maxValue: 100
+    currentHP:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    maxMP:
+      baseValue: 0
+      modifiers: []
+      minValue: 50
+      maxValue: 100
+    currentMP:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    STR:
+      baseValue: 0
+      modifiers: []
+      minValue: 15
+      maxValue: 25
+    DEX:
+      baseValue: 0
+      modifiers: []
+      minValue: 10
+      maxValue: 20
+    INT:
+      baseValue: 0
+      modifiers: []
+      minValue: 10
+      maxValue: 15
+    LUK:
+      baseValue: 0
+      modifiers: []
+      minValue: 20
+      maxValue: 30
+    weaponAttack:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    magicAttack:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    weaponDEF:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    magicDEF:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    accuracy:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    evasion:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    rareItemDropChance:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    rareChestItemChance:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    physicalAttacks: []
+    magicAttacks: []
+    buffs: []
+    name: Enemy 1
+    level: 1
