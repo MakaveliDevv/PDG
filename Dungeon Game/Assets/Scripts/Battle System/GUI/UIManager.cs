@@ -20,12 +20,12 @@ public class UIManager
     {
         if(instance != null && instance != this) 
         {
-            GameObject.Destroy(GameManager.instance);
+            Object.Destroy(GameManager.instance);
         } 
         else 
         {
             instance = this;
-            GameObject.DontDestroyOnLoad(GameManager.instance);
+            Object.DontDestroyOnLoad(GameManager.instance);
         }
     }
 

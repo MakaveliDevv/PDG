@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -76,7 +77,7 @@ public class GameManager : MonoBehaviour
 
             case(GameState.BATTLE):
                 // Start battle
-                StartBatlle();
+                BattleMode();
                 
                 // StartBattleScene();
 
@@ -101,10 +102,19 @@ public class GameManager : MonoBehaviour
         return SceneManager.GetActiveScene().name == scenename;
     }
 
-    private void StartBatlle() 
+    private void BattleMode() 
     {
         isGameplayTimerActive = false;
         isBattleTimerActive = true;
+
+        // Open the UI
+        for (int i = 0; i < heroes.Count; i++)
+        {
+            var element = heroes.ElementAt(i);
+            GameObject heroUIPanel = element.Value.heroUIManager.heroPanelUI;
+            heroUIPanel.SetActive(true);
+        }
+        
         // inBattle = true;
 
         // Open battle UI

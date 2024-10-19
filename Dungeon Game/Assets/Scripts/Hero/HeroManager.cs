@@ -58,10 +58,10 @@ public class HeroManager : MonoBehaviour
         }
 
         // Toggle hero panel
-        if(Input.GetKeyDown(KeyCode.Tab)) 
-        {
-            heroUIManager.ToggleHeroPanel();
-        }
+        // if(Input.GetKeyDown(KeyCode.Tab)) 
+        // {
+        //     heroUIManager.ToggleHeroPanel();
+        // }
 
         // if(heroUIManager.isPanelOpen) 
         // {
@@ -113,6 +113,9 @@ public class HeroManager : MonoBehaviour
                 {
                     GameManager.instance.enemiesToBattle.Add(entry);
                     Debug.Log("Added new enemy to enemiesToBattle list.");
+
+                    GameManager.instance.gameState = GameManager.GameState.BATTLE;
+
                 }
                 else
                 {
@@ -134,10 +137,5 @@ public class HeroManager : MonoBehaviour
         {
             inRangeForBattle = false;
         }
-    }
-
-    private void BattleMode(bool _bool) 
-    {
-
     }
 }

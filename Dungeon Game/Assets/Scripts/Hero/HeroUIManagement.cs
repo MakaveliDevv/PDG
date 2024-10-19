@@ -86,23 +86,41 @@ public class HeroUIManagement : HeroStats
     }
     
 
-    public void ToggleHeroPanel() 
+    // public void ToggleHeroPanel() 
+    // {
+    //     // Toggle panel logic
+    //     isPanelOpen = !isPanelOpen;
+
+    //     // Close Panel
+    //     if(heroPanelUI.activeInHierarchy)
+    //     {
+    //         heroPanelUI.SetActive(false);
+    //         isPanelOpen = false;
+    //         battlePanelOpened = false;
+    //     }
+    //     else 
+    //     {
+    //         // Open Panel
+    //         heroPanelUI.SetActive(true);
+    //         isPanelOpen = true;
+    //     }
+    // }
+
+    public void OpenHeroPanelsUI() 
     {
         // Toggle panel logic
         isPanelOpen = !isPanelOpen;
 
         // Close Panel
-        if(heroPanelUI.activeInHierarchy)
-        {
-            heroPanelUI.SetActive(false);
-            isPanelOpen = false;
-            battlePanelOpened = false;
-        }
-        else 
+        if(!heroPanelUI.activeInHierarchy)
         {
             // Open Panel
             heroPanelUI.SetActive(true);
             isPanelOpen = true;
+        }
+        else if(heroPanelUI == null)
+        {
+            Debug.LogWarning("Panel not found");
         }
     }
 
@@ -110,7 +128,7 @@ public class HeroUIManagement : HeroStats
     {
         if(!isheroSelected) 
         {
-            Button btn = heroStuff.transform.GetChild(2).GetComponent<Button>();
+            Button btn = heroPanelUI.transform.GetChild(2).GetComponent<Button>();
             btn.onClick.RemoveAllListeners();
             
             // Go through the list of Heroes
@@ -183,7 +201,9 @@ public class HeroUIManagement : HeroStats
                     Value = btn
                 };
 
-                if(!UIManager.instance.targetButtonsEntry.Contains(entry)) 
+                bool entryExists = UIManager.instance.targetButtonsEntry.Any(e => e.Key == buttonObject.name);
+                
+                if(!entryExists) 
                 {
                     UIManager.instance.targetButtonsEntry.Add(entry); 
                 }
