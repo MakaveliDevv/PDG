@@ -57,9 +57,9 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         // Create rooms along the corridors
         HashSet<Vector2Int> roomPositions = CreateRooms(corridors);
-
+        FindAllDeadEnds(floorPositions);
         // Find all dead ends and potentially create rooms at dead ends
-        List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
+        // List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
         // CreateRoomsAtDeadEnd(deadEnds, roomPositions);
 
         floorPositions.UnionWith(roomPositions);
@@ -83,7 +83,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         }
 
         // Spawn the player
-        SpawnPlayer(GameManager.instance.mainHeroPrefab);
+        GeneratePlayer(GameManager.instance.mainHeroPrefab);
 
         // Visualize spawn points using TilemapVisualizer
         tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
@@ -338,12 +338,12 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return true;
     }
 
-    private void SpawnPlayer(GameObject _player) 
+    private void GeneratePlayer(GameObject _player) 
     {     
         Vector3 roomCenter = roomsList[0].center;
 
         // Spawn the player at the center
-        GameObject heroGameObject = Instantiate(_player, roomCenter, Quaternion.identity) as GameObject;
+        GameObject heroGameObject = Instantiate(_player, roomCenter, Quaternion.identity);
         heroGameObject.name = "Main Hero";
 
         // Fetch the HeroManager script

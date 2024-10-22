@@ -1936,6 +1936,7 @@ MonoBehaviour:
     heroPanelUI: {fileID: 7014547539797904301, guid: 57bfcb61f72761b4ca00c0941fd481a3, type: 3}
   mainHeroPrefab: {fileID: 3356054240259773361, guid: 54bcfae7ae7c8cc4d9b436682d2ff6ae, type: 3}
   heroes: []
+  heroToAttackWith: {fileID: 0}
   enemiesToBattle: []
   enemyTypes:
   - {fileID: 3826202874038174869, guid: 03c16424a56c1b1438e39495610f20a2, type: 3}

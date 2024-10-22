@@ -106,7 +106,7 @@ public class HeroUIManagement : HeroStats
     //     }
     // }
 
-    public void OpenHeroPanelsUI() 
+    public void OpenHeroPanelUI() 
     {
         // Toggle panel logic
         isPanelOpen = !isPanelOpen;
@@ -124,11 +124,12 @@ public class HeroUIManagement : HeroStats
         }
     }
 
-    public void SelectHero() 
+    public HeroManager SelectHero() 
     {
+        HeroManager heroManager = null;
         if(!isheroSelected) 
         {
-            Button btn = heroPanelUI.transform.GetChild(2).GetComponent<Button>();
+            Button btn = heroPanelUI.transform.GetChild(3).GetComponent<Button>();
             btn.onClick.RemoveAllListeners();
             
             // Go through the list of Heroes
@@ -136,7 +137,7 @@ public class HeroUIManagement : HeroStats
             {
                 // Get the name of the heroes
                 var hero = GameManager.instance.heroes.ElementAt(i);
-                
+                heroManager = hero.Value;
                 // Compare this name with that name
                 if(name == hero.Value.name)
                 {
@@ -144,16 +145,21 @@ public class HeroUIManagement : HeroStats
                     btn.onClick.AddListener(() => 
                     {
                         Debug.Log($"{name} is equal to {hero.Value.name}");
+                        isheroSelected = true;
+
+                        // Disable the background
+                        heroPanelUI.transform.GetChild(2).gameObject.SetActive(false);
+
+                        GameManager.instance.heroToAttackWith = heroManager;
                     });
                 }
             }
-
-            isheroSelected = true;
         }
+    
+        return heroManager;
     }
 
-    // To battle panel button
-    public void ToggleBattlePanel() 
+    public void OpenBattlePanel() 
     {
         if(!battlePanelOpened) 
         {        
@@ -180,6 +186,34 @@ public class HeroUIManagement : HeroStats
             });
         }
     }
+
+    // public void ToggleBattlePanel() 
+    // {
+    //     if(!battlePanelOpened) 
+    //     {        
+    //         Button btn = heroStuff.transform.GetChild(2).GetComponent<Button>();
+            
+    //         btn.onClick.RemoveAllListeners();
+    //         btn.onClick.AddListener(() => 
+    //         {
+    //             heroStuff.gameObject.SetActive(false);
+    //             battlePanel.gameObject.SetActive(true);
+    //         });
+
+    //         battlePanelOpened = true;
+    //     }
+    //     else if(battlePanelOpened) 
+    //     {
+    //         // Get button
+    //         Button btn2 = battlePanel.transform.GetChild(2).GetChild(1).GetComponent<Button>();
+    //         btn2.onClick.RemoveAllListeners();
+    //         btn2.onClick.AddListener(() => 
+    //         {
+    //             battlePanel.gameObject.SetActive(false);
+    //             heroStuff.gameObject.SetActive(true);
+    //         });
+    //     }
+    // }
 
     // Create buttons method
     public void CreateSelectTargetButtons() 

@@ -6,7 +6,6 @@ public class HeroManager : MonoBehaviour
 {
     public HeroUIManagement heroUIManager;
     private HeroMovement heroMovement;
-    private GameObject hero;
     private Rigidbody2D rb;
     private bool inRangeForBattle;
     public float timeToMove = .2f;
@@ -15,7 +14,6 @@ public class HeroManager : MonoBehaviour
     {
         heroMovement = new();
         rb = GetComponent<Rigidbody2D>();
-        hero = gameObject;
         heroUIManager.CustomAwake();
     }
 

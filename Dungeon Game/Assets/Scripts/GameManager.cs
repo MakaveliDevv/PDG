@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
     [Header("Hero Stuff")]
     public GameObject mainHeroPrefab; 
     public List<DictionaryEntry<int, HeroManager>> heroes = new();
+    public HeroManager heroToAttackWith;
 
     [Header("Enemy Stuff")]
     public List<DictionaryEntry<GameObject, EnemyManagement>>  enemiesToBattle;
@@ -77,7 +79,7 @@ public class GameManager : MonoBehaviour
 
             case(GameState.BATTLE):
                 // Start battle
-                BattleMode();
+                StartCoroutine(BattleMode());
                 
                 // StartBattleScene();
 
@@ -102,22 +104,28 @@ public class GameManager : MonoBehaviour
         return SceneManager.GetActiveScene().name == scenename;
     }
 
-    private void BattleMode() 
+    private IEnumerator BattleMode() 
     {
         isGameplayTimerActive = false;
         isBattleTimerActive = true;
 
         // Open the UI
+        yield return new WaitForSeconds(1f);
         for (int i = 0; i < heroes.Count; i++)
         {
             var element = heroes.ElementAt(i);
-            GameObject heroUIPanel = element.Value.heroUIManager.heroPanelUI;
-            heroUIPanel.SetActive(true);
+            element.Value.heroUIManager.OpenHeroPanelUI();
+      
+      
+      
+            // GameObject heroUIPanel = element.Value.heroUIManager.heroPanelUI;
+            // heroUIPanel.SetActive(true);
         }
         
         // inBattle = true;
 
         // Open battle UI
+        yield break;
     }
 }
 
