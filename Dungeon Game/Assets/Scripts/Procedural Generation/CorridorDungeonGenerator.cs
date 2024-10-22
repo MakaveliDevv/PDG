@@ -79,7 +79,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floorPositions, walls, maxSpawnPoints);
         foreach (Vector2Int point in floorSpawnPoints)
         {
-           HandleEnemySpawning(point);
+           GenerateEnemies(point);
         }
 
         // Spawn the player
@@ -285,7 +285,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             position.y >= bounds.yMin && position.y < bounds.yMax;
     }
 
-    private void HandleEnemySpawning(Vector2Int spawnPosition)
+    private void GenerateEnemies(Vector2Int spawnPosition)
     {
         // Check if the total number of spawned enemies has reached the limit
         if (GameManager.instance.enemyCounter >= GameManager.instance.amountOfEnemiesToGenerate)
@@ -310,15 +310,30 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
 
         // Instantiate the enemy at the position
         GameObject newEnemy = Instantiate(enemyPrefab, worldPosition, Quaternion.identity);
-        GameManager.instance.enemiesInGame.Add(newEnemy);
+        
+        // Fetch the EnemyManagement component
+        if(newEnemy.TryGetComponent<EnemyManagement>(out var enemyManagement)) 
+        {
+            newEnemy.name = enemyManagement.enemyStats.Name;    
+            
+            if(!GameManager.instance.enemiesInGame.Contains(newEnemy)) 
+            {
+                GameManager.instance.enemiesInGame.Add(newEnemy);
+            }
 
-        // Set the enemy as a child of the designated enemies parent object
-        newEnemy.transform.SetParent(GameManager.instance.enemiesInSceneGameObjectContainer);
+            // Set the enemy as a child of the designated enemies parent object
+            newEnemy.transform.SetParent(GameManager.instance.enemiesInSceneGameObjectContainer);
+            
+            // Increment the enemy counter
+            GameManager.instance.enemyCounter++;
 
-        // Increment the enemy counter
-        GameManager.instance.enemyCounter++;
+            Debug.Log($"Spawned {enemyPrefab.name} at {worldPosition}. Total enemies: {GameManager.instance.enemyCounter}");
+        }
+        else 
+        {
+            Debug.LogError("The component 'EnemyManagement' couldn't be found!");
+        }
 
-        Debug.Log($"Spawned {enemyPrefab.name} at {worldPosition}. Total enemies: {GameManager.instance.enemyCounter}");
     }
 
     private bool CanSpawnEnemyAt(Vector2Int position)

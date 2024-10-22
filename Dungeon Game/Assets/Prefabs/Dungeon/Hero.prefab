@@ -179,44 +179,88 @@ MonoBehaviour:
     maxHP:
       baseValue: 100
       modifiers: []
+      minValue: 0
+      maxValue: 0
     currentHP:
       baseValue: 0
       modifiers: []
+      minValue: 0
+      maxValue: 0
     maxMP:
       baseValue: 100
       modifiers: []
+      minValue: 0
+      maxValue: 0
     currentMP:
       baseValue: 0
       modifiers: []
+      minValue: 0
+      maxValue: 0
     STR:
       baseValue: 0
       modifiers: []
-    INT:
-      baseValue: 0
-      modifiers: []
+      minValue: 0
+      maxValue: 0
     DEX:
       baseValue: 10
       modifiers: []
+      minValue: 0
+      maxValue: 0
+    INT:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
     LUK:
       baseValue: 10
       modifiers: []
+      minValue: 0
+      maxValue: 0
     weaponAttack:
       baseValue: 25
       modifiers: []
+      minValue: 0
+      maxValue: 0
     magicAttack:
       baseValue: 15
       modifiers: []
+      minValue: 0
+      maxValue: 0
     weaponDEF:
       baseValue: 15
       modifiers: []
+      minValue: 0
+      maxValue: 0
     magicDEF:
       baseValue: 10
       modifiers: []
+      minValue: 0
+      maxValue: 0
+    accuracy:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    evasion:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    rareItemDropChance:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
+    rareChestItemChance:
+      baseValue: 0
+      modifiers: []
+      minValue: 0
+      maxValue: 0
     physicalAttacks: []
     magicAttacks: []
     buffs: []
     heroID: 0
-    name: Main Hero
+    Name: Main Hero
     level: 1
     EXP: 0
     heroName_text: {fileID: 0}
@@ -230,7 +274,12 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: 8fa024343012df24093b1c0d3dbae285, type: 3}
     heroPanelUI: {fileID: 0}
     isPanelOpen: 0
-  timeToMove: 0.2
+    heroStuff: {fileID: 0}
+    battlePanel: {fileID: 0}
+    buttonInputContainer: {fileID: 0}
+    battlePanelOpened: 0
+    isheroSelected: 0
+  timeToMove: 0.02
 --- !u!1 &8737899637850468474
 GameObject:
   m_ObjectHideFlags: 0

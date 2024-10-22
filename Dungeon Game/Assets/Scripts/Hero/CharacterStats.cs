@@ -43,7 +43,7 @@ public class HeroStats : CharacterStats
 {
     [Header("Hero Info")]
     public int heroID;
-    public string name;
+    public string Name;
     public int level = 1;
     public float EXP = 0f;
 }

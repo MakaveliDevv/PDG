@@ -35,22 +35,22 @@ public class HeroManager : MonoBehaviour
     public void InputManagment()
     {
         // Movement
-        if(Input.GetKey(KeyCode.W) && !heroMovement.isMoving) 
+        if(Input.GetKey(KeyCode.UpArrow) && !heroMovement.isMoving) 
         {
             StartCoroutine(PlayerMovement(Vector3.up));
         }
 
-        if(Input.GetKey(KeyCode.A) && !heroMovement.isMoving) 
+        if(Input.GetKey(KeyCode.LeftArrow) && !heroMovement.isMoving) 
         {
             StartCoroutine(PlayerMovement(Vector3.left));
         }
 
-        if(Input.GetKey(KeyCode.S) && !heroMovement.isMoving) 
+        if(Input.GetKey(KeyCode.DownArrow) && !heroMovement.isMoving) 
         {
             StartCoroutine(PlayerMovement(Vector3.down));
         }
 
-        if(Input.GetKey(KeyCode.D) && !heroMovement.isMoving) 
+        if(Input.GetKey(KeyCode.RightArrow) && !heroMovement.isMoving) 
         {
             StartCoroutine(PlayerMovement(Vector3.right));
         }
@@ -120,7 +120,8 @@ public class HeroManager : MonoBehaviour
                     Debug.Log("Enemy already exists in the enemiesToBattle list.");
                 }
 
-                heroUIManager.CreateSelectTargetButtons();  // Create buttons if needed
+                // heroUIManager.CreateSelectTargetButtons();  // Create buttons if needed
+                StartCoroutine(heroUIManager.CreateSelectTargetButtons());
             }
             else 
             {

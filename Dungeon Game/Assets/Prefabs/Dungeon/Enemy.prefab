@@ -230,5 +230,5 @@ MonoBehaviour:
     physicalAttacks: []
     magicAttacks: []
     buffs: []
-    name: Enemy 1
+    Name: StupidEnemy
     level: 1

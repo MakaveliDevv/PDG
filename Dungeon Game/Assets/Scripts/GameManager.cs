@@ -19,28 +19,39 @@ public class GameManager : MonoBehaviour
 
     // Game Management
     [Header("Game Management")]
-    public EnemyManagement EnemyToAttack;
-    private bool isGameplayTimerActive; 
     [SerializeField] private float elapsedGameplayTime = 0f;
-    private bool isBattleTimerActive;
     [SerializeField] private float elapsedBattleTime = 0f;
+    private bool isGameplayTimerActive; 
+    private bool isBattleTimerActive;
 
+
+    // UI Management
     [Header("UI Management")]
     [SerializeField] private UIManager uIManager;
 
-    [Header("Hero Stuff")]
+
+    // Battle Management
+    [Header("Battle Management")]
+    public List<DictionaryEntry<GameObject, EnemyManagement>>  enemiesToBattle;
+    public EnemyManagement enemyToAttack;
+    
+    
+    // Hero Management
+    [Header("Hero Management")]
     public GameObject mainHeroPrefab; 
     public List<DictionaryEntry<int, HeroManager>> heroes = new();
     public HeroManager heroToAttackWith;
 
+    
+    // Enemy Stuff
     [Header("Enemy Stuff")]
-    public List<DictionaryEntry<GameObject, EnemyManagement>>  enemiesToBattle;
     public List<GameObject> enemyTypes = new();
-    [HideInInspector] public List<GameObject> enemiesInGame = new();
     public Transform enemiesInSceneGameObjectContainer;
     public int amountOfEnemiesToGenerate;
-    [HideInInspector] public int enemyCounter;
     public float checkForSpawnPointRadius = 5f; 
+    [HideInInspector] public List<GameObject> enemiesInGame = new();
+    [HideInInspector] public int enemyCounter;
+
 
     void Awake()
     {
@@ -69,7 +80,7 @@ public class GameManager : MonoBehaviour
     {        
         switch(gameState)
         {
-            case(GameState.DUNGEON):
+            case GameState.DUNGEON:
                 isGameplayTimerActive = true;
                 isBattleTimerActive = false;
 
@@ -77,7 +88,7 @@ public class GameManager : MonoBehaviour
 
             break;
 
-            case(GameState.BATTLE):
+            case GameState.BATTLE:
                 // Start battle
                 StartCoroutine(BattleMode());
                 
@@ -115,16 +126,14 @@ public class GameManager : MonoBehaviour
         {
             var element = heroes.ElementAt(i);
             element.Value.heroUIManager.OpenHeroPanelUI();
-      
-      
-      
-            // GameObject heroUIPanel = element.Value.heroUIManager.heroPanelUI;
-            // heroUIPanel.SetActive(true);
         }
         
-        // inBattle = true;
-
-        // Open battle UI
+        // Open the battle panel
+        if(heroToAttackWith != null) 
+        {
+            heroToAttackWith.heroUIManager.OpenBattlePanel();
+        }
+        
         yield break;
     }
 }

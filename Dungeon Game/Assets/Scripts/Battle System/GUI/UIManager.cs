@@ -14,7 +14,7 @@ public class UIManager
     // [SerializeField] private List<DictionaryEntry<HeroManager, HeroPanelStats>> heroPanelStatsEntry;
     // private Dictionary<HeroManager, HeroPanelStats> heroPanelStats; // GameObject and the hero panel of the game object
 
-    public GameObject heroPanelUI;
+    public GameObject heroPanelUIPrefab;
 
     public void Initialize() 
     {
@@ -32,7 +32,7 @@ public class UIManager
     // Use this when a hero gets instantiated into the scene
     public void InstantiateHeroPanelUI(HeroManager hero) 
     {
-        GameObject newHeroPanel = GameObject.Instantiate(heroPanelUI);
+        GameObject newHeroPanel = Object.Instantiate(heroPanelUIPrefab);
         newHeroPanel.transform.SetParent(heroesPanel.transform);
         newHeroPanel.name = "Hero Panel: " + hero.name;
 

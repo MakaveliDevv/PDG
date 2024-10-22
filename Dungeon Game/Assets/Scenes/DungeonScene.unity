@@ -1933,7 +1933,7 @@ MonoBehaviour:
     buttonPrefab: {fileID: 1423206172430289659, guid: 0c06e23da34d04f41a5a5c898a855b6f, type: 3}
     heroPanelStatsEntry: []
     targetButtonsEntry: []
-    heroPanelUI: {fileID: 7014547539797904301, guid: 57bfcb61f72761b4ca00c0941fd481a3, type: 3}
+    heroPanelUIPrefab: {fileID: 7014547539797904301, guid: 57bfcb61f72761b4ca00c0941fd481a3, type: 3}
   mainHeroPrefab: {fileID: 3356054240259773361, guid: 54bcfae7ae7c8cc4d9b436682d2ff6ae, type: 3}
   heroes: []
   heroToAttackWith: {fileID: 0}

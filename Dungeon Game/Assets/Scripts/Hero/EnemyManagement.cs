@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyManagement : MonoBehaviour 
 {
     public EnemyStats enemyStats;
+    public bool hasTargetButtonCreated = false;
 
     void Start() 
     {
@@ -14,7 +15,7 @@ public class EnemyManagement : MonoBehaviour
 public class EnemyStats : CharacterStats 
 {
     [Header("Enemy Info")]
-    public string name;
+    public string Name;
     public int level = 1;
 
     public override void CustomAwake() 
@@ -70,8 +71,8 @@ public class EnemyStats : CharacterStats
         accuracy.SetValue(Mathf.RoundToInt(60 + (DEX.GetValue() / 2))); // Base accuracy is 60%, every 2 DEX adds 1%
         evasion.SetValue(Mathf.RoundToInt(35 + (DEX.GetValue() / 3))); // Base evasion is 35%, every 3 DEX adds 1%
 
-        Debug.Log($"{name}'s Accuracy: {accuracy}%");
-        Debug.Log($"{name}'s Evasion: {evasion}%");
+        Debug.Log($"{Name}'s Accuracy: {accuracy}%");
+        Debug.Log($"{Name}'s Evasion: {evasion}%");
 
         // INT-based formulas
         magicAttack.SetValue(Mathf.RoundToInt(INT.GetValue() * 2));   // 1 INT = 2 magic attack
@@ -81,7 +82,7 @@ public class EnemyStats : CharacterStats
         rareItemDropChance.SetValue(Mathf.RoundToInt(35 + (LUK.GetValue() * 1.05f))); // Base is 35%, every 1 LUK adds 1.25%
         rareChestItemChance.SetValue(Mathf.RoundToInt(20 + (LUK.GetValue() * 1.025f))); // Base is 20%, every 1 LUK adds 0.75%
 
-        Debug.Log($"{name}'s Rare Item Drop Chance: {rareItemDropChance}%");
-        Debug.Log($"{name}'s Rare Chest Item Chance: {rareChestItemChance}%");
+        Debug.Log($"{Name}'s Rare Item Drop Chance: {rareItemDropChance}%");
+        Debug.Log($"{Name}'s Rare Chest Item Chance: {rareChestItemChance}%");
     }
 }
