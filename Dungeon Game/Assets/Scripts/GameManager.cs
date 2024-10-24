@@ -57,12 +57,12 @@ public class GameManager : MonoBehaviour
     {
         if(instance != null && instance != this) 
         {
-            Destroy(gameObject); // Prevent multiple GameManager instances
+            Destroy(this); // Prevent multiple GameManager instances
         }
         else 
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this);
         }
 
         uIManager.Initialize();
@@ -91,6 +91,8 @@ public class GameManager : MonoBehaviour
             case GameState.BATTLE:
                 // Start battle
                 StartCoroutine(BattleMode());
+
+                // SceneManager.LoadScene("BattleScene2");
                 
                 // StartBattleScene();
 
@@ -133,7 +135,11 @@ public class GameManager : MonoBehaviour
         {
             heroToAttackWith.heroUIManager.OpenBattlePanel();
         }
-        
+
+        yield return new WaitForSeconds(1.25f);
+
+        SceneManager.LoadScene("BattleScene2");
+    
         yield break;
     }
 }

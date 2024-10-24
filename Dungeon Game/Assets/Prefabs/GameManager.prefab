@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4230074524842248598
+--- !u!1 &2062069857028591466
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,70 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8719857887452088481}
-  - component: {fileID: 1920169645527744677}
+  - component: {fileID: 4994958544456120638}
+  m_Layer: 0
+  m_Name: Enemy SpawnPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4994958544456120638
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062069857028591466}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2409616452065565937}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2160008669637130554
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1272048405992235082}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1272048405992235082
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2160008669637130554}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2409616452065565937}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6497324729336134730
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2409616452065565937}
+  - component: {fileID: 9076258621098195064}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -17,55 +79,105 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8719857887452088481
+--- !u!4 &2409616452065565937
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4230074524842248598}
+  m_GameObject: {fileID: 6497324729336134730}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4994958544456120638}
+  - {fileID: 1272048405992235082}
+  - {fileID: 7098831541069281030}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1920169645527744677
+--- !u!114 &9076258621098195064
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4230074524842248598}
+  m_GameObject: {fileID: 6497324729336134730}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d295825ee7e51a4408a778d4d7c3da44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  regions:
-  - RegionName: Region1
-    maxEnemiesEncounter: 4
-    BattleScene: BattleScene
-    possibleEnemies:
-    - {fileID: 5456013119319380669, guid: 3b48152f6c7c3e14389e4f5d7fdd197d, type: 3}
-  - RegionName: Region2
-    maxEnemiesEncounter: 4
-    BattleScene: BattleScene
-    possibleEnemies:
-    - {fileID: 5456013119319380669, guid: 3b48152f6c7c3e14389e4f5d7fdd197d, type: 3}
-    - {fileID: 168880411672914388, guid: a1abef4f370d60649a75deaf45741f37, type: 3}
-  curRegion: 0
-  gameState: 0
-  heroCharacter: {fileID: 7629995059607858149, guid: 7b840915987133940880e501015e1f99, type: 3}
-  nextHeroPosition: {x: 0, y: 0}
-  lastHeroPosition: {x: 0, y: 0}
-  SceneToLoad: 
-  LastScene: 
-  isWalking: 0
-  canGetEncounter: 0
-  gotAttacked: 0
+  gameState: 2
+  elapsedGameplayTime: 0
+  elapsedBattleTime: 0
+  uIManager:
+    heroesPanel: {fileID: 0}
+    buttonPrefab: {fileID: 1423206172430289659, guid: 0c06e23da34d04f41a5a5c898a855b6f, type: 3}
+    heroPanelStatsEntry: []
+    targetButtonsEntry: []
+    heroPanelUIPrefab: {fileID: 7014547539797904301, guid: 57bfcb61f72761b4ca00c0941fd481a3, type: 3}
   enemiesToBattle: []
-  enemyAmount: 0
-  NextSpawnPoint: 
+  enemyToAttack: {fileID: 0}
+  mainHeroPrefab: {fileID: 3356054240259773361, guid: 54bcfae7ae7c8cc4d9b436682d2ff6ae, type: 3}
+  heroes: []
+  heroToAttackWith: {fileID: 0}
+  enemyTypes:
+  - {fileID: 3826202874038174869, guid: 03c16424a56c1b1438e39495610f20a2, type: 3}
+  enemiesInSceneGameObjectContainer: {fileID: 1272048405992235082}
+  amountOfEnemiesToGenerate: 10
+  checkForSpawnPointRadius: 5
+  enemiesInGame: []
+  enemyCounter: 0
+--- !u!1 &8236057147369134284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7098831541069281030}
+  - component: {fileID: 8488052756719791631}
+  m_Layer: 0
+  m_Name: TilemapVisualizer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7098831541069281030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8236057147369134284}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2409616452065565937}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8488052756719791631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8236057147369134284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d250b5633e0160748b0dcdcc8408fa16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  floorTilemap: {fileID: 0}
+  wallTimeMap: {fileID: 0}
+  spawnLocationMap: {fileID: 0}
+  enemyMap: {fileID: 0}
+  floorTile: {fileID: 11400000, guid: 3563d97889d7f5246b1d4c2efb17f85e, type: 2}
+  wallTile: {fileID: 11400000, guid: 122cb05e74491f14d8b702fe7e3467f7, type: 2}
+  spawnPointTile: {fileID: 11400000, guid: 50aac63eaf814b54bbf67652b0e92147, type: 2}
