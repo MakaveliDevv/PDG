@@ -26,80 +26,89 @@ public class HeroUIManagement : HeroStats
     [SerializeField] private Button heroDeselectBtn;
     [SerializeField] private Button toBattlePanelBtn;
     [SerializeField] private Button closeBattlePanelBtn;
-    [SerializeField] private readonly List<GameObject> targetButtons = new();
 
-   
     [Header("Panels")]
     public Transform heroStatsPanel = null;
     public Transform battlePanel = null;
     public Transform buttonInputContainer = null;
     public GameObject heroPanelSelector = null;
 
-   
     [Header("Booleans")]
     public bool isHeroPanelOpen = false;
-    public bool isBattlePanelOpen = false;  
-    public bool isheroSelected = false;
+    public bool isBattlePanelOpen = false;
+    public bool isHeroSelected = false;
+    private bool targetButtonsCreated = false; 
 
-
-    public void CustomStart() 
+    private void InitializePanels()
     {
-        // (Need to find a way to move this piece of code to the method below)
-
-        // Panels
         battlePanel = heroPanelUI.transform.GetChild(1);
         buttonInputContainer = battlePanel.GetChild(0).GetChild(1);
         heroPanelSelector = heroPanelUI.transform.GetChild(2).gameObject;
-
-        // Buttons
-        heroSelectBtn = heroPanelUI.transform.GetChild(3).gameObject.GetComponent<Button>();
-        heroDeselectBtn = heroPanelUI.transform.GetChild(4).gameObject.GetComponent<Button>();
-        toBattlePanelBtn = heroStatsPanel.transform.GetChild(2).gameObject.GetComponent<Button>();
-        closeBattlePanelBtn = battlePanel.transform.GetChild(3).gameObject.GetComponent<Button>();
     }
 
-    public void AssignHeroUIElements() 
+    private void InitializeButtons()
     {
-        heroStatsPanel = heroPanelUI.transform.GetChild(0); // Hero stats panel
-        Transform infoPanel = heroStatsPanel.transform.GetChild(0).GetChild(0); // HeroID -> Info
-        Transform imagePanel = heroStatsPanel.transform.GetChild(0).GetChild(1); // HeroID -> Image Panel 
-
-        lvl_text = GetTextComponent(infoPanel, new int[] {0, 1}); // Lvl
-        heroName_text = GetTextComponent(infoPanel, new int[] {1}); // Name
-        Image image = imagePanel.transform.GetChild(0).gameObject.GetComponent<Image>();
-        image.sprite = icon; 
-    
-        Transform statsPanel = heroStatsPanel.GetChild(1).GetChild(0).GetChild(1); // HeroStats -> Stats -> statsPanel
-        
-        hp_text = GetTextComponent(statsPanel, new int[] {0, 1, 0});
-        mp_text = GetTextComponent(statsPanel, new int[] {1, 1, 0});
-        watt_text = GetTextComponent(statsPanel, new int[] {2, 1, 0});
-        matt_text = GetTextComponent(statsPanel, new int[] {3, 1, 0});
-        weaponDef_text = GetTextComponent(statsPanel, new int[] {4, 1, 0});
-        magicDef_text = GetTextComponent(statsPanel, new int[] {5, 1, 0});
-
-        AssignStats();
+        heroSelectBtn = heroPanelUI.transform.GetChild(3).GetComponent<Button>();
+        heroDeselectBtn = heroPanelUI.transform.GetChild(4).GetComponent<Button>();
+        toBattlePanelBtn = heroStatsPanel.transform.GetChild(2).GetComponent<Button>();
+        closeBattlePanelBtn = battlePanel.transform.GetChild(3).GetComponent<Button>();
     }
 
-    public void AssignStats() 
-    {   
+    public IEnumerator AssignHeroUIStatsElements(MonoBehaviour monoBehaviour)
+    {
+        if (!heroStatsPanel)
+        {
+            heroStatsPanel = heroPanelUI.transform.GetChild(0); // Hero stats panel
+
+            // Assign hero stats UI elements
+            Transform infoPanel = heroStatsPanel.GetChild(0).GetChild(0);
+            Transform imagePanel = heroStatsPanel.GetChild(0).GetChild(1);
+
+            lvl_text = GetTextComponent(infoPanel, new int[] { 0, 1 }); // Lvl
+            heroName_text = GetTextComponent(infoPanel, new int[] { 1 }); // Name
+            Image image = imagePanel.GetChild(0).GetComponent<Image>();
+            image.sprite = icon;
+
+            Transform statsPanel = heroStatsPanel.GetChild(1).GetChild(0).GetChild(1);
+
+            hp_text = GetTextComponent(statsPanel, new int[] { 0, 1, 0 });
+            mp_text = GetTextComponent(statsPanel, new int[] { 1, 1, 0 });
+            watt_text = GetTextComponent(statsPanel, new int[] { 2, 1, 0 });
+            matt_text = GetTextComponent(statsPanel, new int[] { 3, 1, 0 });
+            weaponDef_text = GetTextComponent(statsPanel, new int[] { 4, 1, 0 });
+            magicDef_text = GetTextComponent(statsPanel, new int[] { 5, 1, 0 });
+
+            monoBehaviour.StartCoroutine(AssignStats());
+
+            InitializePanels();
+            InitializeButtons();
+
+            yield break;
+        }
+        else
+        {
+            Debug.LogError("The hero stats panel already exists, something went wrong");
+        }
+    }
+
+    public IEnumerator AssignStats()
+    {
+        Debug.Log("Assigning stats...");
+        yield return new WaitForSeconds(.5f);
+
         hp_text.text = currentHP.ToString();
         mp_text.text = currentMP.ToString();
-
         heroName_text.text = Name.ToString();
         lvl_text.text = level.ToString();
-
-        hp_text.text = currentHP.GetValue().ToString(); // HP
-        mp_text.text = currentMP.GetValue().ToString(); // MP
-
-        watt_text.text = weaponAttack.GetValue().ToString(); // Weapon Attack
-        matt_text.text = magicAttack.GetValue().ToString(); // Magic Attack
-
-        weaponDef_text.text = weaponDEF.GetValue().ToString(); // Weapon def
-        magicDef_text.text = magicDEF.GetValue().ToString(); // Magic def
+        hp_text.text = currentHP.GetValue().ToString();
+        mp_text.text = currentMP.GetValue().ToString();
+        watt_text.text = weaponAttack.GetValue().ToString();
+        matt_text.text = magicAttack.GetValue().ToString();
+        weaponDef_text.text = weaponDEF.GetValue().ToString();
+        magicDef_text.text = magicDEF.GetValue().ToString();
     }
 
-    private TextMeshProUGUI GetTextComponent(Transform parent, int[] path) 
+    private TextMeshProUGUI GetTextComponent(Transform parent, int[] path)
     {
         foreach (var index in path)
         {
@@ -109,236 +118,253 @@ public class HeroUIManagement : HeroStats
         return parent.GetComponent<TextMeshProUGUI>();
     }
 
-    private void ToggleGameObject(Transform parent, int[] path, bool isActive)
+    public void OpenHeroPanelUI()
     {
-        foreach (var index in path)
+        if (!heroPanelUI.activeInHierarchy)
         {
-            parent = parent.GetChild(index);
-        }
-
-        GameObject targetObject = parent.gameObject;
-        targetObject.SetActive(isActive);
-    }
-    
-    public void OpenHeroPanelUI() 
-    {
-        // Toggle panel logic
-        // isHeroPanelOpen = !isHeroPanelOpen;
-
-        // Close Panel
-        if(!heroPanelUI.activeInHierarchy)
-        {
-            // Open Panel
             heroPanelUI.SetActive(true);
             isHeroPanelOpen = true;
         }
-        else if(heroPanelUI == null)
+        else if (heroPanelUI == null)
         {
             Debug.LogWarning("Panel not found");
         }
     }
 
-    public void SelectHero() 
+    public void SelectHero()
     {
-        // Create new values
-        HeroManager newHero = null;
+        if (heroSelectBtn != null)
+        {
+            heroSelectBtn.onClick.RemoveAllListeners(); 
 
-        if(!isheroSelected) 
-        {            
-            // Loop through the list of Heroes
-            for (int i = 0; i < GameManager.instance.heroes.Count; i++)
+            heroSelectBtn.onClick.AddListener(() =>
             {
-                // Get the name of each hero
-                var hero = GameManager.instance.heroes.ElementAt(i);
-
-                // If this hero's name is the same as one of the heroes in the Heroes list
-                if(Name == hero.Value.heroUIManager.Name)
+                if (!isHeroSelected)
                 {
-                    // Then assign the new hero
-                    newHero = hero.Value;
+                    // Debug.Log("Select hero...");
+                    HeroManager newHero = null;
 
-                    // Remove existing listeners before adding a new one
-                    heroSelectBtn.onClick.RemoveAllListeners();
+                    // Loop through the heroes only when the button is clicked
+                    for (int i = 0; i < GameManager.instance.heroes.Count; i++)
+                    {
+                        var hero = GameManager.instance.heroes.ElementAt(i);
 
-                    // Add listener to the button
-                    heroSelectBtn.onClick.AddListener(() => 
-                    {             
-                        // Debug.Log($"{Name} is equal to {newHero.heroUIManager.Name}");
-           
-                        isheroSelected = true;
+                        // Check if the name matches
+                        if (Name == hero.Value.heroUIManager.Name)
+                        {
+                            newHero = hero.Value;
+                            break; 
+                        }
+                    }
 
-                        // Disable the background
+                    if (newHero != null)
+                    {
+                        Debug.Log($"{Name} is equal to {newHero.heroUIManager.Name}");
+                        isHeroSelected = true;
                         heroPanelSelector.SetActive(false);
-
-                        // Assign the hero to attack with
-                        GameManager.instance.heroToAttackWith = newHero;
-                        
-                        // Activate the battle panel button
                         toBattlePanelBtn.gameObject.SetActive(true);
-
-                        // Debug.Log($"{heroSelectBtn.gameObject.name}");
-
-                        // Deactivate the 'hero select' button at the end
-                        heroSelectBtn.gameObject.SetActive(false);  
-
-                        // Activate the deselect button
+                        heroSelectBtn.gameObject.SetActive(false);
                         heroDeselectBtn.gameObject.SetActive(true);
-                        
-                        // Remove existing listeners before adding a new one
-                        heroDeselectBtn.onClick.RemoveAllListeners();  
 
-                        heroDeselectBtn.onClick.AddListener(() => DeselectHero()); // Assign the method to deselect the hero                     
-                    });
+                        // Activate the toBattlePanelBtn and set its listener
+                        toBattlePanelBtn.gameObject.SetActive(true);
+                        toBattlePanelBtn.onClick.RemoveAllListeners();
+                        toBattlePanelBtn.onClick.AddListener(() =>
+                        {
+                            if (isHeroSelected)
+                            {
+                                OpenBattlePanel();
+                            }
+                        });
 
+                        heroDeselectBtn.onClick.RemoveAllListeners();
+                        heroDeselectBtn.onClick.AddListener(() => DeselectHero());
+                        Debug.Log($"{newHero.name} has been selected.");                  
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No matching hero found.");
+                    }
                 }
-            }
+            });
         }
     }
 
-    public void DeselectHero() 
+    public void DeselectHero()
     {
-        // Remove the hero to attack with
-        GameManager.instance.heroToAttackWith = null;
-
-        // Deactivate the 'to battle panel' button
+        Debug.Log("Deselecting the hero");
+        isHeroSelected = false; // Reset hero selection
+        
+        // Deactivate the battle button and hide the battle panel
         toBattlePanelBtn.gameObject.SetActive(false);
         heroDeselectBtn.gameObject.SetActive(false);
         heroSelectBtn.gameObject.SetActive(true);
-
-        // Activate the background of the hero panel UI
         heroPanelSelector.SetActive(true);
     }
 
-    public void OpenBattlePanel() 
+    public void OpenBattlePanel()
     {
-        if(isheroSelected && !isBattlePanelOpen) 
-        {                    
-            toBattlePanelBtn.onClick.RemoveAllListeners();
-            toBattlePanelBtn.onClick.AddListener(() => 
-            {
-                heroDeselectBtn.gameObject.SetActive(false);
-                heroStatsPanel.gameObject.SetActive(false);
-                battlePanel.gameObject.SetActive(true);
-            });
-            
-            isBattlePanelOpen = true;
-        }
-
-        if(isBattlePanelOpen) 
+        if (!isBattlePanelOpen) 
         {
+            Debug.Log("Battle Panel Open...");
+            isBattlePanelOpen = true;
+            heroDeselectBtn.gameObject.SetActive(false);
+            heroStatsPanel.gameObject.SetActive(false);
+            battlePanel.gameObject.SetActive(true);
+
             closeBattlePanelBtn.onClick.RemoveAllListeners();
-            
             closeBattlePanelBtn.onClick.AddListener(() => CloseBattlePanel());
         }
     }
 
-    public void CloseBattlePanel() 
+    public void CloseBattlePanel()
     {
-        // Deactivate the battle panel
+        Debug.Log("Closing battle panel...");
         battlePanel.gameObject.SetActive(false);
-        
-        // Activate the hero stats panel
         heroStatsPanel.gameObject.SetActive(true);
-
-        // Activate the deselect button again
-        heroDeselectBtn.gameObject.SetActive(true);
+        heroDeselectBtn.gameObject.SetActive(true); 
+        isBattlePanelOpen = false;
     }
 
-    // Create buttons method
-    public IEnumerator CreateSelectTargetButtons() 
+    private void CreateChooseActionToPerformButtons() 
     {
-        GameObject targetButton = null;
 
-        // Loop through the enemies to battle list
-        for (int i = 0; i < GameManager.instance.enemiesToBattle.Count; i++)
+    }
+
+    private void CreateActionTypeButton() 
+    {
+        // Create dynaically a button
+        // So either an attack button or a defense button, etc.
+    }
+
+    public IEnumerator CreateTargetButtons(List<DictionaryEntry<string, Button>> dictionaryEntry, GameObject buttonPrefab)
+    {
+        // Wait for initialization to be done
+        yield return new WaitForSeconds(1f);
+
+        if (targetButtonsCreated) yield break; // Prevent multiple runs
+
+        if (BattleManager.instance.enemiesInBattle.Count <= 0)
         {
-            // Assign the enemy
-            var enemy = GameManager.instance.enemiesToBattle[i];
-        
-            if(!enemy.Value.hasTargetButtonCreated)
-            {
-                // Create target button
-                targetButton = Object.Instantiate(UIManager.instance.buttonPrefab);
-                targetButton.transform.SetParent(buttonInputContainer);
+            Debug.LogError("No enemies found!");
+            yield break;
+        }
 
-                // Name the button
+        // Loop through the enemies in battle
+        for (int i = 0; i < BattleManager.instance.enemiesInBattle.Count; i++)
+        {
+            // Store the enemy
+            var enemy = BattleManager.instance.enemiesInBattle[i];
+
+            // Only create if button hasn't been created yet
+            if (!enemy.Value.hasTargetButtonCreated)
+            {
+                Debug.Log("Creating target button...");
+
+                // Instantiate
+                GameObject targetButton = Object.Instantiate(buttonPrefab);
+                // GameObject targetButton = Object.Instantiate(uIBattleManager.buttonPrefab);
+                targetButton.transform.SetParent(buttonInputContainer);
                 targetButton.name = enemy.Value.enemyStats.Name;
-            
-                // Fetch the button component
-                if(targetButton.TryGetComponent<Button>(out var btn)) 
+                
+                // Fetch the button compontent
+                if (targetButton.TryGetComponent<Button>(out var btn))
                 {
+                    // Fetch the Text component
                     TextMeshProUGUI buttonText = targetButton.GetComponentInChildren<TextMeshProUGUI>();
 
-                    if(buttonText == null) 
+                    if (buttonText == null)
                     {
                         Debug.LogError("Couldn't fetch the TextUGUI component");
+                        yield break;
                     }
-                    
-                    buttonText.text = enemy.Value.enemyStats.Name;
 
-                    var entry = new DictionaryEntry<string, Button>
+                    buttonText.text = enemy.Value.enemyStats.Name;
+                    
+                    // Add the button to the dictionary
+                    dictionaryEntry.Add(new DictionaryEntry<string, Button>
                     {
                         Key = targetButton.name,
                         Value = btn
-                    };
+                    });
+        
 
-                    bool entryExists = UIManager.instance.targetButtonsEntry.Any(e => e.Key == targetButton.name);
-
-                    if(!entryExists) 
-                    {
-                        UIManager.instance.targetButtonsEntry.Add(entry);
-                    }
+                    // dictionaryEntry.Add(entry);
+                    // uIBattleManager.targetButtonsEntry.Add(new DictionaryEntry<string, Button>
+                    // {
+                    //     Key = targetButton.name,
+                    //     Value = btn
+                    // });
 
                     enemy.Value.hasTargetButtonCreated = true;
-
-                    break;
-                } 
+                    break; // Stop after creating one button
+                }
                 else
                 {
                     Debug.LogError("Couldn't fetch the Button component");
+                    yield break;
                 }
             }
-           
         }
 
         // Add listener to the buttons
-        for (int i = 0; i < UIManager.instance.targetButtonsEntry.Count; i++)
+        foreach (var buttonEntry in dictionaryEntry)
         {
-            var button = UIManager.instance.targetButtonsEntry.ElementAt(i);
-            button.Value.onClick.AddListener(() => SelectTarget());
+            buttonEntry.Value.onClick.RemoveAllListeners(); 
+            buttonEntry.Value.onClick.AddListener(() => SelectTarget(dictionaryEntry));
         }
+        // foreach (var buttonEntry in uIBattleManager.targetButtonsEntry)
+        // {
+        //     buttonEntry.Value.onClick.RemoveAllListeners(); 
+        //     buttonEntry.Value.onClick.AddListener(() => SelectTarget(uIBattleManager));
+        // }
 
-        yield break;
+        targetButtonsCreated = true; 
     }
 
-
-    public void SelectTarget() 
+    public void SelectTarget(List<DictionaryEntry<string, Button>> dictionaryEntry)
     {
         Debug.Log("Select target button is pressed!");
 
-        // Loop through the target buttons list
-        for (int i = 0; i < UIManager.instance.targetButtonsEntry.Count; i++)
+        // Ensure the button works only once
+        foreach (var entry in dictionaryEntry)
         {
-            var entry = UIManager.instance.targetButtonsEntry[i];
-
-            // Fetch the button object 
-            GameObject button = entry.Value.gameObject;
-
-            // Check if the button name is the same as one of the enemies in battle
-            foreach (var element in GameManager.instance.enemiesToBattle)
+            if (entry.Value == UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>())
             {
-                if(button.name == element.Value.enemyStats.Name) 
-                {
-                    // Store the enemy as selected enemy to attack
-                    GameManager.instance.enemyToAttack = element.Value;
+                GameObject button = entry.Value.gameObject;
 
-                    break;
+                foreach (var element in BattleManager.instance.enemiesInBattle)
+                {
+                    if (button.name == element.Value.enemyStats.Name)
+                    {
+                        BattleManager.instance.enemyToAttack = element.Value;
+                        return; // Exit after selection to prevent multiple triggers
+                    }
                 }
             }
         }
     }
 
-    // When target selected, create a 'target selector' to visualize it
+    // public void SelectTarget(UIBattleManager uIBattleManager)
+    // {
+    //     Debug.Log("Select target button is pressed!");
 
-    // So when clicking the target button, store the enemy game object as the target to attack
+    //     // Ensure the button works only once
+    //     foreach (var entry in uIBattleManager.targetButtonsEntry)
+    //     {
+    //         if (entry.Value == UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>())
+    //         {
+    //             GameObject button = entry.Value.gameObject;
+
+    //             foreach (var element in BattleManager.instance.enemiesInBattle)
+    //             {
+    //                 if (button.name == element.Value.enemyStats.Name)
+    //                 {
+    //                     BattleManager.instance.enemyToAttack = element.Value;
+    //                     return; // Exit after selection to prevent multiple triggers
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }

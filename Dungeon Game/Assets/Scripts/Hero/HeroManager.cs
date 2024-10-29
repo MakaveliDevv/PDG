@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HeroManager : MonoBehaviour
 {
     public HeroUIManagement heroUIManager;
     private HeroMovement heroMovement;
     private Rigidbody2D rb;
-    private bool inRangeForBattle;
+    // private bool inRangeForBattle;
     public float timeToMove = .2f;
+    private bool targetButtonsCreated = false;
 
     void Awake() 
     {
@@ -16,20 +18,22 @@ public class HeroManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         heroUIManager.CustomAwake();
     }
-
-    void Start() 
-    {
-        heroUIManager.CustomStart();
+    
+    void Update() 
+    {  
+        InputManagment();
+        Swag();
     }
 
-    void Update() 
+    private void Swag () 
     {
-        if(inRangeForBattle) 
+        // If battle scene is active
+        if(SceneManager.GetActiveScene().name == "BattleScene2") 
         {
+            // StartCoroutine(heroUIManager.CreateTargetButtons(BattleManager.instance.UIBattleManager));
+            StartCoroutine(heroUIManager.CreateTargetButtons(BattleManager.instance.UIBattleManager.targetButtonsEntry, BattleManager.instance.UIBattleManager.buttonPrefab));
             heroUIManager.SelectHero();
-        }
-        
-        InputManagment();
+        }   
     }
 
     public void InputManagment()
@@ -54,17 +58,6 @@ public class HeroManager : MonoBehaviour
         {
             StartCoroutine(PlayerMovement(Vector3.right));
         }
-
-        // Toggle hero panel
-        // if(Input.GetKeyDown(KeyCode.Tab)) 
-        // {
-        //     heroUIManager.ToggleHeroPanel();
-        // }
-
-        // if(heroUIManager.isPanelOpen) 
-        // {
-        //     heroUIManager.ToggleBattlePanel();
-        // }
     }
 
     private IEnumerator PlayerMovement(Vector2 direction) 
@@ -90,7 +83,7 @@ public class HeroManager : MonoBehaviour
         if(collider.CompareTag("Enemy")) 
         {
             Debug.Log($"Made contact with the {collider.gameObject.name}");
-            inRangeForBattle = true;
+            // inRangeForBattle = true;
 
             // Fetch the EnemyManagement component
             if(collider.TryGetComponent<EnemyManagement>(out var enemy)) 
@@ -104,12 +97,12 @@ public class HeroManager : MonoBehaviour
                 };
     
                 // Check if this entry already exists in the enemiesToBattle list
-                bool entryExists = GameManager.instance.enemiesToBattle.Any(e => e.Value == enemy);
+                bool entryExists = GameManager.instance.enemiesEncounterd.Any(e => e.Value == enemy);
 
                 // Add the entry only if it doesn't already exist
                 if (!entryExists) 
                 {
-                    GameManager.instance.enemiesToBattle.Add(entry);
+                    GameManager.instance.enemiesEncounterd.Add(entry);
                     Debug.Log("Added new enemy to enemiesToBattle list.");
 
                     GameManager.instance.gameState = GameManager.GameState.BATTLE;
@@ -121,7 +114,7 @@ public class HeroManager : MonoBehaviour
                 }
 
                 // heroUIManager.CreateSelectTargetButtons();  // Create buttons if needed
-                StartCoroutine(heroUIManager.CreateSelectTargetButtons());
+                // StartCoroutine(heroUIManager.CreateSelectTargetButtons());
             }
             else 
             {
@@ -134,7 +127,7 @@ public class HeroManager : MonoBehaviour
     {
         if(collider.CompareTag("Enemy")) 
         {
-            inRangeForBattle = false;
+            // inRangeForBattle = false;
         }
     }
 }

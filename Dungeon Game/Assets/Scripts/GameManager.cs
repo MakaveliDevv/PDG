@@ -21,30 +21,24 @@ public class GameManager : MonoBehaviour
     [Header("Game Management")]
     [SerializeField] private float elapsedGameplayTime = 0f;
     [SerializeField] private float elapsedBattleTime = 0f;
+    public List<DictionaryEntry<GameObject, EnemyManagement>> enemiesEncounterd = new();
     private bool isGameplayTimerActive; 
     private bool isBattleTimerActive;
+    
 
-
-    // UI Management
-    [Header("UI Management")]
-    [SerializeField] private UIManager uIManager;
-
-
-    // Battle Management
     [Header("Battle Management")]
-    public List<DictionaryEntry<GameObject, EnemyManagement>>  enemiesToBattle;
-    public EnemyManagement enemyToAttack;
+    public bool battleMode = false;
     
     
     // Hero Management
     [Header("Hero Management")]
     public GameObject mainHeroPrefab; 
-    public List<DictionaryEntry<int, HeroManager>> heroes = new();
-    public HeroManager heroToAttackWith;
+    public List<DictionaryEntry<GameObject, HeroManager>> heroes = new();
+    // public HeroManager heroToAttackWith;
 
     
     // Enemy Stuff
-    [Header("Enemy Stuff")]
+    [Header("Enemy Management")]
     public List<GameObject> enemyTypes = new();
     public Transform enemiesInSceneGameObjectContainer;
     public int amountOfEnemiesToGenerate;
@@ -65,7 +59,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(this);
         }
 
-        uIManager.Initialize();
+        // battleManager.UIBattleManager.Initialize();
     }
 
     void Start() 
@@ -90,7 +84,7 @@ public class GameManager : MonoBehaviour
 
             case GameState.BATTLE:
                 // Start battle
-                StartCoroutine(BattleMode());
+                BattleMode();
 
                 // SceneManager.LoadScene("BattleScene2");
                 
@@ -117,30 +111,95 @@ public class GameManager : MonoBehaviour
         return SceneManager.GetActiveScene().name == scenename;
     }
 
-    private IEnumerator BattleMode() 
+    private IEnumerator ChangeToBattleScene() 
     {
-        isGameplayTimerActive = false;
-        isBattleTimerActive = true;
-
-        // Open the UI
-        yield return new WaitForSeconds(1f);
-        for (int i = 0; i < heroes.Count; i++)
+        if(!battleMode) 
         {
-            var element = heroes.ElementAt(i);
-            element.Value.heroUIManager.OpenHeroPanelUI();
+            battleMode = true;
+            if(heroes.Count > 0 && enemiesEncounterd.Count > 0) 
+            {
+                foreach (var hero in heroes)
+                {
+                    if(!BattleData.instance.heroesToBattle.Contains(hero)) 
+                    {
+                        BattleData.instance.heroesToBattle.Add(hero);
+                        hero.Key.transform.SetParent(BattleData.instance.transform);
+
+                        GameObject cam = hero.Key.transform.GetChild(0).gameObject;
+                        if(cam != null) 
+                        {
+                            cam.SetActive(false);
+                        }
+                    }
+                }
+                
+                foreach (var enemy in enemiesEncounterd)
+                {
+                    if(!BattleData.instance.enemiesToBattle.Contains(enemy)) 
+                    {
+                        BattleData.instance.enemiesToBattle.Add(enemy);
+                        enemy.Key.transform.SetParent(BattleData.instance.transform);
+                    }
+                }
+            }
+
+            yield return new WaitForSeconds(2f);
+
+            SceneManager.LoadScene("BattleScene2");
+
+            isGameplayTimerActive = false;
+            isBattleTimerActive = true;
+
+            yield break;
+
         }
+
+
         
-        // Open the battle panel
-        if(heroToAttackWith != null) 
+
+        // for (int i = 0; i < heroes.Count; i++)
+        // {
+        //     var element = heroes.ElementAt(i);
+            
+        //     // Open the UI
+        //     element.Value.heroUIManager.OpenHeroPanelUI();
+        // }
+
+        // yield break;
+    }
+
+    private void BattleMode()
+    {
+        StartCoroutine(ChangeToBattleScene());
+
+        // Need a way to pass down the enemies and heroes to the battle scene
+        // Or only set the enemies to battle active and deactivate the rest
+        
+        // if(heroToAttackWith == null) return;
+
+        // heroToAttackWith.heroUIManager.OpenBattlePanel();    
+    }
+
+    public void AddToDictionary<TKey, TValue>
+    (
+        // Dictionary<TKey, TValue> dictionary, 
+        TKey key, 
+        TValue value,
+        List<DictionaryEntry<TKey, TValue>> dictionaryEntry
+    ) 
+    {
+        // if(!dictionary.ContainsKey(key)) 
+        // {
+        //     dictionary.Add(key, value);
+        // }
+
+        var entry = new DictionaryEntry<TKey, TValue> 
         {
-            heroToAttackWith.heroUIManager.OpenBattlePanel();
-        }
+            Key = key,
+            Value = value
+        };
 
-        yield return new WaitForSeconds(1.25f);
-
-        SceneManager.LoadScene("BattleScene2");
-    
-        yield break;
+        dictionaryEntry.Add(entry);
     }
 }
 

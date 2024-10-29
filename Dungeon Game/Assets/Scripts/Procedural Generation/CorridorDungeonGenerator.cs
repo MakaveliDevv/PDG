@@ -83,7 +83,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         }
 
         // Spawn the player
-        GeneratePlayer(GameManager.instance.mainHeroPrefab);
+        GenerateHero(GameManager.instance.mainHeroPrefab);
 
         // Visualize spawn points using TilemapVisualizer
         tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
@@ -118,7 +118,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             var roomFloor = StartRandomWalk(randomWalkParameters, roomPosition);
             var roomBounds = CalculateBounds(roomFloor);
 
-            Debug.Log($"New Room Bounds: {roomBounds}");
+            // Debug.Log($"New Room Bounds: {roomBounds}");
 
             // Check for overlaps
             bool overlaps = roomBoundsList.Any(bounds => BoundsOverlap(bounds, roomBounds));
@@ -290,14 +290,14 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         // Check if the total number of spawned enemies has reached the limit
         if (GameManager.instance.enemyCounter >= GameManager.instance.amountOfEnemiesToGenerate)
         {
-            Debug.Log("Enemy limit reached.");
+            // Debug.Log("Enemy limit reached.");
             return;
         }
 
         // Ensure this spawn point is valid (no nearby enemies)
         if (!CanSpawnEnemyAt(spawnPosition))
         {
-            Debug.Log("Cannot spawn enemy too close to an existing one.");
+            // Debug.Log("Cannot spawn enemy too close to an existing one.");
             return;
         }
 
@@ -327,12 +327,12 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             // Increment the enemy counter
             GameManager.instance.enemyCounter++;
 
-            Debug.Log($"Spawned {enemyPrefab.name} at {worldPosition}. Total enemies: {GameManager.instance.enemyCounter}");
+            // Debug.Log($"Spawned {enemyPrefab.name} at {worldPosition}. Total enemies: {GameManager.instance.enemyCounter}");
         }
-        else 
-        {
-            Debug.LogError("The component 'EnemyManagement' couldn't be found!");
-        }
+        // else 
+        // {
+        //     Debug.LogError("The component 'EnemyManagement' couldn't be found!");
+        // }
 
     }
 
@@ -353,25 +353,25 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         return true;
     }
 
-    private void GeneratePlayer(GameObject _player) 
+    private void GenerateHero(GameObject _hero) 
     {     
         Vector3 roomCenter = roomsList[0].center;
 
-        // Spawn the player at the center
-        GameObject heroGameObject = Instantiate(_player, roomCenter, Quaternion.identity);
+        // Spawn the hero at the center
+        GameObject heroGameObject = Instantiate(_hero, roomCenter, Quaternion.identity);
         heroGameObject.name = "Main Hero";
 
         // Fetch the HeroManager script
         HeroManager hero = heroGameObject.GetComponent<HeroManager>();
-        UIManager.instance.InstantiateHeroPanelUI(hero);
+        // UIManager.instance.InstantiateHeroPanelUI(hero);
 
-        hero.heroUIManager.heroID = 1;
-        int heroID = hero.heroUIManager.heroID;
+        // hero.heroUIManager.heroID = 1;
+        // int heroID = hero.heroUIManager.heroID;
 
         // Add it to the dictionary entry
-        var entry = new DictionaryEntry<int, HeroManager> 
+        var entry = new DictionaryEntry<GameObject, HeroManager> 
         {
-            Key = heroID,
+            Key = heroGameObject,
             Value = hero
         };
 
@@ -442,27 +442,20 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
     {
         if (positions.Count == 0)
         {
-            Debug.LogError("CalculateBounds called with an empty positions set.");
+            // Debug.LogError("CalculateBounds called with an empty positions set.");
             return new BoundsInt(Vector3Int.zero, Vector3Int.zero);
         }
 
         // Log positions
-        Debug.Log($"Positions: {string.Join(", ", positions.Select(p => p.ToString()).ToArray())}");
+        // Debug.Log($"Positions: {string.Join(", ", positions.Select(p => p.ToString()).ToArray())}");
 
         Vector2Int min = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Min(acc.x, pos.x), Mathf.Min(acc.y, pos.y)));
         Vector2Int max = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Max(acc.x, pos.x), Mathf.Max(acc.y, pos.y)));
         BoundsInt bounds = new BoundsInt(new Vector3Int(min.x, min.y, 0), new Vector3Int(max.x - min.x + 1, max.y - min.y + 1, 1));
         
-        Debug.Log($"Room Bounds: Min: {min}, Max: {max}, Size: {bounds.size}");
+        // Debug.Log($"Room Bounds: Min: {min}, Max: {max}, Size: {bounds.size}");
         return bounds;
-}
-
-    // private BoundsInt CalculateBounds(HashSet<Vector2Int> positions)
-    // {
-    //     Vector2Int min = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Min(acc.x, pos.x), Mathf.Min(acc.y, pos.y)));
-    //     Vector2Int max = positions.Aggregate((acc, pos) => new Vector2Int(Mathf.Max(acc.x, pos.x), Mathf.Max(acc.y, pos.y)));
-    //     return new BoundsInt(new Vector3Int(min.x, min.y, 0), new Vector3Int(max.x - min.x + 1, max.y - min.y + 1, 1));
-    // }
+    }
 
     private bool BoundsOverlap(BoundsInt boundsA, BoundsInt boundsB)
     {
