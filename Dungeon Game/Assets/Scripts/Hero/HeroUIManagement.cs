@@ -28,7 +28,7 @@ public class HeroUIManagement : HeroStats
     [SerializeField] private Button heroDeselectBtn = null;
     [SerializeField] private Button toBattlePanelBtn = null;
     [SerializeField] private Button closeBattlePanelBtn = null;
-    [SerializeField] private List<Button> ConfirmButtons = null;
+    [SerializeField] private List<DictionaryEntry<string, Button>> confirmButtons = new();
 
     // Panels
     [Header("Panels")]
@@ -36,6 +36,40 @@ public class HeroUIManagement : HeroStats
     public Transform battlePanel = null;
     public Transform buttonInputContainer = null;
     public GameObject heroPanelSelector = null;
+
+    [Header("Panels 2")]
+    [SerializeField] private Transform selectTargetPanel = null;
+    [SerializeField] private Transform actionPanels = null;
+
+    [SerializeField] private Transform selectActionPanels = null;
+
+    [SerializeField] private Transform selectActionTypePanel = null;
+    [SerializeField] private Transform selectAttackTypePanel = null;
+    [SerializeField] private Transform selectDefenseTypePanel = null;
+
+    [SerializeField] private Transform performActionPanels = null;
+    [SerializeField] private Transform performAttackPanel = null;
+    [SerializeField] private Transform performDefensePanel = null;
+
+    [SerializeField] private Transform performWeaponAttackPanel = null;
+    [SerializeField] private Transform performMagicAttackPanel = null;
+
+    [SerializeField] private Transform performShieldDefPanel = null;
+    [SerializeField] private Transform performBuffDefPanel = null;
+    [SerializeField] private Transform performDebuffDefPanel = null;
+
+    [Header("Confirm Buttons")]
+    [SerializeField] private Button confirmButton_SelectTarget = null;
+    [SerializeField] private Button confirmButton_SelectActionType = null;
+    [SerializeField] private Button confirmButton_SelectAttackType = null;
+    [SerializeField] private Button confirmButton_SelectDefType = null;
+
+    [SerializeField] private Button confirmButton_Watt = null;
+    [SerializeField] private Button confirmButton_Matt = null;
+
+    [SerializeField] private Button confirm_ShieldDef = null;
+    [SerializeField] private Button confirm_BuffDef = null;
+    [SerializeField] private Button confirm_DebuffDef = null;
 
     // Booleans
     [Header("Booleans")]
@@ -50,43 +84,124 @@ public class HeroUIManagement : HeroStats
         buttonInputContainer = battlePanel.GetChild(0).GetChild(1);
         heroPanelSelector = heroPanelUI.transform.GetChild(2).gameObject;
 
-        Transform selectTargetPanel = battlePanel.GetChild(0);
-        Transform actionPanels = battlePanel.GetChild(1);
+        selectTargetPanel = battlePanel.GetChild(0);
+        actionPanels = battlePanel.GetChild(1);
 
         // Select Action Panels
-        Transform selectActionPanels = actionPanels.GetChild(0);
+        selectActionPanels = actionPanels.GetChild(0);
 
-        Transform selectActionTypePanel = selectActionPanels.GetChild(0); 
-        Transform selectAttackTypePanel = selectActionPanels.GetChild(1);
-        Transform selectDefenseTypePanel = selectActionPanels.GetChild(2);
+        selectActionTypePanel = selectActionPanels.GetChild(0); 
+        selectAttackTypePanel = selectActionPanels.GetChild(1);
+        selectDefenseTypePanel = selectActionPanels.GetChild(2);
 
         // Perform Action Panels
-        Transform performActionPanels = actionPanels.GetChild(1);
-        Transform performAttackPanel = performActionPanels.GetChild(0);
-        Transform performDefensePanel = performActionPanels.GetChild(1);
+        performActionPanels = actionPanels.GetChild(1);
+        performAttackPanel = performActionPanels.GetChild(0);
+        performDefensePanel = performActionPanels.GetChild(1);
 
         // Perform Attack Panels
-        Transform performWeaponAttackPanel = performAttackPanel.GetChild(0); // Watt
-        Transform performMagicAttackPanel = performAttackPanel.GetChild(1); // Matt
+        performWeaponAttackPanel = performAttackPanel.GetChild(0); // Watt
+        performMagicAttackPanel = performAttackPanel.GetChild(1); // Matt
 
         // Perform Defense Panels
-        Transform performShieldDefPanel = performDefensePanel.GetChild(0);
-        Transform performBuffDefPanel = performDefensePanel.GetChild(1);
-        Transform performDebuffDefPanel = performDefensePanel.GetChild(2);
+        performShieldDefPanel = performDefensePanel.GetChild(0);
+        performBuffDefPanel = performDefensePanel.GetChild(1);
+        performDebuffDefPanel = performDefensePanel.GetChild(2);
 
         // Initialize Confirm Buttons
-        Button confirmButton_SelectTarget = selectTargetPanel.GetChild(2).GetComponent<Button>(); // Select target confirm button
-        Button confirmButton_SelectActionType = selectActionTypePanel.GetChild(2).GetComponent<Button>(); // Select ation type confirm button
-        Button confirmButton_SelectAttackType = selectAttackTypePanel.GetChild(2).GetComponent<Button>(); // Select attack type confirm button
-        Button confirmButton_SelectDefTypePanel = selectDefenseTypePanel.GetChild(2).GetComponent<Button>(); // Select defense type confirm button
+        confirmButton_SelectTarget = selectTargetPanel.GetChild(1).GetComponent<Button>(); // Select target confirm button
+        confirmButton_SelectActionType = selectActionTypePanel.GetChild(1).GetComponent<Button>(); // Select ation type confirm button
+        confirmButton_SelectAttackType = selectAttackTypePanel.GetChild(1).GetComponent<Button>(); // Select attack type confirm button
+        confirmButton_SelectDefType = selectDefenseTypePanel.GetChild(1).GetComponent<Button>(); // Select defense type confirm button
 
-        Button confirmButton_WattPanel = performWeaponAttackPanel.GetChild(2).GetComponent<Button>(); // Watt panel
-        Button confirmButton_MattPanel = performMagicAttackPanel.GetChild(2).GetComponent<Button>(); // Matt panel     
+        confirmButton_Watt = performWeaponAttackPanel.GetChild(1).GetComponent<Button>(); // Watt panel
+        confirmButton_Matt = performMagicAttackPanel.GetChild(1).GetComponent<Button>(); // Matt panel     
 
-        Button confirm_ShieldDefPanel = performShieldDefPanel.GetChild(2).GetComponent<Button>(); // Shield def panel
-        Button confirm_BuffDefPanel = performBuffDefPanel.GetChild(2).GetComponent<Button>(); // Buff def panel
-        Button confirm_DebuffDefPanel = performDebuffDefPanel.GetChild(2).GetComponent<Button>(); // Debuff def panel
+        confirm_ShieldDef = performShieldDefPanel.GetChild(1).GetComponent<Button>(); // Shield def panel
+        confirm_BuffDef = performBuffDefPanel.GetChild(1).GetComponent<Button>(); // Buff def panel
+        confirm_DebuffDef = performDebuffDefPanel.GetChild(1).GetComponent<Button>(); // Debuff def panel
 
+        
+        // Select Target Confirm Button
+        var selectTargetButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirmButton_SelectTarget.name,
+            Value = confirmButton_SelectTarget
+        };
+
+        confirmButtons.Add(selectTargetButtonEntry);
+
+        // Select Action Type Confirm Button
+        var selectActionTypeButtonEntry = new DictionaryEntry<string, Button> 
+        {   
+            Key = confirmButton_SelectActionType.name,
+            Value = confirmButton_SelectActionType
+        };
+
+        confirmButtons.Add(selectActionTypeButtonEntry);
+
+        // Select Attack Type Confirm Button
+        var selectAttackTypeButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirmButton_SelectAttackType.name,
+            Value = confirmButton_SelectAttackType
+        };
+        
+        confirmButtons.Add(selectAttackTypeButtonEntry);
+
+        // Select Def Type Confirm Button
+        var selectDefTypeButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirmButton_SelectDefType.name,
+            Value = confirmButton_SelectDefType
+        };
+
+        confirmButtons.Add(selectDefTypeButtonEntry);
+
+        // Weapon Attack Confirm Button
+        var wattConfirmButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirmButton_Watt.name,
+            Value = confirmButton_Watt
+        };
+
+        confirmButtons.Add(wattConfirmButtonEntry);
+
+        // Magic Attack Confirm Button
+        var mattConfirmButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirmButton_Matt.name,
+            Value = confirmButton_Matt
+        };
+
+        confirmButtons.Add(mattConfirmButtonEntry);
+
+        // Shield Def Confirm Button
+        var shieldDefButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirm_ShieldDef.name,
+            Value = confirm_ShieldDef
+        };
+
+        confirmButtons.Add(shieldDefButtonEntry);
+
+        // Buff Def Confirm Button
+        var buffDefButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirm_BuffDef.name,
+            Value = confirm_BuffDef
+        };
+
+        confirmButtons.Add(buffDefButtonEntry);
+
+        // Debuff Def Confirm Button
+        var debuffButtonEntry = new DictionaryEntry<string, Button> 
+        {
+            Key = confirm_DebuffDef.name,
+            Value = confirm_DebuffDef
+        };
+
+        confirmButtons.Add(debuffButtonEntry);
     }
 
     private void InitializeButtons()
