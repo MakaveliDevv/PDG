@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class HeroManager : MonoBehaviour
 {
@@ -10,8 +9,7 @@ public class HeroManager : MonoBehaviour
     private Rigidbody2D rb;
     // private bool inRangeForBattle;
     public float timeToMove = .2f;
-    private bool targetButtonsCreated = false;
-
+    
     void Awake() 
     {
         heroMovement = new();
@@ -22,18 +20,6 @@ public class HeroManager : MonoBehaviour
     void Update() 
     {  
         InputManagment();
-        Swag();
-    }
-
-    private void Swag () 
-    {
-        // If battle scene is active
-        if(SceneManager.GetActiveScene().name == "BattleScene2") 
-        {
-            // StartCoroutine(heroUIManager.CreateTargetButtons(BattleManager.instance.UIBattleManager));
-            StartCoroutine(heroUIManager.CreateTargetButtons(BattleManager.instance.UIBattleManager.targetButtonsEntry, BattleManager.instance.UIBattleManager.buttonPrefab));
-            heroUIManager.SelectHero();
-        }   
     }
 
     public void InputManagment()

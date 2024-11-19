@@ -153,19 +153,6 @@ public class GameManager : MonoBehaviour
             yield break;
 
         }
-
-
-        
-
-        // for (int i = 0; i < heroes.Count; i++)
-        // {
-        //     var element = heroes.ElementAt(i);
-            
-        //     // Open the UI
-        //     element.Value.heroUIManager.OpenHeroPanelUI();
-        // }
-
-        // yield break;
     }
 
     private void BattleMode()
@@ -188,11 +175,6 @@ public class GameManager : MonoBehaviour
         List<DictionaryEntry<TKey, TValue>> dictionaryEntry
     ) 
     {
-        // if(!dictionary.ContainsKey(key)) 
-        // {
-        //     dictionary.Add(key, value);
-        // }
-
         var entry = new DictionaryEntry<TKey, TValue> 
         {
             Key = key,

@@ -7,8 +7,11 @@ public class BattleManager : MonoBehaviour
     public static BattleManager instance;
     public List<DictionaryEntry<GameObject, HeroManager>> heroesInBattle = new();
     public List<DictionaryEntry<GameObject, EnemyManagement>> enemiesInBattle = new();
-    public EnemyManagement enemyToAttack;
     public bool battleMode = false;
+
+    // -------------
+    public bool heroPanelInitialized = false;
+    public GameObject targetToAttack = null;
     
 
     [Header("UI Battle Manager")]
@@ -25,8 +28,6 @@ public class BattleManager : MonoBehaviour
         {
             instance = this;
         }
-
-        // UIBattleManager.InitializeInstance();
 
         // Check
         if(BattleData.instance.heroesToBattle.Count <= 0 && 
@@ -47,19 +48,34 @@ public class BattleManager : MonoBehaviour
 
     void Start() 
     {
-        // Initialize hero panel
-       StartCoroutine(InitializeHeroPanel());
+        StartCoroutine(InitializeHeroUI());
     }
 
 
-    private IEnumerator InitializeHeroPanel() 
+    private IEnumerator InitializeHeroUI() 
     {
-        yield return new WaitForSeconds(1.5f);  // Initial wait to ensure everything is set up.
+        InitializeHeroPanel();
+
+        yield return new WaitForEndOfFrame();
+        
+        foreach (var element in heroesInBattle)
+        {
+            var hero = element.Value;
+            hero.heroUIManager.CreateTargetButtons(UIBattleManager.targetButtonsEntry, UIBattleManager.buttonPrefab);
+            hero.heroUIManager.SelectHero();
+        }
+
+        yield break;
+    }
+
+    private void InitializeHeroPanel() 
+    {
+        if(heroPanelInitialized) return;
 
         if (heroesInBattle.Count == 0)
         {
             Debug.LogError("No heroes found in heroesInBattle");
-            yield break;
+            return;
         }
 
         foreach (var hero in heroesInBattle)
@@ -68,6 +84,7 @@ public class BattleManager : MonoBehaviour
             {
                 Debug.Log($"{hero.Value} found in the heroes in battle dictionary");
                 UIBattleManager.InstantiateHeroPanelUI(hero.Value, this);
+                heroPanelInitialized = true;
             }
             else
             {
@@ -75,5 +92,4 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-
 }
