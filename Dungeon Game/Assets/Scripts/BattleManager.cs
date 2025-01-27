@@ -56,13 +56,12 @@ public class BattleManager : MonoBehaviour
     {
         InitializeHeroPanel();
 
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForFixedUpdate();
         
-        foreach (var element in heroesInBattle)
+        foreach (var _hero in heroesInBattle)
         {
-            var hero = element.Value;
-            hero.heroUIManager.CreateTargetButtons(UIBattleManager.targetButtonsEntry, UIBattleManager.buttonPrefab);
-            hero.heroUIManager.SelectHero();
+            _hero.Value.heroUIManager.CreateTargetButtons(UIBattleManager.targetButtonsEntry, UIBattleManager.buttonPrefab);
+            _hero.Value.heroUIManager.SelectHero();
         }
 
         yield break;

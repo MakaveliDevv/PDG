@@ -107,101 +107,6 @@ public class HeroUIManagement : HeroStats
         performShieldDefPanel = performDefensePanel.GetChild(0);
         performBuffDefPanel = performDefensePanel.GetChild(1);
         performDebuffDefPanel = performDefensePanel.GetChild(2);
-
-        // Initialize Confirm Buttons
-        confirmButton_SelectTarget = selectTargetPanel.GetChild(1).GetComponent<Button>(); // Select target confirm button
-        confirmButton_SelectActionType = selectActionTypePanel.GetChild(1).GetComponent<Button>(); // Select ation type confirm button
-        confirmButton_SelectAttackType = selectAttackTypePanel.GetChild(1).GetComponent<Button>(); // Select attack type confirm button
-        confirmButton_SelectDefType = selectDefenseTypePanel.GetChild(1).GetComponent<Button>(); // Select defense type confirm button
-
-        confirmButton_Watt = performWeaponAttackPanel.GetChild(1).GetComponent<Button>(); // Watt panel
-        confirmButton_Matt = performMagicAttackPanel.GetChild(1).GetComponent<Button>(); // Matt panel     
-
-        confirm_ShieldDef = performShieldDefPanel.GetChild(1).GetComponent<Button>(); // Shield def panel
-        confirm_BuffDef = performBuffDefPanel.GetChild(1).GetComponent<Button>(); // Buff def panel
-        confirm_DebuffDef = performDebuffDefPanel.GetChild(1).GetComponent<Button>(); // Debuff def panel
-
-        
-        // Select Target Confirm Button
-        var selectTargetButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirmButton_SelectTarget.name,
-            Value = confirmButton_SelectTarget
-        };
-
-        confirmButtons.Add(selectTargetButtonEntry);
-
-        // Select Action Type Confirm Button
-        var selectActionTypeButtonEntry = new DictionaryEntry<string, Button> 
-        {   
-            Key = confirmButton_SelectActionType.name,
-            Value = confirmButton_SelectActionType
-        };
-
-        confirmButtons.Add(selectActionTypeButtonEntry);
-
-        // Select Attack Type Confirm Button
-        var selectAttackTypeButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirmButton_SelectAttackType.name,
-            Value = confirmButton_SelectAttackType
-        };
-        
-        confirmButtons.Add(selectAttackTypeButtonEntry);
-
-        // Select Def Type Confirm Button
-        var selectDefTypeButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirmButton_SelectDefType.name,
-            Value = confirmButton_SelectDefType
-        };
-
-        confirmButtons.Add(selectDefTypeButtonEntry);
-
-        // Weapon Attack Confirm Button
-        var wattConfirmButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirmButton_Watt.name,
-            Value = confirmButton_Watt
-        };
-
-        confirmButtons.Add(wattConfirmButtonEntry);
-
-        // Magic Attack Confirm Button
-        var mattConfirmButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirmButton_Matt.name,
-            Value = confirmButton_Matt
-        };
-
-        confirmButtons.Add(mattConfirmButtonEntry);
-
-        // Shield Def Confirm Button
-        var shieldDefButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirm_ShieldDef.name,
-            Value = confirm_ShieldDef
-        };
-
-        confirmButtons.Add(shieldDefButtonEntry);
-
-        // Buff Def Confirm Button
-        var buffDefButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirm_BuffDef.name,
-            Value = confirm_BuffDef
-        };
-
-        confirmButtons.Add(buffDefButtonEntry);
-
-        // Debuff Def Confirm Button
-        var debuffButtonEntry = new DictionaryEntry<string, Button> 
-        {
-            Key = confirm_DebuffDef.name,
-            Value = confirm_DebuffDef
-        };
-
-        confirmButtons.Add(debuffButtonEntry);
     }
 
     private void InitializeButtons()
@@ -210,6 +115,44 @@ public class HeroUIManagement : HeroStats
         heroDeselectBtn = heroPanelUI.transform.GetChild(4).GetComponent<Button>();
         toBattlePanelBtn = statsPanel.transform.GetChild(2).GetComponent<Button>();
         closeBattlePanelBtn = battlePanel.transform.GetChild(3).GetComponent<Button>();
+
+        // Confirm Buttons
+
+        // Select target confirm button
+        confirmButton_SelectTarget = selectTargetPanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirmButton_SelectTarget.name = "ConfirmButton_SelectTarget";
+
+        // Select ation type confirm button
+        confirmButton_SelectActionType = selectActionTypePanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirmButton_SelectActionType.name = "ConfirmButton_SelectActionType";
+
+        // Select attack type confirm button
+        confirmButton_SelectAttackType = selectAttackTypePanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirmButton_SelectAttackType.name = "ConfirmButton_SelectAttackType";
+
+        // Select defense type confirm button
+        confirmButton_SelectDefType = selectDefenseTypePanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirmButton_SelectDefType.name = "ConfirmButton_SelectDefType";
+        
+        // Watt panel
+        confirmButton_Watt = performWeaponAttackPanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirmButton_Watt.name = "ConfirmButton_Watt";
+        
+        // Matt panel
+        confirmButton_Matt = performMagicAttackPanel.GetChild(2).transform.GetChild(0).GetComponent<Button>();      
+        confirmButton_Matt.name = "ConfirmButton_Matt";
+
+        // Shield def panel
+        confirm_ShieldDef = performShieldDefPanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirm_ShieldDef.name = "ConfirmButton_ShieldDef";
+        
+        // Buff def panel
+        confirm_BuffDef = performBuffDefPanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirm_BuffDef.name = "ConfirmButton_BuffDef";
+        
+        // Debuff def panel
+        confirm_DebuffDef = performDebuffDefPanel.GetChild(2).transform.GetChild(0).GetComponent<Button>(); 
+        confirm_DebuffDef.name = "ConfirmButon_DebuffDef";
     }
 
     public IEnumerator AssignHeroUIStatsElements(MonoBehaviour monoBehaviour)
@@ -385,48 +328,61 @@ public class HeroUIManagement : HeroStats
         isBattlePanelOpen = false;
     }
 
-    public void CreateTargetButtons(List<DictionaryEntry<string, Button>> dictionaryEntry, GameObject buttonPrefab)
-    {
-        if (targetButtonsCreated) return;
+    public void CreateTargetButtons(List<DictionaryEntry<string, GameObject>> dictionaryEntry, GameObject buttonPrefab)
+    {   
+        if (targetButtonsCreated) return; // If  button already created, return
 
+        // Check for enemies
         if (BattleManager.instance.enemiesInBattle.Count <= 0)
         {
             Debug.LogError("No enemies found!");
             return;
         }
 
-        foreach (var enemy in BattleManager.instance.enemiesInBattle)
+        // Loop through the dictionary
+        foreach (var element in BattleManager.instance.enemiesInBattle)
         {
-            if (!enemy.Value.hasTargetButtonCreated)
+            // If button hasn't been created yet (just a double check)
+            if (!element.Value.hasTargetButtonCreated)
             {
-                GameObject targetButton = Object.Instantiate(buttonPrefab, buttonInputContainer);
-                targetButton.name = enemy.Value.enemyStats.Name;
+                // Create button
+                element.Value.hasTargetButtonCreated = true;
                 
-                // Set up button component and text
-                if (targetButton.TryGetComponent<Button>(out var btn))
+                // Create target button
+                GameObject targetButton = Object.Instantiate(buttonPrefab, buttonInputContainer);
+                
+                // Assign the enemy name to the target button
+                targetButton.name = element.Value.enemyStats.Name;
+                
+                // Fetch button component and text
+                if (targetButton.TryGetComponent<Button>(out var _targetButton))
                 {
                     var buttonText = targetButton.GetComponentInChildren<TextMeshProUGUI>();
                     if (buttonText != null)
                     {
-                        buttonText.text = enemy.Value.enemyStats.Name;
+                        // Assign the name of the enemy to the UI text
+                        buttonText.text = element.Value.enemyStats.Name;
                     }
-
+                    
+                    foreach (var _element in dictionaryEntry)
+                    {
+                        
+                    }
                     // Add button to the dictionary
-                    dictionaryEntry.Add(new DictionaryEntry<string, Button>
+                    dictionaryEntry.Add(new DictionaryEntry<string, GameObject>
                     {
                         Key = targetButton.name,
-                        Value = btn
+                        Value = _targetButton.gameObject
                     });
 
                     // Assign a click listener with debug
-                    btn.onClick.RemoveAllListeners();
-                    btn.onClick.AddListener(() =>
+                    _targetButton.onClick.RemoveAllListeners();
+                    _targetButton.onClick.AddListener(() =>
                     {
-                        Debug.Log("Button clicked! Attempting to select target.");
+                        Debug.Log($"Enemy: {_targetButton.name} is selected");
                         SelectTarget(dictionaryEntry);
                     });
 
-                    enemy.Value.hasTargetButtonCreated = true;
                 }
                 else
                 {
@@ -438,26 +394,40 @@ public class HeroUIManagement : HeroStats
         targetButtonsCreated = true;
     }
 
-    public void SelectTarget(List<DictionaryEntry<string, Button>> dictionaryEntry)
+    public void SelectTarget(List<DictionaryEntry<string, GameObject>> dictionaryEntry)
     {
         var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
         Debug.Log($"Select target button pressed: {selectedButton}");
 
+        Debug.Log($"{selectedButton.name}");
+
         if (selectedButton != null)
         {
-            foreach (var entry in dictionaryEntry)
+            var buttonEntry = new DictionaryEntry<string, GameObject> 
             {
-                if (entry.Value.gameObject == selectedButton)
+                Key = selectedButton.gameObject.name,
+                Value = selectedButton
+            };
+            
+            dictionaryEntry.Add(buttonEntry);
+
+            Debug.Log("Button entry added");
+
+            foreach (var enemy in BattleManager.instance.enemiesInBattle)
+            {
+                Debug.Log("Inside the foreach loop");
+                if (selectedButton.name == enemy.Value.enemyStats.Name)
                 {
-                    foreach (var enemy in BattleManager.instance.enemiesInBattle)
+                    Debug.Log("Selected button name is the same as the enemy name");
+                    Button btn = selectedButton.GetComponent<Button>();
+                    
+                    btn.onClick.AddListener(() => 
                     {
-                        if (selectedButton.name == enemy.Value.enemyStats.Name)
-                        {
-                            BattleManager.instance.targetToAttack = enemy.Value.gameObject;
-                            Debug.Log($"Target selected: {enemy.Value.enemyStats.Name}");
-                            return;
-                        }
-                    }
+                        BattleManager.instance.targetToAttack = enemy.Value.gameObject;
+                        Debug.Log($"Target selected: {enemy.Value.enemyStats.Name}");
+                    });
+                    
+                    return;
                 }
             }
         }
@@ -466,6 +436,4 @@ public class HeroUIManagement : HeroStats
             Debug.LogError("No button selected.");
         }
     }
-
-    
 }

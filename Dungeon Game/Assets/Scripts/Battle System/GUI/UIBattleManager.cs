@@ -9,8 +9,8 @@ public class UIBattleManager
     public GameObject heroPanelUIPrefab;
     public GameObject buttonPrefab, heroesPanel;
     public List<DictionaryEntry<HeroManager, GameObject>> heroPanelStatsEntry = new();
-    private readonly Dictionary<HeroManager, GameObject> heroPanelStats = new();
-    public List<DictionaryEntry<string, Button>> targetButtonsEntry;
+    // private readonly Dictionary<HeroManager, GameObject> heroPanelStats = new();
+    public List<DictionaryEntry<string, GameObject>> targetButtonsEntry;
 
     public void InstantiateHeroPanelUI(HeroManager hero, MonoBehaviour monoBehaviour) 
     {
