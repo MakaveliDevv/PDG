@@ -263,22 +263,8 @@ MonoBehaviour:
     Name: Main Hero
     level: 1
     EXP: 0
-    heroName_text: {fileID: 0}
-    lvl_text: {fileID: 0}
-    hp_text: {fileID: 0}
-    mp_text: {fileID: 0}
-    watt_text: {fileID: 0}
-    matt_text: {fileID: 0}
-    weaponDef_text: {fileID: 0}
-    magicDef_text: {fileID: 0}
     icon: {fileID: 21300000, guid: 8fa024343012df24093b1c0d3dbae285, type: 3}
     heroPanelUI: {fileID: 0}
-    isPanelOpen: 0
-    heroStuff: {fileID: 0}
-    battlePanel: {fileID: 0}
-    buttonInputContainer: {fileID: 0}
-    battlePanelOpened: 0
-    isheroSelected: 0
   timeToMove: 0.02
 --- !u!1 &8737899637850468474
 GameObject:

@@ -30,8 +30,13 @@ public class CharacterStats
     [Header("Attacks")]
     public List<BaseAction> physicalAttacks = new();
     public List<BaseAction> magicAttacks = new();
-    public List<BaseAction> buffs = new();
 
+    [Header("Defense")]
+    public List<BaseAction> defenseAbilities = new();
+    
+    [Header("Buffs")]
+    public List<BaseAction> buffs = new();
+    
     public virtual void CustomAwake() 
     {
         currentHP = maxHP;

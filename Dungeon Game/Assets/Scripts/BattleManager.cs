@@ -5,16 +5,22 @@ using UnityEngine;
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager instance;
+
+    [Header("Heroes & Enemies in battle")]
     public List<DictionaryEntry<GameObject, HeroManager>> heroesInBattle = new();
     public List<DictionaryEntry<GameObject, EnemyManagement>> enemiesInBattle = new();
-    public bool battleMode = false;
+    // public bool battleMode = false;
 
     // -------------
-    public bool heroPanelInitialized = false;
+    private bool heroPanelInitialized = false;
     public GameObject targetToAttack = null;
+
+    [Header("Heroes & Enemies positions")]
+    [SerializeField] private List<GameObject> heroesPosition;
+    [SerializeField] private List<GameObject> enemeisPosition;
     
 
-    [Header("UI Battle Manager")]
+    [Header("UI related stuff")]
     public UIBattleManager UIBattleManager; 
     
 
@@ -49,8 +55,31 @@ public class BattleManager : MonoBehaviour
     void Start() 
     {
         StartCoroutine(InitializeHeroUI());
+        InitializePosition();
     }
 
+    private void InitializePosition() 
+    {
+        if(heroesInBattle.Count > 0 && enemeisPosition.Count > 0) 
+        {
+            if(heroesPosition != null && enemeisPosition != null) 
+            {
+                // Handle heroes
+                for (int i = 0; i < heroesInBattle.Count; i++)
+                {
+                    heroesInBattle[i].Key.transform.position = heroesPosition[i].transform.position;
+                }
+
+                // Handle enemies
+                for (int i = 0; i < enemiesInBattle.Count; i++)
+                {
+                    enemiesInBattle[i].Key.transform.position = enemeisPosition[i].transform.position;
+                }
+            }
+            else { Debug.LogError("Positions need to be assigned!"); }
+        }
+        else { Debug.LogError("No heroes and/or enemies found!"); }
+    }
 
     private IEnumerator InitializeHeroUI() 
     {
@@ -62,6 +91,8 @@ public class BattleManager : MonoBehaviour
         {
             _hero.Value.heroUIManager.CreateTargetButtons(UIBattleManager.targetButtonsEntry, UIBattleManager.buttonPrefab);
             _hero.Value.heroUIManager.SelectHero();
+            _hero.Value.heroUIManager.SelectAction();
+            _hero.Value.heroUIManager.SelectAttack();
         }
 
         yield break;
