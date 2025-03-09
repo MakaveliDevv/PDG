@@ -1,13 +1,90 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyManagement : MonoBehaviour 
 {
     public EnemyStats enemyStats;
     public bool hasTargetButtonCreated = false;
+    public string currentSceneName;
 
     void Start() 
     {
         enemyStats.CustomAwake();
+        StartCoroutine(SceneCheckCoroutine());
+    }
+
+    private void CheckSceneName()
+    {
+        currentSceneName = SceneManager.GetActiveScene().name;
+        // Debug.Log($"Current Scene: {currentSceneName}");
+
+        if (currentSceneName == "BattleScene2")
+        {
+            if (BattleManager.instance.turnState == TurnState.ENEMY_TURN)
+            {
+                PerformAction();
+            }
+        }
+    }
+
+    IEnumerator SceneCheckCoroutine()
+    {
+        while (true)
+        {
+            CheckSceneName();
+            yield return new WaitForSeconds(2f); 
+        }
+    }
+
+    private BaseAction FetchRandomAttack() 
+    {
+        if (BattleManager.instance.turnState == TurnState.ENEMY_TURN) 
+        {
+            if (enemyStats.physicalAttacks.Count == 0)
+            {
+                Debug.LogWarning("No physical attacks available for this enemy.");
+                return null;
+            }
+
+            int randomIndex = Random.Range(0, enemyStats.physicalAttacks.Count);
+            BaseAction selectedAttack = enemyStats.physicalAttacks[randomIndex];
+
+            Debug.Log($"Enemy selected attack: {selectedAttack.Name}");
+
+            return selectedAttack;
+        }
+
+        return null;
+    }
+
+    private GameObject ChooseRandomTarget() 
+    {
+        if(BattleManager.instance.turnState == TurnState.ENEMY_TURN) 
+        {
+            if(BattleManager.instance.heroesInBattle.Count == 0) 
+            {
+                Debug.LogWarning($"No heroes found in the 'heroes in battle' list.");
+                return null;
+            }
+
+            int randomIndex = Random.Range(0, BattleManager.instance.heroesInBattle.Count);
+            GameObject selectedHero = BattleManager.instance.heroesInBattle[randomIndex].Key;
+
+            return selectedHero;
+
+        }
+
+        return null;
+    }
+
+    private void PerformAction() 
+    {
+        BaseAction action = FetchRandomAttack();
+        GameObject player = ChooseRandomTarget(); 
+        
+        action.PerformAction(this, gameObject, player.transform);
+        BattleManager.instance.turnState = TurnState.HERO_TURN;
     }
 }
 

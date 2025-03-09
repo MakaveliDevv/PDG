@@ -19,9 +19,9 @@ public class GameManager : MonoBehaviour
 
     // Game Management
     [Header("Game Management")]
+    public List<DictionaryEntry<GameObject, EnemyManagement>> enemiesEncounterd = new();
     [SerializeField] private float elapsedGameplayTime = 0f;
     [SerializeField] private float elapsedBattleTime = 0f;
-    public List<DictionaryEntry<GameObject, EnemyManagement>> enemiesEncounterd = new();
     private bool isGameplayTimerActive; 
     private bool isBattleTimerActive;
     
@@ -34,8 +34,6 @@ public class GameManager : MonoBehaviour
     [Header("Hero Management")]
     public GameObject mainHeroPrefab; 
     public List<DictionaryEntry<GameObject, HeroManager>> heroes = new();
-    // public HeroManager heroToAttackWith;
-
     
     // Enemy Stuff
     [Header("Enemy Management")]
@@ -45,6 +43,13 @@ public class GameManager : MonoBehaviour
     public float checkForSpawnPointRadius = 5f; 
     [HideInInspector] public List<GameObject> enemiesInGame = new();
     [HideInInspector] public int enemyCounter;
+
+    [Header("Items Management")]
+    public List<GameObject> items = new();
+    public int amountOfItemsToGenerate;
+    public float spawnRadius = 5f;
+
+    
 
 
     void Awake()
@@ -86,10 +91,6 @@ public class GameManager : MonoBehaviour
                 // Start battle
                 BattleMode();
 
-                // SceneManager.LoadScene("BattleScene2");
-                
-                // StartBattleScene();
-
             break;
         }
 
@@ -102,7 +103,6 @@ public class GameManager : MonoBehaviour
         if (condition)
         {
             timer += Time.deltaTime;
-            // UpdateTimerText(timer);
         }
     }
 
@@ -157,14 +157,7 @@ public class GameManager : MonoBehaviour
 
     private void BattleMode()
     {
-        StartCoroutine(ChangeToBattleScene());
-
-        // Need a way to pass down the enemies and heroes to the battle scene
-        // Or only set the enemies to battle active and deactivate the rest
-        
-        // if(heroToAttackWith == null) return;
-
-        // heroToAttackWith.heroUIManager.OpenBattlePanel();    
+        StartCoroutine(ChangeToBattleScene());   
     }
 
     public void AddToDictionary<TKey, TValue>

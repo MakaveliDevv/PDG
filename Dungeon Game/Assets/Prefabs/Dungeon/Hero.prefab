@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1880843954044416240}
   m_Layer: 0
   m_Name: Hero
-  m_TagString: Untagged
+  m_TagString: Hero
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -256,8 +256,10 @@ MonoBehaviour:
       modifiers: []
       minValue: 0
       maxValue: 0
-    physicalAttacks: []
+    physicalAttacks:
+    - {fileID: 11400000, guid: 556d1039335d1d14e82d97861cf2f7f6, type: 2}
     magicAttacks: []
+    shieldAbilities: []
     buffs: []
     heroID: 0
     Name: Main Hero
@@ -265,6 +267,9 @@ MonoBehaviour:
     EXP: 0
     icon: {fileID: 21300000, guid: 8fa024343012df24093b1c0d3dbae285, type: 3}
     heroPanelUI: {fileID: 0}
+    actionButtons: []
+    actionButtonsCreated: 0
+    wattActionToPerform: 
   timeToMove: 0.02
 --- !u!1 &8737899637850468474
 GameObject:

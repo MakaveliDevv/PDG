@@ -28,8 +28,8 @@ public class HeroUIManagement : HeroStats
     private Button closeBattlePanelBtn = null;
 
     // LIST OF BUTTONS
-    private readonly List<Button> selectActionTypeBtns = new();
-    private readonly List<Button> selectAttackTypeBtns = new();
+    private List<Button> selectActionTypeBtns = new();
+    private List<Button> selectAttackTypeBtns = new();
     private List<Button> selectDefenseTypeBtns = new();
 
     // MAIN PANELS
@@ -72,12 +72,26 @@ public class HeroUIManagement : HeroStats
     private Button confirm_BuffDef = null;
     private Button confirm_DebuffDef = null;
 
-    // private bool isHeroPanelOpen = false;
+    public List<GameObject> actionButtons = new();
+
     private bool isBattlePanelOpen = false;
     private bool isHeroSelected = false;
     private bool targetButtonsCreated = false; 
     private bool targetSelected;
-    
+
+    // OTHER STUFF
+    private string defenseType = "";
+    private bool defenseTypeSelected;
+
+    private string attackType = "";
+    private bool attackTypeSelected;
+
+    private string actionType = "";
+    private bool actionTypeSelected;
+    public bool actionButtonsCreated;
+
+    public string wattActionToPerform = "";
+    private bool wattActionToPerformSelected;
 
     private void InitializePanels()
     {
@@ -118,19 +132,25 @@ public class HeroUIManagement : HeroStats
         closeBattlePanelBtn = battlePanel.transform.GetChild(3).GetComponent<Button>();
 
         // Action type buttons
-        selectActionTypeBtns.Add(selectActionTypePanel.GetChild(1).GetChild(0).gameObject.GetComponent<Button>()); // Select attack btn
-        selectActionTypeBtns.Add(selectActionTypePanel.GetChild(1).GetChild(1).gameObject.GetComponent<Button>()); // Select defense btn
+        selectActionTypeBtns = new()
+        {
+            selectActionTypePanel.GetChild(1).GetChild(0).gameObject.GetComponent<Button>(), // Select attack btn
+            selectActionTypePanel.GetChild(1).GetChild(1).gameObject.GetComponent<Button>() // Select defense btn
+        };
 
         // Attack type buttons
-        selectAttackTypeBtns.Add(selectAttackTypePanel.GetChild(1).GetChild(0).gameObject.GetComponent<Button>()); // Select weapon attack panel btn
-        selectAttackTypeBtns.Add(selectAttackTypePanel.GetChild(1).GetChild(1).gameObject.GetComponent<Button>()); // Select magic attack panel btn
+        selectAttackTypeBtns = new()
+        {
+            selectAttackTypePanel.GetChild(1).GetChild(0).gameObject.GetComponent<Button>(), // Select weapon attack panel btn
+            selectAttackTypePanel.GetChild(1).GetChild(1).gameObject.GetComponent<Button>() // Select magic attack panel btn
+        };
 
         // Defense type buttons
         selectDefenseTypeBtns = new()
         {
             selectDefenseTypePanel.GetChild(1).GetChild(0).gameObject.GetComponent<Button>(), // Select shield panel btn
             selectDefenseTypePanel.GetChild(1).GetChild(1).gameObject.GetComponent<Button>(), // Select buff panel btn
-            selectDefenseTypePanel.GetChild(1).GetChild(1).gameObject.GetComponent<Button>() // Select debuff panel btn
+            selectDefenseTypePanel.GetChild(1).GetChild(2).gameObject.GetComponent<Button>() // Select debuff panel btn
         };
          
         // Select target confirm button
@@ -210,7 +230,7 @@ public class HeroUIManagement : HeroStats
 
     public IEnumerator AssignStats()
     {
-        Debug.Log("Assigning stats...");
+        // Debug.Log("Assigning stats...");
         yield return new WaitForSeconds(.5f);
 
         hp_text.text = currentHP.ToString();
@@ -256,53 +276,57 @@ public class HeroUIManagement : HeroStats
 
             heroSelectBtn.onClick.AddListener(() =>
             {
-                if (!isHeroSelected)
+                if(BattleManager.instance.turnState == TurnState.HERO_TURN)
                 {
-                    // Debug.Log("Select hero...");
-                    HeroManager newHero = null;
-
-                    // Loop through the heroes only when the button is clicked
-                    for (int i = 0; i < GameManager.instance.heroes.Count; i++)
+                    if (!isHeroSelected)
                     {
-                        var hero = GameManager.instance.heroes.ElementAt(i);
+                        // Debug.Log("Select hero...");
+                        HeroManager newHero = null;
 
-                        // Check if the name matches
-                        if (Name == hero.Value.heroUIManager.Name)
+                        // Loop through the heroes only when the button is clicked
+                        for (int i = 0; i < GameManager.instance.heroes.Count; i++)
                         {
-                            newHero = hero.Value;
-                            break; 
+                            var hero = GameManager.instance.heroes.ElementAt(i);
+
+                            // Check if the name matches
+                            if (Name == hero.Value.heroUIManager.Name)
+                            {
+                                newHero = hero.Value;
+                                break; 
+                            }
                         }
-                    }
 
-                    if (newHero != null)
-                    {
-                        isHeroSelected = true;
-                        heroPanelSelector.SetActive(false);
-                        toBattlePanelBtn.gameObject.SetActive(true);
-                        heroSelectBtn.gameObject.SetActive(false);
-                        heroDeselectBtn.gameObject.SetActive(true);
+                        if (newHero != null)
+                        {
+                            isHeroSelected = true;
+                            heroPanelSelector.SetActive(false);
+                            toBattlePanelBtn.gameObject.SetActive(true);
+                            heroSelectBtn.gameObject.SetActive(false);
+                            heroDeselectBtn.gameObject.SetActive(true);
 
-                        // Activate the toBattlePanelBtn and set its listener
-                        toBattlePanelBtn.gameObject.SetActive(true);
-                        toBattlePanelBtn.onClick.RemoveAllListeners();
-                        toBattlePanelBtn.onClick.AddListener(OpenBattlePanel);
+                            // Activate the toBattlePanelBtn and set its listener
+                            toBattlePanelBtn.gameObject.SetActive(true);
+                            toBattlePanelBtn.onClick.RemoveAllListeners();
+                            toBattlePanelBtn.onClick.AddListener(OpenBattlePanel);
 
-                        heroDeselectBtn.onClick.RemoveAllListeners();
-                        heroDeselectBtn.onClick.AddListener(() => DeselectHero());
-                        Debug.Log($"{newHero.name} has been selected.");                  
-                    }
-                    else
-                    {
-                        Debug.LogWarning("No matching hero found.");
+                            heroDeselectBtn.onClick.RemoveAllListeners();
+                            heroDeselectBtn.onClick.AddListener(() => DeselectHero());
+                            // Debug.Log($"{newHero.name} has been selected.");                  
+                        }
+                        else
+                        {
+                            Debug.LogWarning("No matching hero found.");
+                        }
                     }
                 }
             });
         }
+    
     }
 
     private void DeselectHero()
     {
-        Debug.Log("Deselecting the hero");
+        // Debug.Log("Deselecting the hero");
         isHeroSelected = false; // Reset hero selection
         
         // Deactivate the battle button and hide the battle panel
@@ -316,11 +340,14 @@ public class HeroUIManagement : HeroStats
     {
         if (!isBattlePanelOpen) 
         {
-            Debug.Log("Battle Panel Open...");
+            // Debug.Log("Battle Panel Open...");
             isBattlePanelOpen = true;
             heroDeselectBtn.gameObject.SetActive(false);
             statsPanel.gameObject.SetActive(false);
+
             battlePanel.gameObject.SetActive(true);
+            selectTargetPanel.gameObject.SetActive(true);
+            
 
             closeBattlePanelBtn.onClick.RemoveAllListeners();
             closeBattlePanelBtn.onClick.AddListener(() => CloseBattlePanel());
@@ -329,10 +356,11 @@ public class HeroUIManagement : HeroStats
 
     private void CloseBattlePanel()
     {
-        Debug.Log("Closing battle panel...");
+        // Debug.Log("Closing battle panel...");
         battlePanel.gameObject.SetActive(false);
         statsPanel.gameObject.SetActive(true);
-        heroDeselectBtn.gameObject.SetActive(true); 
+        heroDeselectBtn.gameObject.SetActive(true);
+
         isBattlePanelOpen = false;
     }
 
@@ -436,10 +464,6 @@ public class HeroUIManagement : HeroStats
                     // Show the selector UI on the target
                     enemy.Key.transform.GetChild(0).gameObject.SetActive(true);
 
-                    // // Change the color of the confirm button to green
-                    // ColorBlock cb = confirmButton_SelectTarget.colors;
-                    // cb.normalColor = Color.blue;
-                    // confirmButton_SelectTarget.colors = cb;
                     ChangeButtonColor(confirmButton_SelectTarget);
 
                     targetSelected = true;
@@ -462,11 +486,10 @@ public class HeroUIManagement : HeroStats
 
             // Activate the action panels
             actionPanels.gameObject.SetActive(true);
+            selectActionPanels.gameObject.SetActive(true);
+            selectActionTypePanel.gameObject.SetActive(true);
         }
     }
-
-    private string actionType = "";
-    private bool actionTypeSelected;
 
     public void SelectAction() 
     {
@@ -486,23 +509,20 @@ public class HeroUIManagement : HeroStats
             return;
         }
 
-        Debug.Log($"Button clicked: {selectedButton.name}");
+        // Debug.Log($"Button clicked: {selectedButton.name}");
 
 
         // Fetch the action type from the text
         GameObject textGo = selectedButton.transform.GetChild(0).gameObject;
         TextMeshProUGUI text = textGo.GetComponent<TextMeshProUGUI>();
 
-        Debug.Log($"Previous actionType: {actionType}");
+        // Debug.Log($"Previous actionType: {actionType}");
         actionType = text.text.Trim(); 
-        Debug.Log($"New actionType: {actionType}");
+        // Debug.Log($"New actionType: {actionType}");
 
 
         // Change the color of the button
         ChangeButtonColor(confirmButton_SelectActionType);
-        // ColorBlock cb = confirmButton_SelectActionType.colors;
-        // cb.normalColor = Color.blue;
-        // confirmButton_SelectActionType.colors = cb;
 
         actionTypeSelected = true;
 
@@ -515,7 +535,7 @@ public class HeroUIManagement : HeroStats
     {
         if(actionTypeSelected) 
         {
-            Debug.Log($"Selected Action Type: {actionType}");
+            // Debug.Log($"Selected Action Type: {actionType}");
             if(selectAttackTypePanel != null && selectDefenseTypePanel != null)
             {
                 // Activate the right panel
@@ -525,7 +545,7 @@ public class HeroUIManagement : HeroStats
                     selectDefenseTypePanel.gameObject
                 };
 
-                Debug.Log($"{panels[0].name}, {panels[1].name}");
+                // Debug.Log($"{panels[0].name}, {panels[1].name}");
 
                 foreach (var panel in panels)
                 {
@@ -559,8 +579,6 @@ public class HeroUIManagement : HeroStats
         selectAttackTypeBtns[1].onClick.AddListener(SelectAttackType);
     }
 
-    private string attackType = "";
-    private bool attackTypeSelected;
     private void SelectAttackType() 
     {
         var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
@@ -570,15 +588,15 @@ public class HeroUIManagement : HeroStats
             return;
         }
 
-        Debug.Log($"Button clicked: {selectedButton.name}");
+        // Debug.Log($"Button clicked: {selectedButton.name}");
 
         // Fetch the text component
         GameObject textGo = selectedButton.transform.GetChild(0).gameObject;
         TextMeshProUGUI text = textGo.GetComponent<TextMeshProUGUI>();
         
-        Debug.Log($"Previous attackType: {attackType}");
+        // Debug.Log($"Previous attackType: {attackType}");
         attackType = text.text.Trim(); 
-        Debug.Log($"New attackType: {attackType}");
+        // Debug.Log($"New attackType: {attackType}");
 
         ChangeButtonColor(confirmButton_SelectAttackType);
 
@@ -592,7 +610,7 @@ public class HeroUIManagement : HeroStats
     {
         if(attackTypeSelected) 
         {
-            Debug.Log($"Selected Action Type: {attackType}");
+            // Debug.Log($"Selected Action Type: {attackType}");
 
             if(performActionPanels != null && performAttackPanel != null && performWeaponAttackPanel != null && performMagicAttackPanel != null) 
             {
@@ -602,13 +620,23 @@ public class HeroUIManagement : HeroStats
                     performMagicAttackPanel.gameObject
                 };
 
-                Debug.Log($"{panels[0].name}, {panels[1].name}");
+                // Debug.Log($"{panels[0].name}, {panels[1].name}");
 
                 foreach (var panel in panels)
                 {
                     if(panel.name.Contains(attackType)) 
                     {
                         panel.SetActive(true);
+
+                        if(attackType.Contains("Weapon")) 
+                        {
+                            CreateActionButton(physicalAttacks, panel.transform);
+
+                        }
+                        else if(attackType.Contains("Magic")) 
+                        {
+                            CreateActionButton(magicAttacks, panel.transform);
+                        }
                     }
                 }
 
@@ -630,15 +658,14 @@ public class HeroUIManagement : HeroStats
 
     public void SelectDefense() 
     {
-        selectAttackTypeBtns[0].onClick.RemoveAllListeners();
-        selectAttackTypeBtns[1].onClick.RemoveAllListeners();
+        selectDefenseTypeBtns[0].onClick.RemoveAllListeners();
+        selectDefenseTypeBtns[1].onClick.RemoveAllListeners();
+        selectDefenseTypeBtns[2].onClick.RemoveAllListeners();
 
-        selectAttackTypeBtns[0].onClick.AddListener(SelectDefenseType);
-        selectAttackTypeBtns[1].onClick.AddListener(SelectDefenseType);
+        selectDefenseTypeBtns[0].onClick.AddListener(SelectDefenseType);
+        selectDefenseTypeBtns[1].onClick.AddListener(SelectDefenseType);
+        selectDefenseTypeBtns[2].onClick.AddListener(SelectDefenseType);
     }
-
-    private string defenseType = "";
-    private bool defenseTypeSelected;
 
     private void SelectDefenseType() 
     {
@@ -673,7 +700,7 @@ public class HeroUIManagement : HeroStats
         {
             Debug.Log($"Selected Action Type: {defenseType}");
 
-            if(performActionPanels != null && performAttackPanel != null && performWeaponAttackPanel != null && performMagicAttackPanel != null) 
+            if(performActionPanels != null && performDefensePanel != null) 
             {
                 List<GameObject> panels = new() 
                 {
@@ -682,29 +709,170 @@ public class HeroUIManagement : HeroStats
                     performDebuffDefPanel.gameObject
                 };
 
-                Debug.Log($"Panel -> {panels[0].name}, Panel -> {panels[1].name}, Panel -> {panels[3].name}");
+                Debug.Log($"Panel -> {panels[0].name}, Panel -> {panels[1].name}, Panel -> {panels[2].name}");
 
                 foreach (var panel in panels)
                 {
                     if(panel.name.Contains(defenseType)) 
                     {
                         panel.SetActive(true);
+                        
+                        if(defenseType.Contains("Shield")) 
+                        {
+                            CreateActionButton(shieldAbilities, panel.transform);
+
+                        }
+                        else if(attackType.Contains("Buff")) 
+                        {
+                            CreateActionButton(buffs, panel.transform);
+                        }
                     }
                 }
 
                 // Deactivate the current panels
+                selectActionPanels.gameObject.SetActive(false);
                 selectDefenseTypePanel.gameObject.SetActive(false);
               
                 // Activate perform action panels
                 performActionPanels.gameObject.SetActive(true);
                 performDefensePanel.gameObject.SetActive(true);
               
-
                 // defenseTypeSelected = false;
 
             } else { Debug.Log($"Something is missing: PerformActionPanels -> {performActionPanels}, PerformAttackPanel -> {performAttackPanel}, PerformWeaponAttackPanel -> {performWeaponAttackPanel}"); }
 
         }
         else { return; }
+    }
+
+    public void CreateActionButton(List<BaseAction> baseActions, Transform panel) 
+    {
+        Transform input = panel.GetChild(1);
+
+        foreach (var element in baseActions)
+        {
+            string newButtonName = element.Name;
+            bool buttonExists = false;
+
+            foreach (var btn in actionButtons)
+            {
+                if (btn != null && btn.name == newButtonName)
+                {
+                    buttonExists = true;
+                    break; 
+                }
+            }
+
+            if (!buttonExists)
+            {
+                GameObject btn = Object.Instantiate(BattleManager.instance.UIBattleManager.buttonPrefab);
+                btn.name = newButtonName;
+                btn.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = newButtonName;
+                btn.transform.SetParent(input);
+
+                actionButtons.Add(btn);
+            }
+        }
+
+        actionButtonsCreated = true;
+    }
+
+    public void SelectWeaponAttActionToPerform(MonoBehaviour mono, GameObject hero) 
+    {
+        // Debug.Log("SelectWeaponAttActionToPerform method executed...");
+
+        foreach (var button in actionButtons)
+        {
+            // Debug.Log("In the foreach loop");
+            Button btn = button.GetComponent<Button>();
+
+            // Debug.Log($"Button name: {btn.name}");
+
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => SelectPerformWattAction(mono, hero));
+        }
+    }
+
+    private void SelectPerformWattAction(MonoBehaviour mono, GameObject hero) 
+    {
+        var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
+
+        // Fetch the text component
+        TextMeshProUGUI text = selectedButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        wattActionToPerform = text.text;
+
+        wattActionToPerformSelected = true;
+
+        confirmButton_Watt.onClick.RemoveAllListeners();
+        confirmButton_Watt.onClick.AddListener(() =>ConfirmWeaponAttackAction(mono, hero));
+    }
+
+    private void ConfirmWeaponAttackAction(MonoBehaviour mono, GameObject hero) 
+    {
+        if(wattActionToPerformSelected)
+        {
+            foreach (var action in physicalAttacks) 
+            {
+                if(wattActionToPerform.Contains(action.name.ToString())) 
+                {
+                    action.PerformAction(mono, hero, BattleManager.instance.targetToAttack.transform);
+                    BattleManager.instance.targetToAttack.transform.GetChild(0).gameObject.SetActive(false);
+                }
+                else 
+                {
+                    Debug.LogWarning("No such name found!");
+                }
+            }
+
+            // Close Perform Action Weapon Att UI panel
+            // performAttackPanel.gameObject.SetActive(false);
+            // performActionPanels.gameObject.SetActive(false);
+            // actionPanels.gameObject.SetActive(false);
+            // battlePanel.gameObject.SetActive(false);
+            
+            // defenseTypeSelected = false;
+            // attackTypeSelected = false;
+            // actionTypeSelected = false;
+            // actionButtonsCreated = false;
+            // wattActionToPerformSelected = false;
+
+            // statsPanel.gameObject.SetActive(true);
+            // heroSelectBtn.gameObject.SetActive(true);
+            // heroPanelSelector.SetActive(true);
+
+            mono.StartCoroutine(WaitBeforeTurningState());
+        }
+    }
+
+    private IEnumerator WaitBeforeTurningState() 
+    {
+        yield return new WaitForSeconds(2f);
+
+        // Panels
+        performAttackPanel.gameObject.SetActive(false);
+        performActionPanels.gameObject.SetActive(false);
+        actionPanels.gameObject.SetActive(false);
+        battlePanel.gameObject.SetActive(false);
+        
+        // Button
+        toBattlePanelBtn.gameObject.SetActive(false);
+        
+        // Bools
+        // targetSelected = false;
+        isBattlePanelOpen = false;
+        defenseTypeSelected = false;
+        attackTypeSelected = false;
+        actionTypeSelected = false;
+        actionButtonsCreated = false;
+        wattActionToPerformSelected = false;
+        isHeroSelected = false;
+
+        statsPanel.gameObject.SetActive(true);
+        heroSelectBtn.gameObject.SetActive(true);
+        heroPanelSelector.SetActive(true);
+
+        yield return new WaitForSeconds(1f);
+
+        BattleManager.instance.turnState = TurnState.ENEMY_TURN;
     }
 }

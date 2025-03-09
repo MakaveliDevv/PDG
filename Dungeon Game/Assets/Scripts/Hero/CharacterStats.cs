@@ -32,7 +32,7 @@ public class CharacterStats
     public List<BaseAction> magicAttacks = new();
 
     [Header("Defense")]
-    public List<BaseAction> defenseAbilities = new();
+    public List<BaseAction> shieldAbilities = new();
     
     [Header("Buffs")]
     public List<BaseAction> buffs = new();

@@ -19,7 +19,9 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField] protected List<GameObject> spawnPoints = new(); // To store the spawn points
     [SerializeField] protected GameObject spawnPointPref;
     [SerializeField] protected Transform spawnPointsHolder;
-    [SerializeField] protected int maxSpawnPoints = 20;
+    [SerializeField] protected int maxSpawnPointsEnemy = 20;
+    [SerializeField] protected int maxSpawnPointsItems = 10;
+
     [SerializeField] protected float minDistanceToFirstRoom = 5f; 
 
     void Start() 

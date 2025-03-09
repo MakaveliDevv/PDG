@@ -6,8 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class TilemapVisualizer : MonoBehaviour
 {
-    [SerializeField] private Tilemap floorTilemap, wallTimeMap, spawnLocationMap, enemyMap;
-    [SerializeField] private TileBase floorTile, wallTile, spawnPointTile;
+    [SerializeField] private Tilemap floorTilemap, wallTimeMap, enemySpawnLocations, itemSpawnLocations;
+    [SerializeField] private TileBase floorTile, wallTile, enemySpawnPointTile, itemSpawnPointTile;
 
     public void PaintFloorTiles(IEnumerable<Vector2Int> _floorPositions)
     {
@@ -33,15 +33,20 @@ public class TilemapVisualizer : MonoBehaviour
         _tilemap.SetTile(tilePosition, _tile);
     }
 
-    public void PaintSpawnPoints(IEnumerable<Vector2Int> _spawnPointPositions)
+    public void PaintEnemySpawnPoints(IEnumerable<Vector2Int> _spawnPointPositions)
     {
-        PaintTiles(_spawnPointPositions, spawnLocationMap, spawnPointTile);
+        PaintTiles(_spawnPointPositions, enemySpawnLocations, enemySpawnPointTile);
+    }
+
+    public void PaintItemSpawnPoints(IEnumerable<Vector2Int> _spawnPointPositions) 
+    {
+        PaintTiles(_spawnPointPositions, itemSpawnLocations, itemSpawnPointTile);
     }
 
     public void Clear() 
     {
         floorTilemap.ClearAllTiles();
         wallTimeMap.ClearAllTiles();
-        spawnLocationMap.ClearAllTiles();
+        enemySpawnLocations.ClearAllTiles();
     }
 }

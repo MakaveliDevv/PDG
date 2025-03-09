@@ -68,13 +68,13 @@ public class HeroManager : MonoBehaviour
     {
         if(collider.CompareTag("Enemy")) 
         {
-            Debug.Log($"Made contact with the {collider.gameObject.name}");
+            // Debug.Log($"Made contact with the {collider.gameObject.name}");
             // inRangeForBattle = true;
 
             // Fetch the EnemyManagement component
             if(collider.TryGetComponent<EnemyManagement>(out var enemy)) 
             {
-                Debug.Log("Fetched the EnemyManagement component");
+                // Debug.Log("Fetched the EnemyManagement component");
 
                 var entry = new DictionaryEntry<GameObject, EnemyManagement> 
                 {
@@ -89,23 +89,19 @@ public class HeroManager : MonoBehaviour
                 if (!entryExists) 
                 {
                     GameManager.instance.enemiesEncounterd.Add(entry);
-                    Debug.Log("Added new enemy to enemiesToBattle list.");
+                    // Debug.Log("Added new enemy to enemiesToBattle list.");
 
                     GameManager.instance.gameState = GameManager.GameState.BATTLE;
 
-                }
-                else
-                {
-                    Debug.Log("Enemy already exists in the enemiesToBattle list.");
                 }
 
                 // heroUIManager.CreateSelectTargetButtons();  // Create buttons if needed
                 // StartCoroutine(heroUIManager.CreateSelectTargetButtons());
             }
-            else 
-            {
-                Debug.Log("No component found!");
-            }
+            // else 
+            // {
+            //     Debug.LogError("No component found!");
+            // }
         }
     }
 

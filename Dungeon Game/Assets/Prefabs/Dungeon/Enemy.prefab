@@ -228,8 +228,11 @@ MonoBehaviour:
       modifiers: []
       minValue: 0
       maxValue: 0
-    physicalAttacks: []
+    physicalAttacks:
+    - {fileID: 11400000, guid: 128d4fdcd3df94047b5c02596c44e6aa, type: 2}
+    - {fileID: 11400000, guid: 15398d692f8115f4d9bdae5c8d034f4d, type: 2}
     magicAttacks: []
+    shieldAbilities: []
     buffs: []
     Name: StupidEnemy
     level: 1

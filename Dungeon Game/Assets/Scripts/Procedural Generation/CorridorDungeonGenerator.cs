@@ -58,6 +58,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         // Create rooms along the corridors
         HashSet<Vector2Int> roomPositions = CreateRooms(corridors);
         FindAllDeadEnds(floorPositions);
+
         // Find all dead ends and potentially create rooms at dead ends
         // List<Vector2Int> deadEnds = FindAllDeadEnds(floorPositions);
         // CreateRoomsAtDeadEnd(deadEnds, roomPositions);
@@ -76,17 +77,24 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         HashSet<Vector2Int> walls = WallGenerator.CreateWall(floorPositions, tilemapVisualizer);
 
         // Generate spawn points
-        HashSet<Vector2Int> floorSpawnPoints = GenerateSpawnPoints(floorPositions, walls, maxSpawnPoints);
-        foreach (Vector2Int point in floorSpawnPoints)
+        HashSet<Vector2Int> enemySpawnPoints = GenerateSpawnPoints(floorPositions, walls, maxSpawnPointsEnemy);
+        foreach (Vector2Int point in enemySpawnPoints)
         {
            GenerateEnemies(point);
+        }
+
+        HashSet<Vector2Int> itemSpawnPoints = GenerateSpawnPoints(floorPositions, walls, maxSpawnPointsItems);
+        foreach (Vector2Int point in itemSpawnPoints)
+        {
+           GenerateItems(point);
         }
 
         // Spawn the player
         GenerateHero(GameManager.instance.mainHeroPrefab);
 
         // Visualize spawn points using TilemapVisualizer
-        tilemapVisualizer.PaintSpawnPoints(floorSpawnPoints);
+        // tilemapVisualizer.PaintEnemySpawnPoints(enemySpawnPoints);
+        // tilemapVisualizer.PaintItemSpawnPoints(itemSpawnPoints);
     }
 
     private List<Vector2Int> IncreaseBrushSize(List<Vector2Int> _corridor)
@@ -285,6 +293,36 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             position.y >= bounds.yMin && position.y < bounds.yMax;
     }
 
+    private void GenerateItems(Vector2Int spawnPosition)
+    {
+        if (!CanSpawnItemAt(spawnPosition))
+        {
+            return;
+        }
+
+        int itemIndex = Random.Range(0, GameManager.instance.items.Count);
+        GameObject itemPrefab = GameManager.instance.items[itemIndex];
+        Vector2 worldPosition = new(spawnPosition.x, spawnPosition.y);
+        Instantiate(itemPrefab, worldPosition, Quaternion.identity);
+    }
+
+    private bool CanSpawnItemAt(Vector2Int position)
+    {
+        foreach (var item in GameManager.instance.items)
+        {
+            Vector2 itemPosition = new(item.transform.position.x, item.transform.position.y);
+            float distance = Vector2.Distance(position, itemPosition);
+
+            // Check if the position is too close to an existing enemy
+            if (distance < GameManager.instance.spawnRadius)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void GenerateEnemies(Vector2Int spawnPosition)
     {
         // Check if the total number of spawned enemies has reached the limit
@@ -306,7 +344,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
         GameObject enemyPrefab = GameManager.instance.enemyTypes[enemyTypeIndex];
 
         // Convert spawn position to world space
-        Vector2 worldPosition = new Vector2(spawnPosition.x, spawnPosition.y);
+        Vector2 worldPosition = new(spawnPosition.x, spawnPosition.y);
 
         // Instantiate the enemy at the position
         GameObject newEnemy = Instantiate(enemyPrefab, worldPosition, Quaternion.identity);

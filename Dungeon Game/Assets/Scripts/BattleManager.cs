@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TurnState { HERO_TURN, ENEMY_TURN }
 public class BattleManager : MonoBehaviour
 {
+    public TurnState turnState;
     public static BattleManager instance;
 
     [Header("Heroes & Enemies in battle")]
     public List<DictionaryEntry<GameObject, HeroManager>> heroesInBattle = new();
     public List<DictionaryEntry<GameObject, EnemyManagement>> enemiesInBattle = new();
-    // public bool battleMode = false;
 
     // -------------
     private bool heroPanelInitialized = false;
@@ -23,6 +24,7 @@ public class BattleManager : MonoBehaviour
     [Header("UI related stuff")]
     public UIBattleManager UIBattleManager; 
     
+    private bool _bool;
 
     void Awake() 
     {
@@ -56,6 +58,29 @@ public class BattleManager : MonoBehaviour
     {
         StartCoroutine(InitializeHeroUI());
         InitializePosition();
+
+        turnState = TurnState.HERO_TURN;
+    }
+
+    void Update()
+    {
+        if(!_bool) 
+        {
+            Swag();
+
+            _bool = false;
+        }
+    }
+
+    private void Swag() 
+    {
+        foreach (var _hero in heroesInBattle)
+        {
+            if(_hero.Value.heroUIManager.actionButtonsCreated) 
+            {
+                _hero.Value.heroUIManager.SelectWeaponAttActionToPerform(this, _hero.Key);
+            }
+        }
     }
 
     private void InitializePosition() 
@@ -93,6 +118,8 @@ public class BattleManager : MonoBehaviour
             _hero.Value.heroUIManager.SelectHero();
             _hero.Value.heroUIManager.SelectAction();
             _hero.Value.heroUIManager.SelectAttack();
+            _hero.Value.heroUIManager.SelectDefense();
+            // StartCoroutine(_hero.Value.heroUIManager.SelectWeaponAttActionToPerform());
         }
 
         yield break;
@@ -112,7 +139,7 @@ public class BattleManager : MonoBehaviour
         {
             if(hero.Value != null)
             {
-                Debug.Log($"{hero.Value} found in the heroes in battle dictionary");
+                // Debug.Log($"{hero.Value} found in the heroes in battle dictionary");
                 UIBattleManager.InstantiateHeroPanelUI(hero.Value, this);
                 heroPanelInitialized = true;
             }

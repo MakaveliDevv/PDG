@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2957937127472593261}
   - component: {fileID: 1738500788669680438}
   m_Layer: 5
-  m_Name: Target Text
+  m_Name: Button Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Target
+  m_text: 'Text
 
 '
   m_isRightToLeft: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 18
   m_fontSizeBase: 56
   m_fontWeight: 400
   m_enableAutoSizing: 1
