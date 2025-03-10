@@ -26,7 +26,11 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
 
     void Start() 
     {
-        GenerateDungeon();
+        if(GameManager.instance.gamePlay == GamePlay.GAMEPLAY) 
+        {
+            GenerateDungeon();
+            // GameManager.instance.game = Game.IN_GAME;
+        }
     }
 
     public void GenerateDungeon() 

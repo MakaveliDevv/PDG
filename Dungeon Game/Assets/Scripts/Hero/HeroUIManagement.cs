@@ -83,15 +83,18 @@ public class HeroUIManagement : HeroStats
     private string defenseType = "";
     private bool defenseTypeSelected;
 
-    private string attackType = "";
-    private bool attackTypeSelected;
-
     private string actionType = "";
     private bool actionTypeSelected;
     public bool actionButtonsCreated;
 
+    private string attackType = "";
+    private bool attackTypeSelected;
+
     public string wattActionToPerform = "";
     private bool wattActionToPerformSelected;
+
+    public string mattActionToPerform = "";
+    private bool mattActionToPerformSelected;
 
     private void InitializePanels()
     {
@@ -268,7 +271,7 @@ public class HeroUIManagement : HeroStats
         }
     }
 
-    public void SelectHero()
+    public void SelectHero(MonoBehaviour mono)
     {
         if (heroSelectBtn != null)
         {
@@ -283,7 +286,7 @@ public class HeroUIManagement : HeroStats
                         // Debug.Log("Select hero...");
                         HeroManager newHero = null;
 
-                        // Loop through the heroes only when the button is clicked
+                        // Loop through the heroes
                         for (int i = 0; i < GameManager.instance.heroes.Count; i++)
                         {
                             var hero = GameManager.instance.heroes.ElementAt(i);
@@ -307,7 +310,7 @@ public class HeroUIManagement : HeroStats
                             // Activate the toBattlePanelBtn and set its listener
                             toBattlePanelBtn.gameObject.SetActive(true);
                             toBattlePanelBtn.onClick.RemoveAllListeners();
-                            toBattlePanelBtn.onClick.AddListener(OpenBattlePanel);
+                            toBattlePanelBtn.onClick.AddListener(() => OpenBattlePanel(mono));
 
                             heroDeselectBtn.onClick.RemoveAllListeners();
                             heroDeselectBtn.onClick.AddListener(() => DeselectHero());
@@ -336,7 +339,7 @@ public class HeroUIManagement : HeroStats
         heroPanelSelector.SetActive(true);
     }
 
-    private void OpenBattlePanel()
+    private void OpenBattlePanel(MonoBehaviour mono)
     {
         if (!isBattlePanelOpen) 
         {
@@ -351,6 +354,11 @@ public class HeroUIManagement : HeroStats
 
             closeBattlePanelBtn.onClick.RemoveAllListeners();
             closeBattlePanelBtn.onClick.AddListener(() => CloseBattlePanel());
+
+            // if(GameManager.instance.gamePlay == GamePlay.TUTORIAL) 
+            // {
+            //     mono.StartCoroutine(GameManager.instance.tutScript.DisplayText(BattleManager.instance.selectTargetText, 2.25f));
+            // }
         }
     }
 
@@ -364,7 +372,7 @@ public class HeroUIManagement : HeroStats
         isBattlePanelOpen = false;
     }
 
-    public void CreateTargetButtons(List<DictionaryEntry<string, GameObject>> dictionaryEntry, GameObject buttonPrefab)
+    public void CreateTargetButtons(List<DictionaryEntry<string, GameObject>> dictionaryEntry, GameObject buttonPrefab, MonoBehaviour mono)
     {   
         if (targetButtonsCreated) return; // If  button already created, return
 
@@ -419,7 +427,7 @@ public class HeroUIManagement : HeroStats
 
                     // Assign click listener
                     _targetButton.onClick.RemoveAllListeners();
-                    _targetButton.onClick.AddListener(SelectTarget);
+                    _targetButton.onClick.AddListener(() => SelectTarget(mono));
                 }
                 else
                 {
@@ -440,7 +448,7 @@ public class HeroUIManagement : HeroStats
     }
 #pragma warning restore IDE0059 // Unnecessary assignment of a value
 
-    private void SelectTarget()
+    private void SelectTarget(MonoBehaviour mono)
     {
         var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
         if(selectedButton == null)
@@ -474,10 +482,10 @@ public class HeroUIManagement : HeroStats
 
         // Confirm Target
         confirmButton_SelectTarget.onClick.RemoveAllListeners();
-        confirmButton_SelectTarget.onClick.AddListener(ConfirmTarget);
+        confirmButton_SelectTarget.onClick.AddListener(() => ConfirmTarget(mono));
     }
 
-    private void ConfirmTarget() 
+    private void ConfirmTarget(MonoBehaviour mono) 
     {
         if(targetSelected) 
         {
@@ -488,19 +496,24 @@ public class HeroUIManagement : HeroStats
             actionPanels.gameObject.SetActive(true);
             selectActionPanels.gameObject.SetActive(true);
             selectActionTypePanel.gameObject.SetActive(true);
+
+            // if(GameManager.instance.gamePlay == GamePlay.TUTORIAL) 
+            // {
+            //     mono.StartCoroutine(GameManager.instance.tutScript.DisplayText(BattleManager.instance.selectActionText, 2.25f));
+            // }
         }
     }
 
-    public void SelectAction() 
+    public void SelectAction(MonoBehaviour mono) 
     {
         selectActionTypeBtns[0].onClick.RemoveAllListeners();
         selectActionTypeBtns[1].onClick.RemoveAllListeners();
 
-        selectActionTypeBtns[0].onClick.AddListener(SelectActionType);
-        selectActionTypeBtns[1].onClick.AddListener(SelectActionType);
+        selectActionTypeBtns[0].onClick.AddListener(() => SelectActionType(mono));
+        selectActionTypeBtns[1].onClick.AddListener(() => SelectActionType(mono));
     }
 
-    private void SelectActionType() 
+    private void SelectActionType(MonoBehaviour mono) 
     {
         var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
         if(selectedButton == null) 
@@ -527,11 +540,11 @@ public class HeroUIManagement : HeroStats
         actionTypeSelected = true;
 
         confirmButton_SelectActionType.onClick.RemoveAllListeners();
-        confirmButton_SelectActionType.onClick.AddListener(() => ConfirmActionType(actionType));
+        confirmButton_SelectActionType.onClick.AddListener(() => ConfirmActionType(actionType, mono));
     
     }
 
-    private void ConfirmActionType(string actionType) 
+    private void ConfirmActionType(string actionType, MonoBehaviour mono) 
     {
         if(actionTypeSelected) 
         {
@@ -567,19 +580,23 @@ public class HeroUIManagement : HeroStats
                 Debug.LogError("No action type panels are assigned! (SelectAttackTypePanel and SelectDefenseTypePanel)");
             }
             
+            // if(GameManager.instance.gamePlay == GamePlay.TUTORIAL) 
+            // {
+            //     mono.StartCoroutine(GameManager.instance.tutScript.DisplayText(BattleManager.instance.selectAttackText, 2.25f));
+            // }
         }
     }
 
-    public void SelectAttack() 
+    public void SelectAttack(MonoBehaviour mono) 
     {
         selectAttackTypeBtns[0].onClick.RemoveAllListeners();
         selectAttackTypeBtns[1].onClick.RemoveAllListeners();
 
-        selectAttackTypeBtns[0].onClick.AddListener(SelectAttackType);
-        selectAttackTypeBtns[1].onClick.AddListener(SelectAttackType);
+        selectAttackTypeBtns[0].onClick.AddListener(() => SelectAttackType(mono));
+        selectAttackTypeBtns[1].onClick.AddListener(() => SelectAttackType(mono));
     }
 
-    private void SelectAttackType() 
+    private void SelectAttackType(MonoBehaviour mono) 
     {
         var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
         if(selectedButton == null) 
@@ -603,10 +620,10 @@ public class HeroUIManagement : HeroStats
         attackTypeSelected = true;
 
         confirmButton_SelectAttackType.onClick.RemoveAllListeners();
-        confirmButton_SelectAttackType.onClick.AddListener(() => ConfirmAttackType(attackType));
+        confirmButton_SelectAttackType.onClick.AddListener(() => ConfirmAttackType(attackType, mono));
     }
 
-    private void ConfirmAttackType(string attackType) 
+    private void ConfirmAttackType(string attackType, MonoBehaviour mono)
     {
         if(attackTypeSelected) 
         {
@@ -649,6 +666,11 @@ public class HeroUIManagement : HeroStats
                 performAttackPanel.gameObject.SetActive(true);
 
                 // attackTypeSelected = false;
+
+                // if(GameManager.instance.gamePlay == GamePlay.TUTORIAL) 
+                // {
+                //     mono.StartCoroutine(GameManager.instance.tutScript.DisplayText(BattleManager.instance.performAttackText, 2.25f));
+                // }
 
             } else { Debug.Log($"Something is missing: PerformActionPanels -> {performActionPanels}, PerformAttackPanel -> {performAttackPanel}, PerformWeaponAttackPanel -> {performWeaponAttackPanel}"); }
 
@@ -824,21 +846,67 @@ public class HeroUIManagement : HeroStats
                 }
             }
 
-            // Close Perform Action Weapon Att UI panel
-            // performAttackPanel.gameObject.SetActive(false);
-            // performActionPanels.gameObject.SetActive(false);
-            // actionPanels.gameObject.SetActive(false);
-            // battlePanel.gameObject.SetActive(false);
-            
-            // defenseTypeSelected = false;
-            // attackTypeSelected = false;
-            // actionTypeSelected = false;
-            // actionButtonsCreated = false;
-            // wattActionToPerformSelected = false;
+            // if(GameManager.instance.gamePlay == GamePlay.TUTORIAL) 
+            // {
+            //     mono.StartCoroutine(GameManager.instance.tutScript.DisplayText(BattleManager.instance.actionPerformedText, 3f));
+            // }
 
-            // statsPanel.gameObject.SetActive(true);
-            // heroSelectBtn.gameObject.SetActive(true);
-            // heroPanelSelector.SetActive(true);
+            mono.StartCoroutine(WaitBeforeTurningState());
+        }
+    }
+
+    // Magic att
+    public void SelectMattActionToPerform(MonoBehaviour mono, GameObject hero) 
+    {
+        // Debug.Log("SelectWeaponAttActionToPerform method executed...");
+
+        foreach (var button in actionButtons)
+        {
+            // Debug.Log("In the foreach loop");
+            Button btn = button.GetComponent<Button>();
+
+            // Debug.Log($"Button name: {btn.name}");
+
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => SelectPerformMattAction(mono, hero));
+        }
+    }
+
+    private void SelectPerformMattAction(MonoBehaviour mono, GameObject hero) 
+    {
+        var selectedButton = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
+
+        // Fetch the text component
+        TextMeshProUGUI text = selectedButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+        mattActionToPerform = text.text;
+
+        mattActionToPerformSelected = true;
+
+        confirmButton_Matt.onClick.RemoveAllListeners();
+        confirmButton_Matt.onClick.AddListener(() =>ConfirmMattAction(mono, hero));
+    }
+
+    private void ConfirmMattAction(MonoBehaviour mono, GameObject hero) 
+    {
+        if(mattActionToPerformSelected)
+        {
+            foreach (var action in magicAttacks) 
+            {
+                if(mattActionToPerform.Contains(action.name.ToString())) 
+                {
+                    action.PerformAction(mono, hero, BattleManager.instance.targetToAttack.transform);
+                    BattleManager.instance.targetToAttack.transform.GetChild(0).gameObject.SetActive(false);
+                }
+                else 
+                {
+                    Debug.LogWarning("No such name found!");
+                }
+            }
+
+            // if(GameManager.instance.gamePlay == GamePlay.TUTORIAL) 
+            // {
+            //     mono.StartCoroutine(GameManager.instance.tutScript.DisplayText(BattleManager.instance.actionPerformedText, 3f));
+            // }
 
             mono.StartCoroutine(WaitBeforeTurningState());
         }

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27c296abcee17014790ff5d0479d481a, type: 3}
+  m_Name: ThunderStrike
+  m_EditorClassIdentifier: 
+  Name: ThunderStrike
+  type: MagicAttack
+  description: 
+  physicalDmg: 0
+  magicDmg: 25
+  manaCost: 15
+  heal: 0
+  physicalDEF: 0
+  magicalDEF: 0
+  sprite: {fileID: 21300000, guid: dadfe4db9fb8c594abf23febe42df5ef, type: 3}

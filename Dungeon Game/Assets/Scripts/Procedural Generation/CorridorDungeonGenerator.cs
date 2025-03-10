@@ -300,15 +300,15 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             return;
         }
 
-        int itemIndex = Random.Range(0, GameManager.instance.items.Count);
-        GameObject itemPrefab = GameManager.instance.items[itemIndex];
+        int itemIndex = Random.Range(0, GameManager.instance.chest.Count);
+        GameObject itemPrefab = GameManager.instance.chest[itemIndex];
         Vector2 worldPosition = new(spawnPosition.x, spawnPosition.y);
         Instantiate(itemPrefab, worldPosition, Quaternion.identity);
     }
 
     private bool CanSpawnItemAt(Vector2Int position)
     {
-        foreach (var item in GameManager.instance.items)
+        foreach (var item in GameManager.instance.chest)
         {
             Vector2 itemPosition = new(item.transform.position.x, item.transform.position.y);
             float distance = Vector2.Distance(position, itemPosition);
@@ -382,7 +382,7 @@ public class CorridorDungeonGenerator : SimpleRandomWalkDungeonGenerator
             float distance = Vector2.Distance(position, enemyPosition);
 
             // Check if the position is too close to an existing enemy
-            if (distance < GameManager.instance.checkForSpawnPointRadius)
+            if (distance < GameManager.instance.spawnRadius)
             {
                 return false;
             }

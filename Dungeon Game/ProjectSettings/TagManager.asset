@@ -13,6 +13,9 @@ TagManager:
   - BattleManager
   - HeroesPanel
   - HeroPanelSelect_btn
+  - Chest
+  - IntroTextForBattle
+  - SelectHeroText
   layers:
   - Default
   - TransparentFX

@@ -1208,6 +1208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d295825ee7e51a4408a778d4d7c3da44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  game: 2
+  gamePlay: 0
   gameState: 1
   enemiesEncounterd: []
   elapsedGameplayTime: 0
@@ -1217,15 +1219,16 @@ MonoBehaviour:
   heroes: []
   enemyTypes:
   - {fileID: 3826202874038174869, guid: 03c16424a56c1b1438e39495610f20a2, type: 3}
+  - {fileID: 3826202874038174869, guid: 81a3587fc5cb71f41a5ed801df5c6a18, type: 3}
   enemiesInSceneGameObjectContainer: {fileID: 6760689751621518372}
   amountOfEnemiesToGenerate: 10
-  checkForSpawnPointRadius: 5
   enemiesInGame: []
   enemyCounter: 0
-  items:
+  chest:
   - {fileID: 3826202874038174869, guid: 8bdfaf2a73264cd43b5198e5014dcdd8, type: 3}
-  amountOfItemsToGenerate: 0
+  amountOfItemsToGenerate: 5
   spawnRadius: 5
+  tutScript: {fileID: 0}
 --- !u!114 &4160883820042406497
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,12 +4,12 @@ using UnityEngine;
 [System.Serializable]
 public class UIBattleManager
 {
-    // public static UIBattleManager instance;
     public GameObject heroPanelUIPrefab;
     public GameObject buttonPrefab, heroesPanel;
     public List<DictionaryEntry<HeroManager, GameObject>> heroPanelStatsEntry = new();
     // private readonly Dictionary<HeroManager, GameObject> heroPanelStats = new();
     public List<DictionaryEntry<string, GameObject>> targetButtonsEntry;
+    public GameObject actionSprite;
 
     public void InstantiateHeroPanelUI(HeroManager hero, MonoBehaviour monoBehaviour) 
     {

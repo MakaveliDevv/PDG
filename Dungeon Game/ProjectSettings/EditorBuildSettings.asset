@@ -6,10 +6,22 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 96e4254c0e614f949a9227d4b79779e9
+  - enabled: 1
+    path: Assets/Scenes/DungeonTutorial.unity
+    guid: 55493139eec4260478d1809e746a210d
+  - enabled: 1
+    path: Assets/Scenes/BattleTutorial.unity
+    guid: 54bb6714eb268d145a381217f823d0c5
+  - enabled: 1
     path: Assets/Scenes/DungeonScene.unity
     guid: accd29c465faff34596c56148552a30c
   - enabled: 1
     path: Assets/Scenes/BattleScene2.unity
     guid: f8192187f28a1654faa601db9fd64f8e
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 765ad285170526946a7e5b7f12670c8a
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
